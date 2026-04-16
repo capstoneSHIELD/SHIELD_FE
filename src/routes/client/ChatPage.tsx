@@ -40,16 +40,12 @@ export function ChatPage() {
     if (!consultation) return;
     if (consultation.status === 'ANALYZING') {
       navigate(`/consultations/${id}/analyzing`, { replace: true });
-      return;
     }
-    if (
-      consultation.status === 'AWAITING_CONFIRM' ||
-      consultation.status === 'CONFIRMED' ||
-      consultation.status === 'REJECTED'
-    ) {
-      navigate('/briefs', { replace: true });
-    }
+    // AWAITING_CONFIRM / CONFIRMED / REJECTED: 채팅방에 남아서 카드 UI로 안내
   }, [consultation, id, navigate]);
+
+  const isCollecting = consultation?.status === 'COLLECTING';
+  const isChatDisabled = !isCollecting;
 
   // ── derive page title ───────────────────────────────────────────────────
   function buildTitle(): string {
@@ -111,6 +107,8 @@ export function ChatPage() {
             sender={msg.role}
             content={msg.content}
             timestamp={msg.createdAt}
+            briefId={consultation?.brief?.briefId}
+            consultationStatus={msg.role === 'SYSTEM' ? consultation?.status : undefined}
           />
         ))}
 
@@ -130,8 +128,8 @@ export function ChatPage() {
 
       {/* ── bottom area ─────────────────────────────────────────────────── */}
       <div className="bg-white safe-area-bottom">
-        {/* "의뢰서 생성" CTA — shown when allCompleted */}
-        {allCompleted && (
+        {/* "의뢰서 생성" CTA — shown when allCompleted and still collecting */}
+        {allCompleted && isCollecting && (
           <div className="px-4 pt-3 pb-1">
             <Button
               variant="primary"
@@ -150,8 +148,8 @@ export function ChatPage() {
         {/* Chat input */}
         <ChatInput
           onSend={sendMessage}
-          disabled={isSending || allCompleted}
-          placeholder={allCompleted ? '상담이 완료되었습니다' : '메시지를 입력하세요...'}
+          disabled={isSending || isChatDisabled}
+          placeholder={isChatDisabled ? '상담이 완료되었습니다' : '메시지를 입력하세요...'}
         />
       </div>
     </div>

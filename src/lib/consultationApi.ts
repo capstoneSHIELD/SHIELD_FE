@@ -31,7 +31,7 @@ export const consultationApi = {
 
   /** 메시지 목록 */
   getMessages: (id: string) =>
-    api.get<ApiResponse<MessageResponse[]>>(`${BASE}/${id}/messages`),
+    api.get<ApiResponse<PageResponse<MessageResponse>>>(`${BASE}/${id}/messages`),
 
   /** 메시지 전송 */
   sendMessage: (id: string, content: string) =>

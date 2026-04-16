@@ -1,4 +1,5 @@
-import { Lightbulb } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Lightbulb, FileText, CheckCircle, XCircle, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 type Sender = 'USER' | 'CHATBOT' | 'CHATBOT_TIP' | 'ROUTER_REQUEST' | 'SYSTEM';
@@ -7,6 +8,8 @@ interface ChatBubbleProps {
   sender: Sender;
   content: string;
   timestamp: string;
+  briefId?: string | null;
+  consultationStatus?: string | null;
 }
 
 function formatTime(timestamp: string): string {
@@ -15,13 +18,73 @@ function formatTime(timestamp: string): string {
   return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-export function ChatBubble({ sender, content, timestamp }: ChatBubbleProps) {
+export function ChatBubble({ sender, content, timestamp, briefId, consultationStatus }: ChatBubbleProps) {
+  const navigate = useNavigate();
   const formattedTime = formatTime(timestamp);
 
   if (sender === 'SYSTEM') {
+    // 의뢰서 생성/확정 관련 시스템 메시지 → 카드 UI
+    const isBriefReady = consultationStatus === 'AWAITING_CONFIRM' || consultationStatus === 'CONFIRMED';
+    const isFailed = consultationStatus === 'REJECTED';
+
+    if (isBriefReady && briefId) {
+      const isConfirmed = consultationStatus === 'CONFIRMED';
+      return (
+        <div className="flex justify-center px-4 py-2">
+          <div className="w-full max-w-[85%] bg-white border border-blue-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              {isConfirmed ? (
+                <CheckCircle size={18} className="text-green-500" />
+              ) : (
+                <FileText size={18} className="text-brand" />
+              )}
+              <span className="text-sm font-semibold text-gray-900">
+                {isConfirmed ? '의뢰서가 확정되었습니다' : '의뢰서가 생성되었습니다'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mb-3">
+              {isConfirmed
+                ? '변호사에게 의뢰서를 전달할 수 있습니다.'
+                : '생성된 의뢰서를 검토하고 확정해 주세요.'}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate(`/briefs/${briefId}`)}
+              className={cn(
+                'w-full flex items-center justify-center gap-1.5',
+                'py-2.5 rounded-xl text-sm font-semibold',
+                'transition-colors duration-150',
+                isConfirmed
+                  ? 'bg-green-50 text-green-700 hover:bg-green-100'
+                  : 'bg-blue-50 text-brand hover:bg-blue-100',
+              )}
+            >
+              {isConfirmed ? '의뢰서 보러 가기' : '의뢰서 확인하러 가기'}
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (isFailed) {
+      return (
+        <div className="flex justify-center px-4 py-2">
+          <div className="w-full max-w-[85%] bg-white border border-red-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <XCircle size={18} className="text-red-500" />
+              <span className="text-sm font-semibold text-gray-900">의뢰서 생성에 실패했습니다</span>
+            </div>
+            <p className="text-xs text-gray-500">{content}</p>
+          </div>
+        </div>
+      );
+    }
+
+    // 기본 시스템 메시지
     return (
       <div className="flex justify-center px-4 py-1">
-        <div className="w-full max-w-full bg-red-50 text-red-600 rounded-lg px-3 py-2 text-center text-xs leading-snug">
+        <div className="w-full max-w-full bg-gray-50 text-gray-500 rounded-lg px-3 py-2 text-center text-xs leading-snug">
           {content}
         </div>
         <span className="sr-only">{formattedTime}</span>

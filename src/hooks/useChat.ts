@@ -27,15 +27,22 @@ export function useChat(consultationId: string) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // 메시지 목록 초기 로딩
-  const { isLoading } = useQuery({
+  const { data: messageData, isLoading } = useQuery({
     queryKey: KEYS.messages(consultationId),
     queryFn: async () => {
       const { data } = await consultationApi.getMessages(consultationId);
-      setMessages(data.data);
-      return data.data;
+      return data.data.content;
     },
     enabled: !!consultationId,
+    staleTime: 0,
   });
+
+  // React Query 데이터 → zustand 스토어 동기화
+  useEffect(() => {
+    if (messageData) {
+      setMessages(messageData);
+    }
+  }, [messageData, setMessages]);
 
   // 스크롤 하단 고정
   const scrollToBottom = useCallback(() => {

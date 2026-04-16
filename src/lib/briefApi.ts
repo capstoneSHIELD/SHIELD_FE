@@ -35,7 +35,7 @@ export const briefApi = {
 
   /** 변호사 추천 (키워드 매칭) */
   getRecommendations: (id: string) =>
-    api.get<ApiResponse<MatchingResponse[]>>(
+    api.get<ApiResponse<PageResponse<MatchingResponse>>>(
       `${BASE}/${id}/lawyer-recommendations`,
     ),
 
