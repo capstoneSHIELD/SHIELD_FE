@@ -11,26 +11,26 @@ import type { CategorySelection } from '@/lib/legalCategories';
 
 export function NewConsultationPage() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<CategorySelection | null>(null);
+  const [selected, setSelected] = useState<CategorySelection[]>([]);
   const [isUnknown, setIsUnknown] = useState(false);
   const { mutate: createConsultation, isPending } = useCreateConsultation();
 
-  const isDomainChosen = selected !== null || isUnknown;
+  const isDomainChosen = selected.length > 0 || isUnknown;
 
-  function handleCategoryChange(value: CategorySelection | null) {
+  function handleCategoryChange(value: CategorySelection[]) {
     setSelected(value);
-    if (value) setIsUnknown(false);
+    if (value.length > 0) setIsUnknown(false);
   }
 
   function handleUnknownToggle() {
     setIsUnknown(!isUnknown);
-    if (!isUnknown) setSelected(null);
+    if (!isUnknown) setSelected([]);
   }
 
   function handleSubmit() {
     if (!isDomainChosen) return;
 
-    // TODO: API가 소분류 리프를 지원하면 selected를 직접 전달
+    // TODO: API가 카테고리 배열을 지원하면 selected를 직접 전달
     // 현재는 기존 API 호환을 위해 domain=null로 전달
     createConsultation(null, {
       onSuccess: (res) => {
@@ -56,7 +56,7 @@ export function NewConsultationPage() {
             어떤 분야의 상담이 필요하신가요?
           </p>
           <p className="mt-1.5 text-sm text-gray-500 leading-relaxed">
-            가장 가까운 분야를 선택해 주세요. 정확하지 않아도 괜찮습니다.
+            관련 분야를 모두 선택해 주세요. 정확하지 않아도 괜찮습니다.
           </p>
         </Card>
 
