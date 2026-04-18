@@ -1,46 +1,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Scale, Shield, Briefcase, Users } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useCreateConsultation } from '@/hooks/useConsultation';
-import { useLegalFields } from '@/hooks/useLegalFields';
-import { Button, Card, Spinner } from '@/components/ui';
+import { Button, Card } from '@/components/ui';
+import { CategoryPicker } from '@/components/ui/CategoryPicker';
 import { Header } from '@/components/layout/Header';
-import type { DomainType } from '@/types/enums';
-
-// ─── domain icon mapping ─────────────────────────────────────────────────────
-
-const DOMAIN_ICONS: Record<string, React.ElementType> = {
-  CIVIL: Scale,
-  CRIMINAL: Shield,
-  LABOR: Briefcase,
-  SCHOOL_VIOLENCE: Users,
-};
-
-const DOMAIN_DESCRIPTIONS: Record<string, string> = {
-  CIVIL: '계약, 손해배상, 부동산 등',
-  CRIMINAL: '고소, 고발, 형사 사건 등',
-  LABOR: '해고, 임금, 근로조건 등',
-  SCHOOL_VIOLENCE: '학교폭력 사건 대응',
-};
+import type { CategorySelection } from '@/lib/legalCategories';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
 export function NewConsultationPage() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<DomainType | null | 'UNKNOWN'>(null);
+  const [selected, setSelected] = useState<CategorySelection | null>(null);
+  const [isUnknown, setIsUnknown] = useState(false);
   const { mutate: createConsultation, isPending } = useCreateConsultation();
-  const { data: legalFields, isLoading: fieldsLoading } = useLegalFields();
 
-  // "잘 모르겠어요" uses domain=null, but we track it as 'UNKNOWN' locally
-  const isDomainChosen = selected !== null;
+  const isDomainChosen = selected !== null || isUnknown;
+
+  function handleCategoryChange(value: CategorySelection | null) {
+    setSelected(value);
+    if (value) setIsUnknown(false);
+  }
+
+  function handleUnknownToggle() {
+    setIsUnknown(!isUnknown);
+    if (!isUnknown) setSelected(null);
+  }
 
   function handleSubmit() {
     if (!isDomainChosen) return;
-    const domain: DomainType | null =
-      selected === 'UNKNOWN' ? null : (selected as DomainType);
 
-    createConsultation(domain, {
+    // TODO: API가 소분류 리프를 지원하면 selected를 직접 전달
+    // 현재는 기존 API 호환을 위해 domain=null로 전달
+    createConsultation(null, {
       onSuccess: (res) => {
         const newId = res.data.data.consultationId;
         navigate(`/consultations/${newId}`);
@@ -68,69 +60,22 @@ export function NewConsultationPage() {
           </p>
         </Card>
 
-        {/* Domain grid */}
-        {fieldsLoading ? (
-          <div className="flex items-center justify-center h-32">
-            <Spinner size="md" />
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-2">
-            {(legalFields ?? []).map(({ value, label }) => {
-              const isSelected = selected === value;
-              const Icon = DOMAIN_ICONS[value] ?? Scale;
-              const description = DOMAIN_DESCRIPTIONS[value] ?? label;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setSelected(value as DomainType)}
-                  className={cn(
-                    'text-left bg-white rounded-card border-2 p-4',
-                    'transition-all duration-150 cursor-pointer',
-                    'hover:border-brand hover:shadow-sm',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
-                    'active:scale-[0.98]',
-                    isSelected
-                      ? 'border-brand bg-blue-50 shadow-sm'
-                      : 'border-gray-200',
-                  )}
-                  aria-pressed={isSelected}
-                >
-                  <div
-                    className={cn(
-                      'mb-3 w-10 h-10 rounded-xl flex items-center justify-center',
-                      isSelected ? 'bg-brand text-white' : 'bg-gray-100 text-gray-500',
-                      'transition-colors duration-150',
-                    )}
-                  >
-                    <Icon size={20} />
-                  </div>
-                  <p
-                    className={cn(
-                      'text-sm font-semibold mb-0.5',
-                      isSelected ? 'text-brand' : 'text-gray-900',
-                    )}
-                  >
-                    {label}
-                  </p>
-                  <p className="text-xs text-gray-500 leading-snug">
-                    {description}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-        )}
+        {/* Category picker */}
+        <CategoryPicker
+          value={selected}
+          onChange={handleCategoryChange}
+          placeholder="분야 검색 (예: 보증금 반환, 이혼, 해고...)"
+        />
 
         {/* "잘 모르겠어요" option */}
         <div className="flex justify-center">
           <button
             type="button"
-            onClick={() => setSelected('UNKNOWN')}
+            onClick={handleUnknownToggle}
             className={cn(
               'text-sm font-medium transition-colors duration-150',
               'focus-visible:outline-none focus-visible:underline',
-              selected === 'UNKNOWN'
+              isUnknown
                 ? 'text-brand underline'
                 : 'text-gray-400 hover:text-gray-600',
             )}
