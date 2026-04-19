@@ -92,18 +92,10 @@ export interface VerificationLog {
 
 /**
  * PATCH /api/admin/lawyers/{lawyerId}/verification 요청
- * BE VerificationRequest 와 1:1.
- * status 값은 REVIEWING | SUPPLEMENT_REQUESTED | VERIFIED | REJECTED 중 하나(PENDING 은 전이 불가).
- * reason 은 REJECTED / SUPPLEMENT_REQUESTED 에서 필수, VERIFIED / REVIEWING 은 생략 가능.
+ * BE VerificationRequest 와 1:1. status 는 필수, reason 은 승인(APPROVED) 제외 필수.
  */
-export type VerificationActionStatus =
-  | 'REVIEWING'
-  | 'SUPPLEMENT_REQUESTED'
-  | 'VERIFIED'
-  | 'REJECTED';
-
 export interface VerificationActionRequest {
-  status: VerificationActionStatus;
+  status: string;
   reason?: string;
 }
 

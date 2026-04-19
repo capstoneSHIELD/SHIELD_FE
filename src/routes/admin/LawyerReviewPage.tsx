@@ -11,8 +11,6 @@ import { Spinner, Modal, Input, Button } from '@/components/ui';
 import type { VerificationChecks as VerificationChecksType } from '@/types/admin';
 import type { DocumentResponse } from '@/types/lawyer';
 
-// BE API 명세: PATCH /api/admin/lawyers/{lawyerId}/verification
-// status 값은 REVIEWING | SUPPLEMENT_REQUESTED | VERIFIED | REJECTED (구 APPROVED 아님)
 type ActionType = 'VERIFIED' | 'REJECTED' | 'SUPPLEMENT_REQUESTED';
 
 const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
