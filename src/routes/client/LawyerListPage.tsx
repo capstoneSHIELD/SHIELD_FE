@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { User, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLawyerList } from '@/hooks/useLawyer';
-import { useLegalFields } from '@/hooks/useLegalFields';
 import { Badge, Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
 import { DOMAIN_LABELS } from '@/lib/constants';
@@ -76,12 +75,14 @@ function LawyerCard({ lawyer, onClick }: LawyerCardProps) {
         </p>
       )}
 
-      {/* Specialization badge */}
-      {lawyer.specializations && (
+      {/* Specialization badges — L1 대분류 배열을 모두 표시 */}
+      {lawyer.domains && lawyer.domains.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
-          <Badge variant="primary" size="sm">
-            {DOMAIN_LABELS[lawyer.specializations] ?? lawyer.specializations}
-          </Badge>
+          {lawyer.domains.map((d) => (
+            <Badge key={d} variant="primary" size="sm">
+              {DOMAIN_LABELS[d] ?? d}
+            </Badge>
+          ))}
         </div>
       )}
 
@@ -101,10 +102,12 @@ export function LawyerListPage() {
     string | undefined
   >(undefined);
 
-  const { data: legalFields } = useLegalFields();
   const filters: { label: string; value: string | undefined }[] = [
     { label: '전체', value: undefined },
-    ...(legalFields ?? []).map((f) => ({ label: f.label, value: f.value })),
+    ...Object.entries(DOMAIN_LABELS).map(([value, label]) => ({
+      label,
+      value,
+    })),
   ];
 
   const { data, isLoading } = useLawyerList(0, 20, selectedSpecialization);

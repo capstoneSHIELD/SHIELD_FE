@@ -7,6 +7,40 @@ import { CategoryPicker } from '@/components/ui/CategoryPicker';
 import { Header } from '@/components/layout/Header';
 import type { CategorySelection } from '@/lib/legalCategories';
 
+// ─── helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * 선택된 CategorySelection[] 배열을 백엔드 3단계 분류 형태로 변환.
+ *
+ *  - path 길이 1 → 대분류(domains)
+ *  - path 길이 2 → 중분류(subDomains) — 상위 대분류도 함께 포함
+ *  - path 길이 3 → 소분류(tags) — 상위 대/중분류도 함께 포함
+ *
+ *  중복은 Set 으로 제거.
+ */
+function toClassificationRequest(selections: CategorySelection[]): {
+  domains: string[];
+  subDomains: string[];
+  tags: string[];
+} {
+  const domains = new Set<string>();
+  const subDomains = new Set<string>();
+  const tags = new Set<string>();
+
+  for (const sel of selections) {
+    const [l1, l2, l3] = sel.path;
+    if (l1) domains.add(l1);
+    if (l2) subDomains.add(l2);
+    if (l3) tags.add(l3);
+  }
+
+  return {
+    domains: Array.from(domains),
+    subDomains: Array.from(subDomains),
+    tags: Array.from(tags),
+  };
+}
+
 // ─── page ────────────────────────────────────────────────────────────────────
 
 export function NewConsultationPage() {
@@ -30,9 +64,13 @@ export function NewConsultationPage() {
   function handleSubmit() {
     if (!isDomainChosen) return;
 
-    // TODO: API가 카테고리 배열을 지원하면 selected를 직접 전달
-    // 현재는 기존 API 호환을 위해 domain=null로 전달
-    createConsultation(null, {
+    // "잘 모르겠어요" → 세 배열 모두 빈 값으로 전달.
+    // 그 외에는 선택된 경로를 domains/subDomains/tags 로 분해해 전달.
+    const request = isUnknown
+      ? { domains: [], subDomains: [], tags: [] }
+      : toClassificationRequest(selected);
+
+    createConsultation(request, {
       onSuccess: (res) => {
         const newId = res.data.data.consultationId;
         navigate(`/consultations/${newId}`);

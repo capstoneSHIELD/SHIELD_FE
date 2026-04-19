@@ -8,7 +8,6 @@ import type {
   MessageResponse,
   SendMessageResponse,
 } from '@/types/consultation';
-import type { DomainType } from '@/types/enums';
 
 const BASE = '/consultations';
 
@@ -24,10 +23,8 @@ export const consultationApi = {
     api.get<ApiResponse<ConsultationResponse>>(`${BASE}/${id}`),
 
   /** 새 상담 생성 */
-  create: (domain: DomainType | null) =>
-    api.post<ApiResponse<CreateConsultationResponse>>(BASE, {
-      domain,
-    } satisfies CreateConsultationRequest),
+  create: (request: CreateConsultationRequest) =>
+    api.post<ApiResponse<CreateConsultationResponse>>(BASE, request),
 
   /** 메시지 목록 */
   getMessages: (id: string, page = 0, size = 50) =>
@@ -41,17 +38,17 @@ export const consultationApi = {
       content,
     } satisfies MessageRequest),
 
-  /** 분류 수정 */
+  /** 분류 수정 — BE ClassifyRequest/ClassifyResponse 와 정합 맞춤.
+   *  3단계 분류 체계 — domains(L1) / subDomains(L2) / tags(L3) 을 독립 배열로 전달. */
   updateClassify: (
     id: string,
-    data: { primaryField: string[]; tags: string[] },
-  ) => api.patch<ApiResponse<void>>(`${BASE}/${id}/classify`, data),
+    data: { domains: string[]; subDomains: string[]; tags: string[] },
+  ) =>
+    api.patch<
+      ApiResponse<{ domains: string[]; subDomains: string[]; tags: string[] }>
+    >(`${BASE}/${id}/classify`, data),
 
   /** 의뢰서 생성 요청 (비동기) */
   requestAnalyze: (id: string) =>
     api.post<ApiResponse<void>>(`${BASE}/${id}/analyze`),
-
-  /** 법률 분야 목록 (BE에서 동적 조회) */
-  getLegalFields: () =>
-    api.get<ApiResponse<string[]>>(`${BASE}/legal-fields`),
 };
