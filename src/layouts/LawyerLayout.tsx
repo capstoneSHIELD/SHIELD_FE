@@ -17,7 +17,7 @@ export function LawyerLayout() {
       <SideNav tabs={[...LAWYER_TABS]} />
 
       {/* Page content */}
-      <main className="flex-1 flex flex-col lg:pl-60 pb-20 lg:pb-0 min-h-0 overflow-y-auto overflow-x-hidden">
+      <main className="flex-1 flex flex-col lg:pl-60 pb-20 lg:pb-0 min-h-0 overflow-y-auto overflow-x-auto">
         <div className="mx-auto w-full max-w-7xl flex-1 flex flex-col min-h-0">
           <Outlet />
         </div>
