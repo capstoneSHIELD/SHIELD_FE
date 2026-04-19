@@ -93,11 +93,15 @@ export interface VerificationRequestData {
   barAssociationNumber: string;
 }
 
-/** GET /api/lawyers/me/documents 아이템 */
+/**
+ * GET /api/lawyers/me/documents 아이템 — BE DocumentResponse 와 1:1.
+ * 주의: BE 는 uploadedAt 이 아닌 createdAt 으로 내려주며, fileSize(Long) 가 포함된다.
+ */
 export interface DocumentResponse {
   documentId: string;
   fileName: string;
+  fileSize: number;
   fileType: string;
   fileUrl: string;
-  uploadedAt: string;
+  createdAt: string;
 }

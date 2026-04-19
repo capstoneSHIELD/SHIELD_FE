@@ -8,7 +8,8 @@ import {
   useProcessVerification,
 } from '@/hooks/useAdmin';
 import { Spinner, Modal, Input, Button } from '@/components/ui';
-import type { VerificationChecks as VerificationChecksType } from '@/lib/adminApi';
+import type { VerificationChecks as VerificationChecksType } from '@/types/admin';
+import type { DocumentResponse } from '@/types/lawyer';
 
 type ActionType = 'APPROVED' | 'REJECTED' | 'SUPPLEMENT_REQUESTED';
 
@@ -123,8 +124,8 @@ export function LawyerReviewPage() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[16px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
-            <p className="text-[11px] text-[#adb5b8]">{lawyer.bio || 'lawyer@shield.com'}</p>
-            <p className="text-[11px] text-[#adb5b8]">{lawyer.region || '-'}</p>
+            <p className="text-[11px] text-[#adb5b8]">{lawyer.email || '-'}</p>
+            <p className="text-[11px] text-[#adb5b8]">{lawyer.phone || '-'}</p>
           </div>
         </div>
         {lawyer.domains && lawyer.domains.length > 0 && (
@@ -171,7 +172,7 @@ export function LawyerReviewPage() {
           </div>
         ) : (
           <div className="space-y-2">
-            {docs.map((d: { documentId: string; fileName: string; fileSize: number; fileType: string; fileUrl: string; createdAt: string }) => (
+            {docs.map((d: DocumentResponse) => (
               <div key={d.documentId} className="bg-white border-[0.5px] border-[#e9edef] rounded-[14px] p-3">
                 <div className="flex items-start gap-3">
                   {/* PDF 아이콘 */}
