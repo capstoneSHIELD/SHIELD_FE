@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || 'https://shieldai.kr';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://api.shieldai.kr';
 export const APP_NAME = import.meta.env.VITE_APP_NAME || 'SHIELD';
 
 export const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
