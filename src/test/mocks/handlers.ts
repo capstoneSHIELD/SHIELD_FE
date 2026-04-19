@@ -17,8 +17,13 @@ const mockUser = {
 const mockConsultation = {
   consultationId: '660e8400-e29b-41d4-a716-446655440001',
   status: 'COLLECTING',
-  primaryField: ['CIVIL'],
-  tags: ['계약분쟁'],
+  // 3단계 분류 — 사용자 입력값과 AI 분류값을 분리해 내려준다.
+  userDomains: ['CIVIL'],
+  userSubDomains: ['LEASE'],
+  userTags: ['계약분쟁'],
+  aiDomains: null,
+  aiSubDomains: null,
+  aiTags: null,
   lastMessage: '안녕하세요, 상담을 시작합니다.',
   lastMessageAt: '2025-01-15T10:30:00',
   createdAt: '2025-01-15T10:00:00',
