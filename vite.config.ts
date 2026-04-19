@@ -17,11 +17,11 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'https://shieldai.kr',
+        target: 'https://api.shieldai.kr',
         changeOrigin: true,
         configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('origin', 'https://shieldai.kr');
+            proxyReq.setHeader('origin', 'https://api.shieldai.kr');
           });
         },
       },
