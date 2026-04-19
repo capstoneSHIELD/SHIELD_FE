@@ -1,3 +1,5 @@
+import type { DomainType } from '@/types/enums';
+
 // ── Types ──────────────────────────────────────────────────────────────────
 
 /** 소분류 — 최종 선택 리프 */
@@ -396,20 +398,69 @@ export function searchCategories(
 
   const q = query.trim().toLowerCase();
   const results: CategorySearchResult[] = [];
+  const seen = new Set<string>();
+
+  function push(leaf: CategoryLeaf, path: [string, string, string]) {
+    const key = `${path[0]}|${path[1]}|${path[2]}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    results.push({ leaf, path });
+  }
 
   for (const l1 of data) {
+    const l1Match = l1.name.toLowerCase().includes(q);
     for (const l2 of l1.children) {
+      const l2Match = l2.name.toLowerCase().includes(q);
       for (const leaf of l2.children) {
         const nameMatch = leaf.name.toLowerCase().includes(q);
         const aliasMatch = leaf.aliases.some((a) => a.toLowerCase().includes(q));
-        if (nameMatch || aliasMatch) {
-          results.push({ leaf, path: [l1.name, l2.name, leaf.name] });
+        if (nameMatch || aliasMatch || l1Match || l2Match) {
+          push(leaf, [l1.name, l2.name, leaf.name]);
         }
       }
     }
   }
 
   return results;
+}
+
+// ── L1 → DomainType mapping ────────────────────────────────────────────────
+
+/**
+ * L1 카테고리 이름 → 백엔드 DomainType 매핑.
+ * 현재 API는 단일 DomainType만 받으므로, 선택된 항목의 L1을 기반으로 가장 가까운
+ * DomainType을 추론. 매핑이 없으면 null 반환 → 백엔드에서 미분류로 처리.
+ */
+const L1_TO_DOMAIN: Record<string, DomainType> = {
+  '근로계약·해고·임금': 'LABOR',
+  '부동산 거래': 'CIVIL',
+  '이혼·위자료·재산분할': 'CIVIL',
+  '상속·유류분·유언': 'CIVIL',
+  '손해배상·불법행위': 'CIVIL',
+  '채무·보증·개인파산·회생': 'CIVIL',
+  '임대차보호': 'CIVIL',
+  '기업·상사거래': 'CIVIL',
+};
+
+/**
+ * 선택된 카테고리 배열에서 대표 DomainType을 추론.
+ * 선택 항목의 L1(=path[0])을 L1_TO_DOMAIN에 매핑, 우선순위는 등장 순.
+ * LABOR처럼 특수 도메인이 포함되면 그것을 우선.
+ */
+export function inferDomainFromSelection(
+  selection: CategorySelection[],
+): DomainType | null {
+  if (selection.length === 0) return null;
+
+  const domains = selection
+    .map((s) => L1_TO_DOMAIN[s.path[0]])
+    .filter((d): d is DomainType => !!d);
+
+  if (domains.length === 0) return null;
+
+  // 특수 도메인(LABOR, CRIMINAL, SCHOOL_VIOLENCE)을 CIVIL보다 우선
+  const specific = domains.find((d) => d !== 'CIVIL');
+  return specific ?? domains[0];
 }
 
 // ── Path lookup utility ────────────────────────────────────────────────────
