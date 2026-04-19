@@ -11,7 +11,9 @@ import { Spinner, Modal, Input, Button } from '@/components/ui';
 import type { VerificationChecks as VerificationChecksType } from '@/types/admin';
 import type { DocumentResponse } from '@/types/lawyer';
 
-type ActionType = 'APPROVED' | 'REJECTED' | 'SUPPLEMENT_REQUESTED';
+// BE API 명세: PATCH /api/admin/lawyers/{lawyerId}/verification
+// status 값은 REVIEWING | SUPPLEMENT_REQUESTED | VERIFIED | REJECTED (구 APPROVED 아님)
+type ActionType = 'VERIFIED' | 'REJECTED' | 'SUPPLEMENT_REQUESTED';
 
 const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
   PENDING: { bg: 'bg-[#f1f0e8]', text: 'text-[#5f5e5a]', label: '승인 대기' },
@@ -94,7 +96,7 @@ export function LawyerReviewPage() {
   const progressPct = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   const actionLabels: Record<ActionType, { label: string; desc: string }> = {
-    APPROVED: { label: '승인', desc: '이 변호사의 인증을 승인하시겠습니까?' },
+    VERIFIED: { label: '승인', desc: '이 변호사의 인증을 승인하시겠습니까?' },
     REJECTED: { label: '거절', desc: '거절 사유를 입력해 주세요.' },
     SUPPLEMENT_REQUESTED: { label: '보완 요청', desc: '보완이 필요한 내용을 입력해 주세요.' },
   };
@@ -287,7 +289,7 @@ export function LawyerReviewPage() {
       <div className="space-y-2 pt-2">
         <button
           type="button"
-          onClick={() => setModalAction('APPROVED')}
+          onClick={() => setModalAction('VERIFIED')}
           disabled={processing}
           className="w-full h-12 bg-[#1a6de0] rounded-[24px] text-[15px] font-medium text-white disabled:opacity-50"
         >
@@ -322,7 +324,7 @@ export function LawyerReviewPage() {
             <p className="text-sm text-gray-600">
               {actionLabels[modalAction].desc}
             </p>
-            {modalAction !== 'APPROVED' && (
+            {modalAction !== 'VERIFIED' && (
               <Input
                 placeholder="사유를 입력하세요"
                 value={reason}
@@ -339,7 +341,7 @@ export function LawyerReviewPage() {
               <Button
                 variant={modalAction === 'REJECTED' ? 'danger' : 'primary'}
                 onClick={handleSubmit}
-                disabled={processing || (modalAction !== 'APPROVED' && !reason.trim())}
+                disabled={processing || (modalAction !== 'VERIFIED' && !reason.trim())}
               >
                 {processing ? '처리 중...' : '확인'}
               </Button>
