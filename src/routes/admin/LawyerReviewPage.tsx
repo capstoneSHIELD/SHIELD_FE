@@ -11,7 +11,7 @@ import { Spinner, Modal, Input, Button } from '@/components/ui';
 import type { VerificationChecks as VerificationChecksType } from '@/types/admin';
 import type { DocumentResponse } from '@/types/lawyer';
 
-type ActionType = 'APPROVED' | 'REJECTED' | 'SUPPLEMENT_REQUESTED';
+type ActionType = 'VERIFIED' | 'REJECTED' | 'SUPPLEMENT_REQUESTED';
 
 const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
   PENDING: { bg: 'bg-[#f1f0e8]', text: 'text-[#5f5e5a]', label: '승인 대기' },
