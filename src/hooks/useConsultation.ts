@@ -67,17 +67,26 @@ export function useCreateConsultation() {
   });
 }
 
-/** 분류 수정 */
+/** 분류 수정 — 3단계 분류 체계({domains, subDomains, tags}) 로 전달.
+ *
+ *  NewConsultationPage의 CategoryPicker + toClassificationRequest() 와 동일한
+ *  입력 형식을 기대한다. 나중 AnalyzingPage에 "분류 수정" UI를 붙일 때
+ *  CategoryPicker를 그대로 재사용해 이 mutation 인자로 넣으면 된다. */
 export function useUpdateClassify(consultationId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { primaryField: string[]; tags: string[] }) =>
-      consultationApi.updateClassify(consultationId, data),
+    mutationFn: (data: {
+      domains: string[];
+      subDomains: string[];
+      tags: string[];
+    }) => consultationApi.updateClassify(consultationId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: KEYS.detail(consultationId),
       });
+      // 상담 상세 정보의 ai*/user* 필드가 바뀌므로 목록도 함께 스타일 처리.
+      queryClient.invalidateQueries({ queryKey: KEYS.list() });
     },
   });
 }

@@ -195,7 +195,11 @@ export const handlers = [
   }),
 
   http.patch(`${BASE}/consultations/:id/classify`, () => {
-    return ok({ primaryField: ['CIVIL'] });
+    return ok({
+      domains: ['CIVIL'],
+      subDomains: ['LEASE'],
+      tags: ['계약분쟁'],
+    });
   }),
 
   http.post(`${BASE}/consultations/:id/analyze`, () => {
