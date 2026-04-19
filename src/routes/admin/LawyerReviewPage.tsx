@@ -127,11 +127,11 @@ export function LawyerReviewPage() {
             <p className="text-[11px] text-[#adb5b8]">{lawyer.region || '-'}</p>
           </div>
         </div>
-        {lawyer.specializations && (
+        {lawyer.domains && lawyer.domains.length > 0 && (
           <div className="flex items-center gap-1.5 mt-2.5">
-            {lawyer.specializations.split(',').map((spec) => (
-              <span key={spec.trim()} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
-                {spec.trim()}
+            {lawyer.domains.map((spec: string) => (
+              <span key={spec} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
+                {spec}
               </span>
             ))}
           </div>

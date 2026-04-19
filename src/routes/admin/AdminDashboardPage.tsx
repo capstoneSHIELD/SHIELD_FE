@@ -112,9 +112,9 @@ export function AdminDashboardPage() {
                 {/* 전문분야 태그 + 경력 */}
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex items-center gap-1.5">
-                    {lawyer.specializations?.split(',').map((spec) => (
-                      <span key={spec.trim()} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
-                        {spec.trim()}
+                    {lawyer.domains?.map((spec: string) => (
+                      <span key={spec} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
+                        {spec}
                       </span>
                     ))}
                   </div>

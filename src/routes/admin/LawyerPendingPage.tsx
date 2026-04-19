@@ -107,12 +107,12 @@ export function LawyerPendingPage() {
                     </span>
                   </div>
 
-                  {/* 전문분야 태그 */}
-                  {lawyer.specializations && (
+                  {/* 전문분야 태그 — L1 domains 만 표시 */}
+                  {lawyer.domains && lawyer.domains.length > 0 && (
                     <div className="flex items-center gap-1.5 mt-3">
-                      {lawyer.specializations.split(',').map((spec) => (
-                        <span key={spec.trim()} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
-                          {spec.trim()}
+                      {lawyer.domains.map((spec: string) => (
+                        <span key={spec} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
+                          {spec}
                         </span>
                       ))}
                     </div>
