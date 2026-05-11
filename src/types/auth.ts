@@ -91,6 +91,12 @@ export interface GoogleLoginRequest {
   role?: UserRole;
 }
 
+/** POST /api/auth/naver 요청 */
+export interface NaverLoginRequest {
+  authorizationCode: string;
+  role: UserRole;
+}
+
 /** POST /api/auth/token/refresh 응답 data */
 export interface RefreshTokenResponse {
   newAccessToken: string | null;

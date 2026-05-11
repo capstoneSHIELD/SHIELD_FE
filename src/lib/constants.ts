@@ -3,6 +3,7 @@ export const APP_NAME = import.meta.env.VITE_APP_NAME || 'SHIELD';
 
 export const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
 export const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
+export const NAVER_REDIRECT_URI = import.meta.env.VITE_NAVER_REDIRECT_URI;
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 export const TOKEN_KEY = 'shield_access_token';
