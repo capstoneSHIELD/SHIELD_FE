@@ -16,7 +16,7 @@ pnpm install
 `.env` 파일을 프로젝트 루트에 생성:
 
 ```env
-VITE_API_URL=http://localhost:8080
+VITE_API_URL=https://shieldai.kr
 VITE_KAKAO_JS_KEY=your_kakao_key
 VITE_NAVER_CLIENT_ID=your_naver_id
 VITE_GOOGLE_CLIENT_ID=your_google_id
@@ -28,7 +28,7 @@ VITE_APP_NAME=SHIELD
 ```bash
 pnpm dev
 # → http://localhost:5173
-# /api 경로는 http://localhost:8080으로 프록시됨
+# /api 경로는 https://shieldai.kr으로 프록시됨
 ```
 
 ## 빌드

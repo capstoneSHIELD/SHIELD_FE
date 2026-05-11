@@ -4,6 +4,7 @@ import type {
   LoginResponse,
   DevLoginRequest,
   GoogleLoginRequest,
+  NaverLoginRequest,
   RefreshTokenResponse,
   SocialLoginRequest,
 } from '@/types/auth';
@@ -24,7 +25,7 @@ export const authApi = {
     }),
 
   /** 네이버 로그인 */
-  naverLogin: (data: Pick<SocialLoginRequest, 'authorizationCode' | 'state'>) =>
+  naverLogin: (data: NaverLoginRequest) =>
     api.post<ApiResponse<LoginResponse>>(`${BASE}/naver`, data, {
       withCredentials: true,
     }),

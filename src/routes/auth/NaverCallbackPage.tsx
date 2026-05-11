@@ -20,6 +20,13 @@ export function NaverCallbackPage() {
 
     const code = searchParams.get('code');
     const state = searchParams.get('state');
+    const error = searchParams.get('error');
+
+    if (error) {
+      sessionStorage.removeItem('naver_oauth_state');
+      navigate('/login', { replace: true, state: { error: `naver_${error}` } });
+      return;
+    }
 
     // Validate CSRF state before anything else
     if (!validateNaverState(state)) {
@@ -34,9 +41,10 @@ export function NaverCallbackPage() {
 
     (async () => {
       try {
+        // 백엔드 계약상 최초 OAuth 로그인은 기본 USER로 시작하고, 신규 사용자는 온보딩에서 역할을 선택한다.
         const { data } = await authApi.naverLogin({
           authorizationCode: code,
-          state: state ?? undefined,
+          role: 'USER',
         });
 
         const payload = data.data;
