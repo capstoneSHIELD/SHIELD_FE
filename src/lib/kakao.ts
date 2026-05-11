@@ -1,35 +1,28 @@
-import { KAKAO_JS_KEY } from './constants';
-
-declare global {
-  interface Window {
-    Kakao: {
-      init: (key: string) => void;
-      isInitialized: () => boolean;
-      Auth: {
-        authorize: (options: {
-          redirectUri: string;
-          scope?: string;
-        }) => void;
-      };
-    };
-  }
-}
-
-export function initKakaoSDK(): void {
-  if (typeof window.Kakao !== 'undefined' && !window.Kakao.isInitialized()) {
-    if (KAKAO_JS_KEY) {
-      window.Kakao.init(KAKAO_JS_KEY);
-    }
-  }
-}
+import { KAKAO_REDIRECT_URI, KAKAO_REST_API_KEY } from './constants';
 
 export function loginWithKakao(): void {
-  if (typeof window.Kakao === 'undefined') {
-    console.warn('Kakao SDK not loaded');
+  if (!KAKAO_REST_API_KEY) {
+    console.warn('Kakao REST API key not configured');
     return;
   }
-  window.Kakao.Auth.authorize({
-    redirectUri: `${window.location.origin}/auth/kakao/callback`,
-    scope: 'profile_nickname,account_email,profile_image',
+
+  const state = crypto.randomUUID();
+  sessionStorage.setItem('kakao_oauth_state', state);
+  const redirectUri = KAKAO_REDIRECT_URI || `${window.location.origin}/auth/kakao/callback`;
+
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: KAKAO_REST_API_KEY,
+    redirect_uri: redirectUri,
+    state,
+    scope: 'profile_nickname',
   });
+
+  window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;
+}
+
+export function validateKakaoState(state: string | null): boolean {
+  const savedState = sessionStorage.getItem('kakao_oauth_state');
+  sessionStorage.removeItem('kakao_oauth_state');
+  return !!state && state === savedState;
 }

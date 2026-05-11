@@ -4,9 +4,9 @@ import type {
   LoginResponse,
   DevLoginRequest,
   GoogleLoginRequest,
+  KakaoLoginRequest,
   NaverLoginRequest,
   RefreshTokenResponse,
-  SocialLoginRequest,
 } from '@/types/auth';
 
 const BASE = '/auth';
@@ -19,7 +19,7 @@ export const authApi = {
     }),
 
   /** 카카오 로그인 */
-  kakaoLogin: (data: Pick<SocialLoginRequest, 'authorizationCode'>) =>
+  kakaoLogin: (data: KakaoLoginRequest) =>
     api.post<ApiResponse<LoginResponse>>(`${BASE}/kakao`, data, {
       withCredentials: true,
     }),
