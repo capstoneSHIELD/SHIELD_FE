@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-const BASE = 'https://api.shieldai.kr/api';
+const BASE = 'http://localhost:8080/api';
 
 // ── Mock Data ──
 
