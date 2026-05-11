@@ -46,7 +46,7 @@ export function CategoryPicker({
   const [query, setQuery] = useState('');
   const [activeTab, setActiveTab] = useState<string>(data[0]?.name ?? '');
   const [openL2, setOpenL2] = useState<string | null>(null);
-  const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const isSearching = query.trim().length > 0;
   const searchResults = useMemo(() => searchCategories(query, data), [query, data]);
@@ -180,20 +180,9 @@ export function CategoryPicker({
                 return (
                   <div
                     key={node.name}
-                    ref={(el) => {
-                      tabRefs.current[index] = el;
-                    }}
-                    role="tab"
-                    id={`cat-tab-${index}`}
-                    aria-selected={isActive}
-                    aria-controls={`cat-panel-${index}`}
-                    tabIndex={isActive ? 0 : -1}
-                    onClick={() => handleTabNavigate(node)}
-                    onKeyDown={(e) => handleTabKeyDown(e, index)}
                     className={cn(
-                      'whitespace-nowrap pr-4 py-3 text-sm font-medium text-left transition-colors cursor-pointer',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-inset',
-                      'flex items-center gap-2',
+                      'whitespace-nowrap text-sm font-medium transition-colors',
+                      'flex items-stretch',
                       isActive
                         ? 'text-brand bg-blue-50 border-b-2 border-brand md:border-b-0 md:border-r-2'
                         : 'text-[#575e6b] hover:bg-gray-50 hover:text-[#16181d]',
@@ -201,22 +190,35 @@ export function CategoryPicker({
                   >
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggle(node.name, [node.name]);
-                      }}
-                      onKeyDown={(e) => e.stopPropagation()}
+                      onClick={() => toggle(node.name, [node.name])}
                       className={cn(
-                        'pl-4 py-1 -my-1 flex items-center',
+                        'pl-4 pr-2 py-3 flex items-center',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-inset rounded',
                       )}
                       aria-pressed={checked}
                       aria-label={`${node.name} ${checked ? '선택 해제' : '선택'}`}
-                      tabIndex={-1}
                     >
                       <Checkbox checked={checked} />
                     </button>
-                    <span className="truncate">{node.name}</span>
+                    <button
+                      type="button"
+                      ref={(el) => {
+                        tabRefs.current[index] = el;
+                      }}
+                      role="tab"
+                      id={`cat-tab-${index}`}
+                      aria-selected={isActive}
+                      aria-controls={`cat-panel-${index}`}
+                      tabIndex={isActive ? 0 : -1}
+                      onClick={() => handleTabNavigate(node)}
+                      onKeyDown={(e) => handleTabKeyDown(e, index)}
+                      className={cn(
+                        'flex-1 min-w-0 pr-4 py-3 text-left cursor-pointer',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-inset',
+                      )}
+                    >
+                      <span className="block truncate">{node.name}</span>
+                    </button>
                   </div>
                 );
               })}

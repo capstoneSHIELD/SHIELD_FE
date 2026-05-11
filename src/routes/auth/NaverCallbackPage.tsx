@@ -41,6 +41,7 @@ export function NaverCallbackPage() {
 
     (async () => {
       try {
+        // 백엔드 계약상 최초 OAuth 로그인은 기본 USER로 시작하고, 신규 사용자는 온보딩에서 역할을 선택한다.
         const { data } = await authApi.naverLogin({
           authorizationCode: code,
           role: 'USER',
