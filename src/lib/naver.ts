@@ -1,4 +1,4 @@
-import { NAVER_CLIENT_ID, NAVER_REDIRECT_URI } from './constants';
+import { NAVER_CLIENT_ID } from './constants';
 
 export function loginWithNaver(): void {
   if (!NAVER_CLIENT_ID) {
@@ -8,12 +8,11 @@ export function loginWithNaver(): void {
 
   const state = crypto.randomUUID();
   sessionStorage.setItem('naver_oauth_state', state);
-  const redirectUri = NAVER_REDIRECT_URI || `${window.location.origin}/auth/naver/callback`;
 
   const params = new URLSearchParams({
     response_type: 'code',
     client_id: NAVER_CLIENT_ID,
-    redirect_uri: redirectUri,
+    redirect_uri: `${window.location.origin}/auth/naver/callback`,
     state,
   });
 
