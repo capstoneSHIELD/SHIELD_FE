@@ -18,8 +18,13 @@ describe('consultationApi – BE contract tests', () => {
       const item = page.content[0];
       expect(item).toHaveProperty('consultationId');
       expect(item).toHaveProperty('status');
-      expect(item).toHaveProperty('primaryField');
-      expect(item).toHaveProperty('tags');
+      // 3단계 분류 — user/ai 2×3개 필드로 분리됨
+      expect(item).toHaveProperty('userDomains');
+      expect(item).toHaveProperty('userSubDomains');
+      expect(item).toHaveProperty('userTags');
+      expect(item).toHaveProperty('aiDomains');
+      expect(item).toHaveProperty('aiSubDomains');
+      expect(item).toHaveProperty('aiTags');
       expect(item).toHaveProperty('lastMessage');
       expect(item).toHaveProperty('lastMessageAt');
       expect(item).toHaveProperty('createdAt');
@@ -33,7 +38,11 @@ describe('consultationApi – BE contract tests', () => {
 
   describe('create', () => {
     it('returns consultationId and welcomeMessage', async () => {
-      const { data } = await consultationApi.create('CIVIL');
+      const { data } = await consultationApi.create({
+        domains: ['CIVIL'],
+        subDomains: [],
+        tags: [],
+      });
       const created = data.data;
 
       expect(created).toHaveProperty('consultationId');

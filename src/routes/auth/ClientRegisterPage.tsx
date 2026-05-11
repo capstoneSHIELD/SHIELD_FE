@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { Button, Input } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/cn';
+import { userApi } from '@/lib/userApi';
+import type { PendingRegistrationState } from '@/lib/authFlow';
 
 const schema = z.object({
   name: z.string().min(1, '이름을 입력해주세요'),
@@ -28,22 +30,39 @@ export function ClientRegisterPage() {
   const login = useAuthStore((s) => s.login);
   const [agreed, setAgreed] = useState(false);
 
+  // 소셜 로그인에서 전달받은 사전 정보 (구글은 name/email 제공)
+  const pending = (location.state ?? null) as PendingRegistrationState | null;
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: '', email: '', phone: '' },
+    defaultValues: {
+      name: pending?.name ?? '',
+      email: pending?.email ?? '',
+      phone: '',
+    },
   });
 
-  const onSubmit = async (_data: FormValues) => {
-    const state = location.state as
-      | { accessToken?: string; refreshToken?: string }
-      | undefined;
+  const onSubmit = async (data: FormValues) => {
+    // 확정된 플로우: 의뢰인(USER) 은 이미 소셜 로그인으로 기본 생성되어 있으므로
+    // 별도의 role 변경/register API 호출 불필요. 이름이 바뀌었으면 PATCH /api/users/me 에
+    // 만 반영.  전화번호는 현재 UserInfo 스키마에 없어 저장하지 않음 (서버 스키마 확장 시 추가 가능).
+    try {
+      const originalName = pending?.name?.trim() ?? '';
+      const nextName = data.name.trim();
+      if (nextName && nextName !== originalName) {
+        await userApi.updateMe({ name: nextName });
+      }
+    } catch (err) {
+      // 이름 저장 실패로 가입 플로우 자체를 막지는 않는다.
+      console.warn('[ClientRegister] 이름 업데이트 실패:', err);
+    }
 
-    if (state?.accessToken && state?.refreshToken) {
-      await login(state.accessToken);
+    if (pending?.accessToken) {
+      await login(pending.accessToken);
     }
 
     navigate('/home', { replace: true });

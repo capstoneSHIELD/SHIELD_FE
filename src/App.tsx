@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/authStore';
 // Guards
 import { ProtectedRoute } from '@/guards/ProtectedRoute';
 import { RoleRoute } from '@/guards/RoleRoute';
+import { OnboardingRoute } from '@/guards/OnboardingRoute';
 
 // Error Boundary + Page Loader
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -108,6 +109,9 @@ const VerificationPage = lazy(() =>
 const DocumentsPage = lazy(() =>
   import('@/routes/lawyer/DocumentsPage').then((m) => ({ default: m.DocumentsPage })),
 );
+const CasesPage = lazy(() =>
+  import('@/routes/lawyer/CasesPage').then((m) => ({ default: m.CasesPage })),
+);
 
 // ── Admin Pages (lazy) ──
 const AdminDashboardPage = lazy(() =>
@@ -126,9 +130,9 @@ const AdminProfilePage = lazy(() =>
   import('@/routes/admin/AdminProfilePage').then((m) => ({ default: m.AdminProfilePage })),
 );
 
-// Lawyer Profile detail (reuse from client)
+// Lawyer's own profile page
 const LawyerMyProfilePage = lazy(() =>
-  import('@/routes/client/LawyerProfilePage').then((m) => ({ default: m.LawyerProfilePage })),
+  import('@/routes/lawyer/LawyerProfilePage').then((m) => ({ default: m.LawyerProfilePage })),
 );
 
 // ── Root Redirect ──
@@ -177,9 +181,13 @@ export default function App() {
               <Route path="/auth/kakao/callback" element={<KakaoCallbackPage />} />
               <Route path="/auth/naver/callback" element={<NaverCallbackPage />} />
               <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
-              <Route path="/role-select" element={<RoleSelectPage />} />
-              <Route path="/register/client" element={<ClientRegisterPage />} />
-              <Route path="/register/lawyer" element={<LawyerRegisterPage />} />
+
+              {/* 온보딩 전용: 소셜 로그인 직후 중간 단계. 인증되었거나 state.accessToken 이 있을 때만 접근 허용 */}
+              <Route element={<OnboardingRoute />}>
+                <Route path="/role-select" element={<RoleSelectPage />} />
+                <Route path="/register/client" element={<ClientRegisterPage />} />
+                <Route path="/register/lawyer" element={<LawyerRegisterPage />} />
+              </Route>
             </Route>
 
             {/* ══════ 보호 라우트 ══════ */}
@@ -211,6 +219,7 @@ export default function App() {
                   <Route path="/lawyer" element={<LawyerDashboardPage />} />
                   <Route path="/lawyer/inbox" element={<InboxPage />} />
                   <Route path="/lawyer/inbox/:id" element={<InboxDetailPage />} />
+                  <Route path="/lawyer/cases" element={<CasesPage />} />
                   <Route path="/lawyer/profile" element={<LawyerMyProfilePage />} />
                   <Route path="/lawyer/profile/edit" element={<ProfileEditPage />} />
                   <Route path="/lawyer/verification" element={<VerificationPage />} />
