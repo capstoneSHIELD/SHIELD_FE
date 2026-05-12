@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Spinner } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
+import { validateKakaoState } from '@/lib/kakao';
 import { authApi } from '@/lib/authApi';
 import { getRoleHome, routeAfterSocialLogin } from '@/lib/authFlow';
 
@@ -18,6 +19,20 @@ export function KakaoCallbackPage() {
     calledRef.current = true;
 
     const code = searchParams.get('code');
+    const state = searchParams.get('state');
+    const error = searchParams.get('error');
+
+    if (error) {
+      sessionStorage.removeItem('kakao_oauth_state');
+      navigate('/login', { replace: true, state: { error: `kakao_${error}` } });
+      return;
+    }
+
+    // Validate CSRF state before anything else
+    if (!validateKakaoState(state)) {
+      navigate('/login', { replace: true, state: { error: 'invalid_state' } });
+      return;
+    }
 
     if (!code) {
       navigate('/login', { replace: true, state: { error: 'authorization_code_missing' } });
@@ -26,7 +41,11 @@ export function KakaoCallbackPage() {
 
     (async () => {
       try {
-        const { data } = await authApi.kakaoLogin({ authorizationCode: code });
+        // 백엔드 계약상 최초 OAuth 로그인은 기본 USER로 시작하고, 신규 사용자는 온보딩에서 역할을 선택한다.
+        const { data } = await authApi.kakaoLogin({
+          authorizationCode: code,
+          role: 'USER',
+        });
 
         const payload = data.data;
         const { accessToken, isNewUser, role, name, email } = payload;

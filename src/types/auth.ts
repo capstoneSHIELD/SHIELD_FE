@@ -97,6 +97,11 @@ export interface NaverLoginRequest {
   role: UserRole;
 }
 
+/** POST /api/auth/kakao 요청 */
+export interface KakaoLoginRequest {
+  authorizationCode: string;
+  role: UserRole;
+}
 /** POST /api/auth/token/refresh 응답 data */
 export interface RefreshTokenResponse {
   newAccessToken: string | null;

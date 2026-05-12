@@ -16,8 +16,8 @@ pnpm install
 `.env` 파일을 프로젝트 루트에 생성:
 
 ```env
-VITE_API_URL=https://shieldai.kr
-VITE_KAKAO_JS_KEY=your_kakao_key
+VITE_API_URL=https://api.shieldai.kr
+VITE_KAKAO_REST_API_KEY=your_kakao_rest_api_key
 VITE_NAVER_CLIENT_ID=your_naver_id
 VITE_GOOGLE_CLIENT_ID=your_google_id
 VITE_APP_NAME=SHIELD
@@ -27,8 +27,8 @@ VITE_APP_NAME=SHIELD
 
 ```bash
 pnpm dev
-# → http://localhost:5173
-# /api 경로는 https://shieldai.kr으로 프록시됨
+# → https://localhost:5174
+# /api 경로는 https://api.shieldai.kr으로 프록시됨
 ```
 
 ## 빌드
@@ -62,6 +62,6 @@ Vercel SPA 배포. `vercel.json`이 모든 경로를 `index.html`로 rewrite합�
 필요한 환경 변수:
 
 - `VITE_API_URL`
-- `VITE_KAKAO_JS_KEY`
+- `VITE_KAKAO_REST_API_KEY`
 - `VITE_NAVER_CLIENT_ID`
 - `VITE_GOOGLE_CLIENT_ID`
