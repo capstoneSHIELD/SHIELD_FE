@@ -1,7 +1,7 @@
 export const API_URL = import.meta.env.VITE_API_URL || 'https://api.shieldai.kr';
 export const APP_NAME = import.meta.env.VITE_APP_NAME || 'SHIELD';
 
-export const KAKAO_CLIENT_ID = import.meta.env.VITE_KAKAO_CLIENT_ID;
+export const KAKAO_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY;
 export const KAKAO_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI;
 export const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
 export const NAVER_REDIRECT_URI = import.meta.env.VITE_NAVER_REDIRECT_URI;

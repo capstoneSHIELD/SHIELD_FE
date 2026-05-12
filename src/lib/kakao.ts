@@ -1,7 +1,7 @@
-import { KAKAO_CLIENT_ID, KAKAO_REDIRECT_URI } from './constants';
+import { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI } from './constants';
 
 export function loginWithKakao(): void {
-  if (!KAKAO_CLIENT_ID) {
+  if (!KAKAO_REST_API_KEY) {
     console.warn('Kakao Client ID not configured');
     return;
   }
@@ -12,7 +12,7 @@ export function loginWithKakao(): void {
 
   const params = new URLSearchParams({
     response_type: 'code',
-    client_id: KAKAO_CLIENT_ID,
+    client_id: KAKAO_REST_API_KEY,
     redirect_uri: redirectUri,
     state,
   });
