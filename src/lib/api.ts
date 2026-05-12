@@ -75,7 +75,7 @@ api.interceptors.response.use(
         { withCredentials: true },
       );
 
-      const newAccess = data.data.accessToken ?? data.data.newAccessToken;
+      const newAccess = data.data?.accessToken ?? data.data?.newAccessToken;
       if (!newAccess) {
         throw new Error('refresh response missing accessToken');
       }

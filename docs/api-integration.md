@@ -4,8 +4,8 @@
 
 모든 API 요청은 `src/lib/api.ts`의 Axios 인스턴스를 통해 이루어집니다.
 
-- Base URL: `VITE_API_URL` 환경변수 (기본 `https://shieldai.kr`)
-- Dev 프록시: Vite가 `/api` 경로를 `https://shieldai.kr`으로 프록시
+- Base URL: `VITE_API_URL` 환경변수 (기본 `https://api.shieldai.kr`)
+- Dev 프록시: Vite가 `/api` 경로를 `https://api.shieldai.kr`으로 프록시
 
 ## 인증
 
