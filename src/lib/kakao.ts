@@ -1,8 +1,8 @@
-import { KAKAO_REDIRECT_URI, KAKAO_REST_API_KEY } from './constants';
+import { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI } from './constants';
 
 export function loginWithKakao(): void {
   if (!KAKAO_REST_API_KEY) {
-    console.warn('Kakao REST API key not configured');
+    console.warn('Kakao Client ID not configured');
     return;
   }
 
