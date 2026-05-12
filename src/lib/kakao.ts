@@ -15,6 +15,7 @@ export function loginWithKakao(): void {
     client_id: KAKAO_REST_API_KEY,
     redirect_uri: redirectUri,
     state,
+    scope: 'profile_nickname',
   });
 
   window.location.href = `https://kauth.kakao.com/oauth/authorize?${params}`;
