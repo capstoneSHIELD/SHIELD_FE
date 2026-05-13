@@ -10,6 +10,7 @@ import { ChatBubble } from '@/components/chat/ChatBubble';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { ClassifyBadge } from '@/components/chat/ClassifyBadge';
+import { ConsultationProgressBar } from '@/components/consultation/ConsultationProgressBar';
 import { DOMAIN_LABELS, CONSULTATION_STATUS_LABELS } from '@/lib/constants';
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -28,6 +29,7 @@ export function ChatPage() {
     isSending,
     allCompleted,
     classification,
+    progress,
     scrollRef,
     sendMessage,
   } = useChat(id);
@@ -96,6 +98,9 @@ export function ChatPage() {
         showBack
         onBack={() => navigate('/consultations')}
       />
+
+      {/* ── progress bar (sticky, BE PR #89) ─────────────────────────── */}
+      <ConsultationProgressBar progress={progress} completed={allCompleted} />
 
       {/* ── AI notice bar ─────────────────────────────────────────────── */}
       <div className="bg-gray-50/50 border-b border-[#e0e2e6] flex items-center gap-2 px-4 py-2">

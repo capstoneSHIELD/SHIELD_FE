@@ -54,6 +54,17 @@ export interface MessageResponse {
   createdAt: string;
 }
 
+/**
+ * 상담 진행률 (BE PR #89). USER 메시지 누적 턴 수와 percent 를 BE 가 계산해 내려보냄.
+ * - maxTurns 는 향후 변경될 수 있어 클라이언트에 하드코딩 X
+ * - PII 거부 등으로 USER 메시지가 미저장이면 currentTurn 증가 없음
+ */
+export interface ConsultationProgress {
+  currentTurn: number;
+  maxTurns: number;
+  progressPercent: number;
+}
+
 /** 명세: POST /api/consultations/{id}/messages 전송 응답 (202) */
 export interface SendMessageResponse {
   messageId: string;
@@ -65,4 +76,6 @@ export interface SendMessageResponse {
     primaryField: string[];
     tags: string[];
   };
+  /** BE PR #89 추가. 일부 레거시 분기에서 null 일 수 있어 nullable */
+  progress?: ConsultationProgress | null;
 }
