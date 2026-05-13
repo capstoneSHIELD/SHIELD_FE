@@ -2,6 +2,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { User } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { useAuthStore } from '@/stores/authStore';
 
 export interface TabItem {
   to: string;
@@ -15,6 +16,9 @@ interface SideNavProps {
 }
 
 export function SideNav({ tabs, className }: SideNavProps) {
+  const user = useAuthStore((s) => s.user);
+  const displayName = user?.name?.trim() || '사용자';
+
   return (
     <aside
       className={cn(
@@ -74,18 +78,34 @@ export function SideNav({ tabs, className }: SideNavProps) {
         </ul>
       </nav>
 
-      {/* User profile placeholder */}
-      <div className="border-t border-gray-100 px-4 py-4">
+      {/* User profile */}
+      <Link
+        to="/profile"
+        aria-label="내 프로필 보기"
+        className={cn(
+          'border-t border-gray-100 px-4 py-4',
+          'hover:bg-gray-50 transition-colors',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/50',
+        )}
+      >
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-            <User size={16} className="text-gray-500" aria-hidden="true" />
+          <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full overflow-hidden">
+            {user?.profileImageUrl ? (
+              <img
+                src={user.profileImageUrl}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User size={16} className="text-gray-500" aria-hidden="true" />
+            )}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">사용자</p>
+            <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
             <p className="text-xs text-gray-400 truncate">프로필 보기</p>
           </div>
         </div>
-      </div>
+      </Link>
     </aside>
   );
 }
