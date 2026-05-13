@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { cn } from '@/lib/cn';
-import { formatDate } from '@/lib/dateUtils';
+import { formatDate, deliveryTimeRemaining } from '@/lib/dateUtils';
 import { useInboxDetail, useUpdateInboxStatus } from '@/hooks/useInbox';
 import { Button, Badge, Card, Spinner, Modal } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
-import { DOMAIN_LABELS } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -83,14 +83,18 @@ export function InboxDetailPage() {
           </div>
         )}
 
-        {/* 24-hour warning bar */}
-        {isPending && (
-          <div className="mb-4 bg-red-50 rounded-[10px] px-3 py-2.5 flex items-center gap-2">
-            <span className="text-xs text-red-700">
-              24시간 이내 응답 없으면 자동 거절됩니다. <strong>12시간 남음</strong>
-            </span>
-          </div>
-        )}
+        {/* 24-hour warning bar — sentAt 기반 동적 남은 시간 */}
+        {isPending && (() => {
+          const remaining = deliveryTimeRemaining(brief.sentAt);
+          return (
+            <div className="mb-4 bg-red-50 rounded-[10px] px-3 py-2.5 flex items-center gap-2">
+              <span className="text-xs text-red-700">
+                24시간 이내 응답 없으면 자동 거절됩니다.
+                {remaining && <> <strong>{remaining}</strong></>}
+              </span>
+            </div>
+          );
+        })()}
 
         <Card padding="md" className="space-y-5">
           {/* Title + status */}
@@ -120,9 +124,17 @@ export function InboxDetailPage() {
 
           {/* Legal field + date */}
           <div className="flex items-center gap-2">
-            <Badge variant="default" size="sm">
-              {DOMAIN_LABELS[brief.legalField] ?? brief.legalField}
-            </Badge>
+            {(() => {
+              const meta = getDomainMeta(brief.legalField);
+              return (
+                <Badge variant="default" size="sm">
+                  <span className="inline-flex items-center gap-1">
+                    <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
+                    {meta.label}
+                  </span>
+                </Badge>
+              );
+            })()}
             <span className="text-xs text-gray-400">{formatDate(brief.sentAt)}</span>
           </div>
 

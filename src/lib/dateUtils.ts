@@ -39,3 +39,25 @@ export function relativeTime(iso: string | null | undefined): string {
   if (months < 12) return `${months}개월 전`;
   return `${Math.floor(months / 12)}년 전`;
 }
+
+/**
+ * 변호사 의뢰서 응답 만료 카운트다운.
+ * BE 정책: sentAt + 24h 이후 자동 거절 (BE 스케줄러 미구현 상태일 수 있음).
+ * BE 에 `hoursRemaining` 필드가 추가되면 본 유틸은 제거하고 응답값을 직접 사용 권장.
+ *
+ * @returns 남은 시간 라벨. 양수면 "N시간 남음", 1시간 미만이면 "N분 남음",
+ *          만료되었으면 "응답 시간 만료", sentAt 없으면 빈 문자열.
+ */
+export function deliveryTimeRemaining(
+  sentAtIso: string | null | undefined,
+  expiryHours = 24,
+): string {
+  if (!sentAtIso) return '';
+  const deadline = new Date(sentAtIso).getTime() + expiryHours * 60 * 60 * 1000;
+  const diffMs = deadline - Date.now();
+  if (diffMs <= 0) return '응답 시간 만료';
+  const totalMin = Math.floor(diffMs / 60000);
+  if (totalMin < 60) return `${totalMin}분 남음`;
+  const hours = Math.floor(totalMin / 60);
+  return `${hours}시간 남음`;
+}

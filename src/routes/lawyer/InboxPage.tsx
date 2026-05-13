@@ -5,7 +5,9 @@ import { cn } from '@/lib/cn';
 import { useInboxList } from '@/hooks/useInbox';
 import { Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
-import { DOMAIN_LABELS, DELIVERY_STATUS_LABEL } from '@/lib/constants';
+import { DELIVERY_STATUS_LABEL } from '@/lib/constants';
+import { deliveryTimeRemaining } from '@/lib/dateUtils';
+import { getDomainMeta } from '@/lib/domainIcons';
 import type { InboxItemResponse } from '@/types';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -41,13 +43,16 @@ function InboxItem({ item }: { item: InboxItemResponse }) {
   const navigate = useNavigate();
   const statusStyle = getStatusBadgeStyle(item.status);
   const isPending = item.status === 'DELIVERED';
+  const domainMeta = getDomainMeta(item.legalField);
+  const remaining = isPending ? deliveryTimeRemaining(item.sentAt) : '';
 
   return (
     <div className="py-3">
       {/* Category & status badges */}
       <div className="flex flex-wrap gap-[7px] items-center">
-        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
-          {DOMAIN_LABELS[item.legalField] ?? item.legalField}
+        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
+          <domainMeta.Icon size={11} strokeWidth={2} aria-hidden="true" />
+          {domainMeta.label}
         </span>
         <span className={cn('text-[11px] font-medium px-[10px] py-[3px] rounded-full', statusStyle.bg, statusStyle.text)}>
           {DELIVERY_STATUS_LABEL[item.status] ?? item.status}
@@ -65,10 +70,10 @@ function InboxItem({ item }: { item: InboxItemResponse }) {
           <span className="text-[11px] text-[#adb5bd]">
             전달 {formatShortDate(item.sentAt)}
           </span>
-          {isPending && (
+          {isPending && remaining && (
             <div className="flex items-center gap-1">
               <Clock size={11} className="text-[#a32d2d]" />
-              <span className="text-[11px] font-medium text-[#a32d2d]">24시간 남음</span>
+              <span className="text-[11px] font-medium text-[#a32d2d]">{remaining}</span>
             </div>
           )}
         </div>

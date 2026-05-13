@@ -6,7 +6,9 @@ import { useInboxList, useInboxStats, useUpdateInboxStatus } from '@/hooks/useIn
 import { useMyLawyerProfile } from '@/hooks/useLawyer';
 import { Button, Modal, Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
-import { DOMAIN_LABELS, DELIVERY_STATUS_LABEL } from '@/lib/constants';
+import { DELIVERY_STATUS_LABEL } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
+import { deliveryTimeRemaining } from '@/lib/dateUtils';
 import type { InboxItemResponse } from '@/types';
 
 const rejectTextareaClass = cn(
@@ -75,13 +77,15 @@ function StatCard({ label, value, color }: StatCardProps) {
 function RecentItem({ item }: { item: InboxItemResponse }) {
   const navigate = useNavigate();
   const statusStyle = getStatusBadgeStyle(item.status);
+  const domainMeta = getDomainMeta(item.legalField);
 
   return (
     <div className="py-2">
       {/* badges */}
       <div className="flex flex-wrap gap-[7px] items-center">
-        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
-          {DOMAIN_LABELS[item.legalField] ?? item.legalField}
+        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
+          <domainMeta.Icon size={11} strokeWidth={2} aria-hidden="true" />
+          {domainMeta.label}
         </span>
         <span className={cn('text-[11px] font-medium px-[10px] py-[3px] rounded-full', statusStyle.bg, statusStyle.text)}>
           {DELIVERY_STATUS_LABEL[item.status] ?? item.status}
@@ -200,9 +204,15 @@ export function DashboardPage() {
                       className="bg-white border border-[#f09595] rounded-[14px] p-[14px] space-y-2"
                     >
                       <div className="flex flex-wrap gap-[7px]">
-                        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
-                          {DOMAIN_LABELS[item.legalField] ?? item.legalField}
-                        </span>
+                        {(() => {
+                          const meta = getDomainMeta(item.legalField);
+                          return (
+                            <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
+                              <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
+                              {meta.label}
+                            </span>
+                          );
+                        })()}
                         <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
                           신규
                         </span>
@@ -213,7 +223,9 @@ export function DashboardPage() {
                       <div className="border-t border-[#e9ecef] pt-[10px] flex items-center justify-between">
                         <div className="flex items-center gap-1">
                           <Clock size={12} className="text-[#a32d2d]" />
-                          <span className="text-[11px] font-medium text-[#a32d2d]">24시간 남음</span>
+                          <span className="text-[11px] font-medium text-[#a32d2d]">
+                            {deliveryTimeRemaining(item.sentAt) || '대기'}
+                          </span>
                         </div>
                         <div className="flex items-center gap-[6px]">
                           <button
