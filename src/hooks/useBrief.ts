@@ -38,8 +38,13 @@ export function useUpdateBrief(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (updates: BriefUpdateRequest) => briefApi.update(id, updates),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: KEYS.detail(id) });
+    // mutateAsync 가 onSuccess 완료까지 기다리므로, 호출 후 setEditMode(false) 시점에는
+    // 이미 새 데이터가 캐시에 반영됨. refetchType: 'active' 로 마운트된 쿼리는 즉시 refetch.
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: KEYS.detail(id),
+        refetchType: 'active',
+      });
     },
   });
 }
