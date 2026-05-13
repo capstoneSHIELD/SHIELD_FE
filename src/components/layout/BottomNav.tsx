@@ -25,11 +25,18 @@ export function BottomNav({ tabs, className }: BottomNavProps) {
         className,
       )}
     >
-      {tabs.map(({ to, icon: Icon, label }) => (
+      {tabs.map(({ to, icon: Icon, label }) => {
+        // 다른 tab 이 `to + '/'` 로 시작하면 본 tab 은 그 그룹의 루트.
+        // 루트 NavLink 는 end:true 필요 — 그렇지 않으면 자식 라우트에서도 항상 활성 표시.
+        const hasNestedSibling = tabs.some(
+          (t) => t.to !== to && t.to.startsWith(to + '/'),
+        );
+        const isExactMatch = to === '/' || hasNestedSibling;
+        return (
         <NavLink
           key={to}
           to={to}
-          end={to === '/'}
+          end={isExactMatch}
           className={({ isActive }) =>
             cn(
               'flex flex-col items-center justify-center gap-0.5',
@@ -49,7 +56,8 @@ export function BottomNav({ tabs, className }: BottomNavProps) {
             </>
           )}
         </NavLink>
-      ))}
+        );
+      })}
     </nav>
   );
 }
