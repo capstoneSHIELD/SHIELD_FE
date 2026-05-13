@@ -283,33 +283,48 @@ export function LawyerReviewPage() {
         </div>
       )}
 
-      {/* 액션 버튼 — 세로 스택 */}
-      <div className="space-y-2 pt-2">
-        <button
-          type="button"
-          onClick={() => setModalAction('VERIFIED')}
-          disabled={processing}
-          className="w-full h-12 bg-[#1a6de0] rounded-[24px] text-[15px] font-medium text-white disabled:opacity-50"
-        >
-          승인
-        </button>
-        <button
-          type="button"
-          onClick={() => setModalAction('SUPPLEMENT_REQUESTED')}
-          disabled={processing}
-          className="w-full h-11 bg-white border-[1.5px] border-[#faeeda] rounded-[22px] text-[14px] font-medium text-[#854f0b] disabled:opacity-50"
-        >
-          보완 요청
-        </button>
-        <button
-          type="button"
-          onClick={() => setModalAction('REJECTED')}
-          disabled={processing}
-          className="w-full h-11 bg-white border-[1.5px] border-[#fcebeb] rounded-[22px] text-[14px] font-medium text-[#a32c2c] disabled:opacity-50"
-        >
-          거절
-        </button>
-      </div>
+      {/* 액션 버튼 — 검토 진행 중인 상태에서만 노출.
+          VERIFIED/REJECTED 같은 종결 상태에서는 안내 메시지로 대체. */}
+      {lawyer.verificationStatus === 'VERIFIED' ? (
+        <div className="pt-2 px-4 py-3 bg-[#eaf3de] rounded-[12px] text-center">
+          <p className="text-[13px] font-medium text-[#3b6e11]">
+            이미 승인 완료된 변호사입니다.
+          </p>
+        </div>
+      ) : lawyer.verificationStatus === 'REJECTED' ? (
+        <div className="pt-2 px-4 py-3 bg-[#fcebeb] rounded-[12px] text-center">
+          <p className="text-[13px] font-medium text-[#a32c2c]">
+            거절 처리된 변호사입니다.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2 pt-2">
+          <button
+            type="button"
+            onClick={() => setModalAction('VERIFIED')}
+            disabled={processing}
+            className="w-full h-12 bg-[#1a6de0] rounded-[24px] text-[15px] font-medium text-white disabled:opacity-50"
+          >
+            승인
+          </button>
+          <button
+            type="button"
+            onClick={() => setModalAction('SUPPLEMENT_REQUESTED')}
+            disabled={processing}
+            className="w-full h-11 bg-white border-[1.5px] border-[#faeeda] rounded-[22px] text-[14px] font-medium text-[#854f0b] disabled:opacity-50"
+          >
+            보완 요청
+          </button>
+          <button
+            type="button"
+            onClick={() => setModalAction('REJECTED')}
+            disabled={processing}
+            className="w-full h-11 bg-white border-[1.5px] border-[#fcebeb] rounded-[22px] text-[14px] font-medium text-[#a32c2c] disabled:opacity-50"
+          >
+            거절
+          </button>
+        </div>
+      )}
 
       {/* 확인 모달 */}
       {modalAction && (
