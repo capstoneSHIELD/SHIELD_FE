@@ -5,7 +5,8 @@ import { relativeTime } from '@/lib/dateUtils';
 import { useConsultationList } from '@/hooks/useConsultation';
 import { Button, Card, Badge, Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
-import { DOMAIN_LABELS, CONSULTATION_STATUS_LABELS, CONSULT_STATUS_BADGE } from '@/lib/constants';
+import { CONSULTATION_STATUS_LABELS, CONSULT_STATUS_BADGE } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
@@ -104,14 +105,18 @@ export function ConsultationListPage() {
                     if (domains.length === 0) return null;
                     return (
                       <div className="flex flex-wrap gap-1 mb-2">
-                        {domains.map((field) => (
-                          <span
-                            key={field}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium"
-                          >
-                            {DOMAIN_LABELS[field] ?? field}
-                          </span>
-                        ))}
+                        {domains.map((field) => {
+                          const meta = getDomainMeta(field);
+                          return (
+                            <span
+                              key={field}
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${meta.bgColor} ${meta.color} text-xs font-medium`}
+                            >
+                              <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
+                              {meta.label}
+                            </span>
+                          );
+                        })}
                       </div>
                     );
                   })()}

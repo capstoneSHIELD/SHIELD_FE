@@ -3,7 +3,7 @@ import { FileText, Shield, Scale, Pencil, TriangleAlert } from 'lucide-react';
 import { useBriefDetail } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
-import { DOMAIN_LABELS } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -107,9 +107,17 @@ export function FinalReviewPage() {
             {/* Legal field */}
             <div>
               <p className="text-xs text-gray-400 mb-1">법률 분야</p>
-              <Badge variant="primary" size="sm">
-                {DOMAIN_LABELS[brief.legalField] ?? brief.legalField}
-              </Badge>
+              {(() => {
+                const meta = getDomainMeta(brief.legalField);
+                return (
+                  <Badge variant="primary" size="sm">
+                    <span className="inline-flex items-center gap-1">
+                      <meta.Icon size={12} strokeWidth={2} aria-hidden="true" />
+                      {meta.label}
+                    </span>
+                  </Badge>
+                );
+              })()}
             </div>
 
             {/* Content excerpt */}

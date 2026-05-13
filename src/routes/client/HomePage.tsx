@@ -6,7 +6,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useConsultationList } from '@/hooks/useConsultation';
 import { useBriefList } from '@/hooks/useBrief';
 import { Card, Badge } from '@/components/ui';
-import { DOMAIN_LABELS, CONSULTATION_STATUS_LABELS, BRIEF_STATUS_LABELS, CONSULT_STATUS_BADGE, BRIEF_STATUS_BADGE } from '@/lib/constants';
+import { CONSULTATION_STATUS_LABELS, BRIEF_STATUS_LABELS, CONSULT_STATUS_BADGE, BRIEF_STATUS_BADGE } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
@@ -116,9 +117,13 @@ export function HomePage() {
                           {(() => {
                             const domains = c.userDomains ?? c.aiDomains ?? [];
                             if (domains.length === 0) return null;
+                            const meta = getDomainMeta(domains[0]);
                             return (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
-                                {DOMAIN_LABELS[domains[0]] ?? domains[0]}
+                              <span
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${meta.bgColor} ${meta.color} text-xs font-medium`}
+                              >
+                                <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
+                                {meta.label}
                               </span>
                             );
                           })()}

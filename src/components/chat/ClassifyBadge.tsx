@@ -1,17 +1,7 @@
 import { Edit2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Badge } from '@/components/ui';
-
-const DOMAIN_LABELS: Record<string, string> = {
-  CIVIL: '민사',
-  CRIMINAL: '형사',
-  LABOR: '노동',
-  SCHOOL_VIOLENCE: '학교폭력',
-};
-
-function resolveLabel(value: string): string {
-  return DOMAIN_LABELS[value] ?? value;
-}
+import { getDomainMeta } from '@/lib/domainIcons';
 
 interface ClassifyBadgeProps {
   primaryField: string[];
@@ -51,20 +41,26 @@ export function ClassifyBadge({ primaryField, tags, onEdit }: ClassifyBadgeProps
       {/* Primary fields */}
       {primaryField.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
-          {primaryField.map((field) => (
-            <Badge key={field} variant="primary" size="sm">
-              {resolveLabel(field)}
-            </Badge>
-          ))}
+          {primaryField.map((field) => {
+            const meta = getDomainMeta(field);
+            return (
+              <Badge key={field} variant="primary" size="sm">
+                <span className="inline-flex items-center gap-1">
+                  <meta.Icon size={12} strokeWidth={2} aria-hidden="true" />
+                  {meta.label}
+                </span>
+              </Badge>
+            );
+          })}
         </div>
       )}
 
-      {/* Tags */}
+      {/* Tags (소분류·키워드 — 아이콘 없이 라벨만) */}
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <Badge key={tag} variant="default" size="sm">
-              {resolveLabel(tag)}
+              {tag}
             </Badge>
           ))}
         </div>

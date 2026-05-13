@@ -14,7 +14,8 @@ import {
 } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner, Modal, Input } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
-import { DOMAIN_LABELS, BRIEF_STATUS_LABELS, BRIEF_STATUS_BADGE } from '@/lib/constants';
+import { BRIEF_STATUS_LABELS, BRIEF_STATUS_BADGE } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 import type { BriefUpdateRequest } from '@/types/brief';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -252,9 +253,17 @@ export function BriefDetailPage() {
 
               {/* Legal field */}
               <div>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
-                  {DOMAIN_LABELS[brief.legalField] ?? brief.legalField}
-                </span>
+                {(() => {
+                  const meta = getDomainMeta(brief.legalField);
+                  return (
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${meta.bgColor} ${meta.color} text-xs font-medium`}
+                    >
+                      <meta.Icon size={12} strokeWidth={2} aria-hidden="true" />
+                      {meta.label}
+                    </span>
+                  );
+                })()}
               </div>
 
               {/* Content */}
@@ -448,7 +457,7 @@ export function BriefDetailPage() {
                         {lawyer.domains && lawyer.domains.length > 0 && (
                           <p className="text-xs text-gray-600 mb-2 line-clamp-1">
                             {lawyer.domains
-                              .map((d: string) => DOMAIN_LABELS[d] ?? d)
+                              .map((d: string) => getDomainMeta(d).label)
                               .join(', ')}
                           </p>
                         )}

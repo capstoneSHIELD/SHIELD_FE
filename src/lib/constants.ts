@@ -10,6 +10,11 @@ export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 export const TOKEN_KEY = 'shield_access_token';
 export const REFRESH_TOKEN_KEY = 'shield_refresh_token';
 
+/**
+ * @deprecated Use `getDomainMeta` from `@/lib/domainIcons` instead.
+ * 옛 4개 분야 enum 호환용. 새 8개 분류 + 아이콘 매핑은 `domainIcons.tsx` 에 중앙화됨.
+ * BE 가 새 분류로 완전 전환된 후 별도 PR 에서 제거 예정.
+ */
 export const DOMAIN_LABELS: Record<string, string> = {
   CIVIL: '민사',
   CRIMINAL: '형사',
