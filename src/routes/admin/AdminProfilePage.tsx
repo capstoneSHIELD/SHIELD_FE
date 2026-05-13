@@ -13,9 +13,9 @@ export function AdminProfilePage() {
   };
 
   const settings = [
-    { label: '알림 설정', icon: Bell, disabled: true },
-    { label: '개인정보 처리방침', icon: Shield, disabled: false },
-    { label: '이용약관', icon: FileText, disabled: false },
+    { label: '알림 설정', icon: Bell, disabled: true, onClick: undefined },
+    { label: '개인정보 처리방침', icon: Shield, disabled: false, onClick: () => navigate('/privacy') },
+    { label: '이용약관', icon: FileText, disabled: false, onClick: () => navigate('/terms') },
   ];
 
   return (
@@ -45,6 +45,7 @@ export function AdminProfilePage() {
             <button
               key={item.label}
               disabled={item.disabled}
+              onClick={item.onClick}
               className={`flex w-full items-center justify-between px-5 py-4 text-left transition-colors ${
                 item.disabled
                   ? 'opacity-50 cursor-not-allowed'

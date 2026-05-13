@@ -44,6 +44,14 @@ const SplashPage = lazy(() =>
   import('@/routes/auth/SplashPage').then((m) => ({ default: m.SplashPage })),
 );
 
+// ── Legal Pages (public, lazy) ──
+const TermsPage = lazy(() =>
+  import('@/routes/legal/TermsPage').then((m) => ({ default: m.TermsPage })),
+);
+const PrivacyPage = lazy(() =>
+  import('@/routes/legal/PrivacyPage').then((m) => ({ default: m.PrivacyPage })),
+);
+
 // ── Client Pages (lazy) ──
 const HomePage = lazy(() =>
   import('@/routes/client/HomePage').then((m) => ({ default: m.HomePage })),
@@ -177,6 +185,10 @@ export default function App() {
           <Routes>
             {/* ══════ 스플래시 (AuthLayout 외부) ══════ */}
             <Route path="/splash" element={<SplashPage />} />
+
+            {/* ══════ 약관·처방 (인증 무관 공개) ══════ */}
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
 
             {/* ══════ 공개 라우트 (비로그인) ══════ */}
             <Route element={<AuthLayout />}>

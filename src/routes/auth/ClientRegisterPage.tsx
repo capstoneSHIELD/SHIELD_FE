@@ -150,7 +150,26 @@ export function ClientRegisterPage() {
               className="mt-0.5 w-5 h-5 rounded-sm border-[#565d6d] text-brand focus:ring-brand/40"
             />
             <span className="text-sm font-medium text-[#16181d]/80">
-              서비스 이용약관 및 개인정보 처리방침에 동의합니다.
+              <a
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand underline underline-offset-2 hover:text-brand/80"
+                onClick={(e) => e.stopPropagation()}
+              >
+                서비스 이용약관
+              </a>
+              {' 및 '}
+              <a
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand underline underline-offset-2 hover:text-brand/80"
+                onClick={(e) => e.stopPropagation()}
+              >
+                개인정보 처리방침
+              </a>
+              에 동의합니다.
             </span>
           </label>
 
