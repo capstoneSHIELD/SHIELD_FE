@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { RefreshCw, Shield, Scale } from 'lucide-react';
+import { RefreshCw, Shield } from 'lucide-react';
 import { usePolling } from '@/hooks/usePolling';
 import { consultationApi } from '@/lib/consultationApi';
-import { DOMAIN_LABELS } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 import { Button, Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
+import { DomainSelectModal } from '@/components/client/DomainSelectModal';
 import type { ConsultationResponse } from '@/types/consultation';
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -17,6 +18,36 @@ export function AnalyzingPage() {
   const [timedOut, setTimedOut] = useState(false);
   const [elapsedSecs, setElapsedSecs] = useState(0);
   const [classificationResult, setClassificationResult] = useState<ConsultationResponse | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [isUpdatingDomain, setIsUpdatingDomain] = useState(false);
+  const [domainUpdateError, setDomainUpdateError] = useState<string | null>(null);
+
+  // ── 사용자가 분야를 직접 재선택했을 때 처리 ───────────────────────────────
+  // BE 의 PATCH /consultations/{id}/classify 호출로 분류를 override 한 뒤 의뢰서 생성 흐름으로 진입
+  const handleDomainOverride = useCallback(
+    async (domainId: string) => {
+      if (!id || !classificationResult) return;
+      setIsUpdatingDomain(true);
+      setDomainUpdateError(null);
+      try {
+        // 기존 subDomains/tags 는 유지하여 사용자 정보 손실 방지
+        const subDomains = classificationResult.aiSubDomains ?? classificationResult.userSubDomains ?? [];
+        const tags = classificationResult.aiTags ?? classificationResult.userTags ?? [];
+        await consultationApi.updateClassify(id, {
+          domains: [domainId],
+          subDomains,
+          tags,
+        });
+        setPickerOpen(false);
+        navigate('/briefs', { replace: true });
+      } catch {
+        setDomainUpdateError('분야 변경에 실패했습니다. 다시 시도해 주세요.');
+      } finally {
+        setIsUpdatingDomain(false);
+      }
+    },
+    [id, classificationResult, navigate],
+  );
 
   // ── elapsed timer ───────────────────────────────────────────────────────
   useEffect(() => {
@@ -64,7 +95,7 @@ export function AnalyzingPage() {
     // 분석 완료 후 조회 단계 — AI 분류값 우선, 없으면 사용자 입력값으로 폴백
     const domains = classificationResult.aiDomains ?? classificationResult.userDomains ?? [];
     const primaryDomain = domains[0] ?? '';
-    const domainLabel = DOMAIN_LABELS[primaryDomain] ?? primaryDomain;
+    const meta = getDomainMeta(primaryDomain);
     const tags: string[] = classificationResult.aiTags ?? classificationResult.userTags ?? [];
 
     return (
@@ -85,10 +116,10 @@ export function AnalyzingPage() {
           {/* Classification result card */}
           <div className="mt-6 bg-[#d8ebfd] rounded-[10px] shadow-lg p-6 flex flex-col items-center">
             <div className="w-18 h-18 rounded-full bg-white/60 flex items-center justify-center mb-4">
-              <Scale size={32} className="text-brand" />
+              <meta.Icon size={32} strokeWidth={1.75} className="text-brand" aria-hidden="true" />
             </div>
             <p className="text-sm font-medium text-brand/70">AI가 분석한 주요 분야</p>
-            <p className="text-4xl font-bold text-brand mt-1">{domainLabel}</p>
+            <p className="text-4xl font-bold text-brand mt-1">{meta.label}</p>
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4 justify-center">
                 {tags.map((tag) => (
@@ -110,6 +141,12 @@ export function AnalyzingPage() {
             </p>
           </div>
 
+          {domainUpdateError && (
+            <div className="mt-3 px-3 py-2 bg-red-50 rounded-lg">
+              <p className="text-xs text-red-600 text-center">{domainUpdateError}</p>
+            </div>
+          )}
+
           <div className="flex-1" />
 
           {/* Action buttons */}
@@ -126,13 +163,22 @@ export function AnalyzingPage() {
               variant="secondary"
               size="lg"
               fullWidth
-              onClick={() => navigate('/consultations/new', { replace: true })}
+              onClick={() => setPickerOpen(true)}
               className="border border-[#dee1e6]"
             >
               다른 분야 선택
             </Button>
           </div>
         </main>
+
+        {/* 분야 직접 선택 모달 — 현재 분야 미리 선택된 상태로 열림 */}
+        {pickerOpen && (
+          <DomainSelectModal
+            current={primaryDomain}
+            onConfirm={handleDomainOverride}
+            onClose={() => !isUpdatingDomain && setPickerOpen(false)}
+          />
+        )}
       </div>
     );
   }
