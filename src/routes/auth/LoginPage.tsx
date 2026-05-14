@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { ShieldCheck, Terminal, ChevronDown, ChevronUp } from 'lucide-react';
-import { Button } from '@/components/ui';
+import { ChevronDown, ChevronUp, Terminal } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { getRoleHome } from '@/lib/authFlow';
 import { loginWithKakao } from '@/lib/kakao';
 import { loginWithNaver } from '@/lib/naver';
 import { loginWithGoogle } from '@/lib/google';
@@ -10,9 +11,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/lib/authApi';
 import type { UserRole } from '@/types';
 
-// 소셜 로그인 버튼 아이콘 — lucide 아이콘은 인증 기관 고유 로고와 달라
-// 식별성을 높이기 위해 인라인 SVG로 직접 렌더링한다.
-function KakaoIcon({ size = 20 }: { size?: number }) {
+function KakaoIcon({ size = 17 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -24,13 +23,13 @@ function KakaoIcon({ size = 20 }: { size?: number }) {
     >
       <path
         d="M12 3.5C6.753 3.5 2.5 6.84 2.5 10.96c0 2.6 1.706 4.888 4.286 6.225l-1.01 3.69a.44.44 0 0 0 .666.49l4.38-2.907c.39.05.78.082 1.178.082 5.247 0 9.5-3.34 9.5-7.46S17.247 3.5 12 3.5Z"
-        fill="#000"
+        fill="#000000"
       />
     </svg>
   );
 }
 
-function GoogleIcon({ size = 20 }: { size?: number }) {
+function GoogleIcon({ size = 25 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -59,15 +58,31 @@ function GoogleIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-function getRoleHome(role: string | null): string {
-  switch (role) {
-    case 'LAWYER':
-      return '/lawyer';
-    case 'ADMIN':
-      return '/admin';
-    default:
-      return '/home';
-  }
+interface SocialButtonProps {
+  className?: string;
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
+function SocialButton({ className, icon, label, onClick }: SocialButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'relative flex h-14 w-full items-center justify-center rounded-[14px]',
+        'text-base font-semibold leading-6 transition duration-150',
+        'shadow-[0px_2px_4px_0px_rgba(35,37,41,0.06)]',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2',
+        'active:scale-[0.99]',
+        className,
+      )}
+    >
+      <span className="absolute left-[58px] flex h-6 w-6 items-center justify-center">{icon}</span>
+      <span>{label}</span>
+    </button>
+  );
 }
 
 const DEV_ROLES: { role: UserRole; label: string; color: string }[] = [
@@ -103,143 +118,96 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 relative overflow-hidden">
-      {/* Decorative blur */}
-      <div className="absolute -top-20 right-0 w-64 h-64 rounded-full bg-brand/5 blur-[64px]" />
+    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-1 flex-col overflow-hidden bg-white">
+      <div className="relative flex min-h-dvh flex-1 flex-col px-[25px]">
+        <div className="absolute -top-20 right-[-80px] h-64 w-64 rounded-full bg-[#1E90FF]" />
 
-      {/* ── Brand area ── */}
-      <div className="flex flex-col items-center pt-[96px] sm:pt-[120px] pb-8 px-6 gap-4">
-        {/* SHIELD logo */}
-        <img
-          src="/logo.png"
-          alt="SHIELD"
-          className="w-[88px] h-[88px] object-contain"
-        />
-
-        {/* Tagline */}
-        <div className="text-center space-y-1">
-          <h1 className="text-xl font-bold text-[#16181d] tracking-tight">
+        <section className="relative z-10 flex flex-col items-center pt-[180px] text-center">
+          <p className="mb-[20px] text-[9px] font-bold leading-7 tracking-normal text-black">
             더 스마트한 법률 파트너
+          </p>
+          <img
+            src="/logo.png"
+            alt="SHIELD"
+            className="h-[71px] w-[71px] rounded-[13px] object-contain"
+          />
+          <h1 className="mt-[18px] font-['Russo_One'] text-[35px] font-normal leading-[26px] tracking-normal text-[#1E90FF]">
+            SHIELD
           </h1>
-          <p className="text-sm text-[#575e6b]">
+          <p className="mt-[8px] text-sm font-medium leading-6 tracking-normal text-[#696969]">
             AI 법률 정보 구조화 플랫폼
           </p>
-        </div>
+        </section>
 
-        {/* Security badge */}
-        <span
-          className={cn(
-            'inline-flex items-center gap-1.5 px-4 py-2 rounded-full',
-            'bg-[#f0f7ff] border border-brand/10 text-brand text-[11px] font-normal',
-          )}
-        >
-          <ShieldCheck size={12} className="shrink-0" aria-hidden="true" />
-          보안 인증 및 데이터 암호화
-        </span>
-      </div>
+        <section className="relative z-10 mt-auto pb-[67px]">
+          <div className="flex flex-col gap-3">
+            <SocialButton
+              label="카카오로 시작하기"
+              icon={<KakaoIcon />}
+              onClick={loginWithKakao}
+              className="bg-[#FFD700] text-black hover:brightness-95"
+            />
+            <SocialButton
+              label="네이버로 시작하기"
+              icon={<span className="text-[15px] font-black leading-none text-white">N</span>}
+              onClick={loginWithNaver}
+              className="bg-[#32CD32] text-white hover:brightness-95"
+            />
+            <SocialButton
+              label="Google 계정으로 시작하기"
+              icon={<GoogleIcon />}
+              onClick={loginWithGoogle}
+              className="border border-[#e0e2e6] bg-white text-black hover:bg-gray-50"
+            />
+          </div>
 
-      {/* ── Social login area ── */}
-      <div className="flex-1 flex flex-col justify-end sm:justify-center px-6 pb-8 sm:pb-12 gap-6">
-        <div className="flex flex-col gap-[12px]">
-          {/* Kakao */}
-          <Button
-            variant="kakao"
-            size="lg"
-            fullWidth
-            className="rounded-[14px] h-14 text-base font-semibold shadow-[0px_2px_4px_0px_rgba(35,37,41,0.06)]"
-            leftIcon={<KakaoIcon size={20} />}
-            onClick={loginWithKakao}
-          >
-            카카오로 시작하기
-          </Button>
+          <p className="mt-[30px] text-center text-[10px] leading-[18px] text-[#696969]">
+            로그인 시 SHIELD의{' '}
+            <a href="/terms" className="underline underline-offset-2">
+              이용약관
+            </a>{' '}
+            및{' '}
+            <a href="/privacy" className="underline underline-offset-2">
+              개인정보 처리방침
+            </a>
+            에 동의하는 것으로 간주합니다.
+          </p>
 
-          {/* Naver */}
-          <Button
-            variant="naver"
-            size="lg"
-            fullWidth
-            className="rounded-[14px] h-14 text-base font-semibold shadow-[0px_2px_4px_0px_rgba(35,37,41,0.06)]"
-            leftIcon={
-              <span
-                className="flex items-center justify-center w-5 h-5 rounded font-extrabold text-sm leading-none text-white"
-                aria-hidden="true"
+          {import.meta.env.DEV && (
+            <div className="mt-4 border-t border-dashed border-gray-200 pt-3">
+              <button
+                type="button"
+                onClick={() => setDevOpen(!devOpen)}
+                className="flex w-full items-center justify-center gap-1.5 text-xs text-gray-400 transition-colors hover:text-gray-600"
               >
-                N
-              </span>
-            }
-            onClick={loginWithNaver}
-          >
-            네이버로 시작하기
-          </Button>
+                <Terminal size={12} />
+                <span>Dev Login</span>
+                {devOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              </button>
 
-          {/* Google */}
-          <Button
-            variant="google"
-            size="lg"
-            fullWidth
-            className="rounded-[14px] h-14 text-base font-semibold shadow-[0px_2px_4px_0px_rgba(35,37,41,0.06)]"
-            leftIcon={<GoogleIcon size={20} />}
-            onClick={loginWithGoogle}
-          >
-            Google 계정으로 시작하기
-          </Button>
-        </div>
-
-        {/* Terms notice */}
-        <p className="text-center text-xs text-[#575e6b] leading-4.5 px-1">
-          로그인 시 SHIELD의{' '}
-          <a
-            href="/terms"
-            className="text-brand underline font-medium hover:opacity-80"
-          >
-            이용약관
-          </a>{' '}
-          및{' '}
-          <a
-            href="/privacy"
-            className="text-brand underline font-medium hover:opacity-80"
-          >
-            개인정보 처리방침
-          </a>
-          에 동의하는 것으로 간주합니다.
-        </p>
-
-        {/* ── Dev Login Section ── */}
-        <div className="border-t border-dashed border-gray-200 pt-4">
-          <button
-            type="button"
-            onClick={() => setDevOpen(!devOpen)}
-            className={cn(
-              'flex items-center justify-center gap-1.5 w-full',
-              'text-xs text-gray-400 hover:text-gray-600 transition-colors',
-            )}
-          >
-            <Terminal size={12} />
-            <span>Dev Login</span>
-            {devOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-          </button>
-
-          {devOpen && (
-            <div className="mt-3 flex gap-2">
-              {DEV_ROLES.map(({ role: devRole, label, color }) => (
-                <button
-                  key={devRole}
-                  type="button"
-                  disabled={devLoading !== null}
-                  onClick={() => handleDevLogin(devRole)}
-                  className={cn(
-                    'flex-1 py-2 rounded-lg text-xs font-semibold text-white transition-all',
-                    color,
-                    devLoading === devRole && 'opacity-60 animate-pulse',
-                    devLoading !== null && devLoading !== devRole && 'opacity-40',
-                  )}
-                >
-                  {devLoading === devRole ? '...' : label}
-                </button>
-              ))}
+              {devOpen && (
+                <div className="mt-3 flex gap-2">
+                  {DEV_ROLES.map(({ role: devRole, label, color }) => (
+                    <button
+                      key={devRole}
+                      type="button"
+                      disabled={devLoading !== null}
+                      onClick={() => handleDevLogin(devRole)}
+                      className={cn(
+                        'flex-1 rounded-lg py-2 text-xs font-semibold text-white transition-all',
+                        color,
+                        devLoading === devRole && 'animate-pulse opacity-60',
+                        devLoading !== null && devLoading !== devRole && 'opacity-40',
+                      )}
+                    >
+                      {devLoading === devRole ? '...' : label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
-        </div>
+        </section>
       </div>
     </div>
   );
