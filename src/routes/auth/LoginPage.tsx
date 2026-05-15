@@ -79,10 +79,10 @@ export function LoginPage() {
 
   return (
     <div className="relative mx-auto flex min-h-dvh w-full max-w-[390px] flex-1 flex-col overflow-hidden bg-white">
-      {/* Background blur halo */}
+      {/* Background blur halo — figma 01 (top:-80, right:-80, size 256, blur 64px) */}
       <div
         aria-hidden
-        className="absolute -top-20 -right-10 h-64 w-64 rounded-full bg-brand/5 blur-3xl"
+        className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-brand/5 blur-3xl"
       />
 
       <div className="relative z-10 flex flex-1 flex-col px-[25px]">
