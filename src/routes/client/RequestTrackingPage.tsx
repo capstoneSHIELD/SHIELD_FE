@@ -67,21 +67,21 @@ function buildSteps(delivery: DeliveryResponse): TrackingStep[] {
 function StepIndicator({ status }: { status: StepStatus }) {
   if (status === 'completed') {
     return (
-      <div className="w-7 h-7 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
-        <Check size={14} className="text-white" strokeWidth={2.5} />
+      <div className="size-8 rounded-full bg-brand flex items-center justify-center shrink-0">
+        <Check size={16} className="text-white" strokeWidth={2.5} />
       </div>
     );
   }
   if (status === 'active') {
     return (
-      <div className="w-7 h-7 rounded-full border-2 border-brand flex items-center justify-center flex-shrink-0 relative">
-        <span className="w-2.5 h-2.5 rounded-full bg-brand animate-pulse" />
+      <div className="size-8 rounded-full border-2 border-brand flex items-center justify-center shrink-0 relative">
+        <span className="size-2.5 rounded-full bg-brand animate-pulse" />
       </div>
     );
   }
   return (
-    <div className="w-7 h-7 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
-      <span className="w-2.5 h-2.5 rounded-full bg-gray-300" />
+    <div className="size-8 rounded-full border-2 border-border flex items-center justify-center shrink-0">
+      <span className="size-2.5 rounded-full bg-border" />
     </div>
   );
 }
@@ -100,7 +100,7 @@ function VerticalStepper({ steps }: { steps: TrackingStep[] }) {
                 <div
                   className={cn(
                     'w-0.5 flex-1 min-h-[28px]',
-                    step.status === 'completed' ? 'bg-brand' : 'bg-gray-200',
+                    step.status === 'completed' ? 'bg-brand' : 'bg-border',
                   )}
                 />
               )}
@@ -164,25 +164,25 @@ function DeliveryCard({ delivery }: { delivery: DeliveryResponse }) {
         {/* Details */}
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm">
-            <MessageSquare size={14} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
+            <MessageSquare size={14} className="text-gray-400 shrink-0" aria-hidden="true" />
             <span className="text-gray-500">변호사</span>
             <span className="font-medium text-gray-900 ml-auto">{delivery.lawyerName}</span>
           </div>
           <div className="flex items-center gap-2 text-sm">
-            <Calendar size={14} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
+            <Calendar size={14} className="text-gray-400 shrink-0" aria-hidden="true" />
             <span className="text-gray-500">전달 일시</span>
             <span className="font-medium text-gray-900 ml-auto">{formatDate(delivery.sentAt)}</span>
           </div>
           {delivery.viewedAt && (
             <div className="flex items-center gap-2 text-sm">
-              <Check size={14} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
+              <Check size={14} className="text-gray-400 shrink-0" aria-hidden="true" />
               <span className="text-gray-500">열람 일시</span>
               <span className="font-medium text-gray-900 ml-auto">{formatDate(delivery.viewedAt)}</span>
             </div>
           )}
           {!delivery.respondedAt && (
             <div className="flex items-center gap-2 text-sm">
-              <Clock size={14} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
+              <Clock size={14} className="text-gray-400 shrink-0" aria-hidden="true" />
               <span className="text-gray-500">예상 응답</span>
               <span className="font-medium text-gray-900 ml-auto">24시간 이내</span>
             </div>
