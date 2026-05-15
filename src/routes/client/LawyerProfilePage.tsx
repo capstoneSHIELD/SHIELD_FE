@@ -4,7 +4,7 @@ import { User, MapPin, Award, Briefcase, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLawyerDetail } from '@/hooks/useLawyer';
 import { useDeliverBrief, useDeliveries } from '@/hooks/useBrief';
-import { Button, Card, Badge, Spinner, Modal } from '@/components/ui';
+import { Button, Card, Spinner, Modal } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { DOMAIN_LABELS } from '@/lib/constants';
 
@@ -84,21 +84,24 @@ export function LawyerProfilePage() {
                   )}
                 </div>
 
-                {/* Name + experience badge */}
+                {/* Name + experience badge — figma 11 */}
                 <div className="flex items-center gap-2">
                   <h2 className="text-xl font-bold text-[#16181d]">{lawyer.name}</h2>
-                  <span className="bg-[#f0f7ff] text-[#0680f9] text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  <span className="bg-info-bg text-[#0680f9] text-xs font-medium px-2 py-1 rounded-[8px]">
                     경력 {lawyer.experienceYears}년
                   </span>
                 </div>
 
-                {/* Specialization — L1 대분류 배열을 Badge 로 나열 */}
+                {/* Specialty chips — figma 11 (gray tone) */}
                 {lawyer.domains && lawyer.domains.length > 0 && (
                   <div className="flex flex-wrap justify-center gap-1.5">
                     {lawyer.domains.map((d: string) => (
-                      <Badge key={d} variant="primary" size="sm">
+                      <span
+                        key={d}
+                        className="bg-gray-100 text-text-soft text-xs font-normal px-2 py-0.5 rounded-[8px]"
+                      >
                         {DOMAIN_LABELS[d] ?? d}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
                 )}
