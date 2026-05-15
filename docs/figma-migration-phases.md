@@ -41,11 +41,19 @@
 
 > ⚠️ **두 커밋으로 분리한다**. Tailwind v4에서 `@theme`의 토큰을 제거하면, 그 토큰을 className으로만 쓰는 JSX(예: `<div className="bg-brand-primary" />`)는 **빌드는 통과하지만 색이 사라진다**(런타임 무음 실패). 추가는 안전, 제거는 명시 — 두 단계로 나눈다.
 
-> ⚠️ **Tailwind v4 네임스페이스 주의**. `--radius-*`, `--shadow-*`는 v4의 예약 네임스페이스로, `@theme`에 선언하면 기본 `rounded-sm` / `shadow-md` 같은 유틸리티 값을 **전역 오버라이드**한다. 우리는 Figma 스케일을 별도 네임스페이스(`--shape-radius-*`)로 분리해 기본 유틸리티를 보존한다. `--shadow-btn`/`--shadow-card`는 의도적으로 `@theme`에 두어 `shadow-btn`/`shadow-card` 유틸리티가 자동 생성되도록 한다(임의 값 `shadow-[var(--shadow-btn)]` 대신 단축 유틸 사용).
+> ⚠️ **Tailwind v4 네임스페이스 주의**.
+> - `--radius-sm`/`--radius-md`/`--radius-lg`는 **기본 키**이므로 `@theme`에 넣으면 기본 `rounded-sm`/`md`/`lg` 유틸을 전역 오버라이드한다. 따라서 우리는 **`--radius-shape-{sm,md,lg}`**, **`--radius-frame`**처럼 두 단어 키를 쓴다. v4는 `--radius-{remainder}`를 `rounded-{remainder}` 유틸로 자동 생성하므로, 위 키들은 `rounded-shape-sm`/`md`/`lg`/`rounded-frame`이라는 **새 유틸**을 만들고 기본 유틸은 보존된다.
+> - `--shadow-btn`/`--shadow-card`도 같은 원리로 `@theme`에 두어 `shadow-btn`/`shadow-card` 유틸을 자동 생성한다(임의 값 `shadow-[var(--shadow-btn)]` 대신 단축 유틸 사용).
+> - **`:root`와 `@theme`은 Phase 1-A에서 동시에 갱신한다**. `:root`만 바꾸면 Tailwind 유틸(`bg-info-bg` 등)은 옛 값을, 인라인 `var(...)`는 새 값을 가지는 비대칭이 발생해 Phase 3-6 시각 검수가 흔들린다.
+
+> 🏷️ **토큰 네이밍 컨벤션**.
+> - **신규 코드는 단축 유틸 우선**: `rounded-shape-md`(12px), `rounded-frame`(24px), `shadow-btn`, `shadow-card`
+> - 기존 `--radius-card`/`--radius-pill`은 **호환을 위해 그대로 둔다**. 신규 사용처는 없게 함. Phase 7-1에서 `rounded-card`/`rounded-pill` 사용 위치를 grep하여 정리 여부 판단
+> - 인라인 hex 예외(`#3688f4`, `#0680f9`)는 토큰화하지 않고 hex 그대로 사용
 
 ### Phase 1-A. 토큰 추가·교체 (안전한 변경)
 
-`brand-primary`/`brand-deep`는 **남겨둔 채로** brand 값만 교체 + 신규 토큰 추가. 빌드/런타임 모두 안전.
+`brand-primary`/`brand-deep`는 **남겨둔 채로** brand 값만 교체 + 신규 토큰 추가. **`:root`와 `@theme`을 동시에 갱신**한다.
 
 #### `:root` diff
 
@@ -67,26 +75,43 @@
 -  --color-text-secondary: #64748B;
 +  --color-text-secondary: #575e6b;
 +  --color-border: #e0e2e6;
-   --radius-card: 12px;
-   --radius-pill: 9999px;
-+  --shape-radius-sm: 8px;               /* Tailwind --radius-* 네임스페이스 회피 */
-+  --shape-radius-md: 12px;
-+  --shape-radius-lg: 14px;
-+  --shape-radius-frame: 24px;
+   --radius-card: 12px;                  /* 기존 호환 — 신규는 rounded-shape-md */
+   --radius-pill: 9999px;                /* 기존 호환 */
++  --shadow-btn: 0 4px 8px rgba(35, 37, 41, 0.08);   /* var(--shadow-btn) 직접 호출 일관성 */
++  --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);
 }
 ```
 
-#### `@theme` diff (이 단계에서는 brand-primary/deep 제거 X)
+#### `@theme` diff (`:root`와 동일한 토큰 셋으로 동기화)
 
 ```diff
 @theme {
 -  --color-brand: #3B82F6;
 +  --color-brand: #1f8cf9;
-   --color-brand-primary: #258cf4;       /* Phase 1-B에서 제거 — 지금은 유지 */
-   --color-brand-deep: #0680f9;          /* Phase 1-B에서 제거 — 지금은 유지 */
-   ...
-+  --shadow-btn: 0 4px 8px rgba(35, 37, 41, 0.08);   /* @theme에 두어야 shadow-btn 유틸 생성 */
-+  --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);
+   --color-brand-primary: #258cf4;       /* Phase 1-B에서 제거 */
+   --color-brand-deep: #0680f9;          /* Phase 1-B에서 제거 */
+   --color-accent-orange: #c2410c;
+   --color-warning-red: #eb4747;          /* 기존 유지 */
+   --color-text-soft: #575e6b;
+   --color-kakao: #FEE500;
+   --color-naver: #03C75A;
+   --color-surface: #F8FAFC;
+-  --color-info-bg: #EFF6FF;
++  --color-info-bg: #f0f7ff;
++  --color-error: #e42020;
++  --color-alert: #ef6a6a;
++  --color-text-primary: #171a1f;
++  --color-text-secondary: #575e6b;
++  --color-border: #e0e2e6;
+   --font-family-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif;
+   --radius-card: 12px;                   /* 기존 호환 */
+   --radius-pill: 9999px;                 /* 기존 호환 — rounded-pill 유틸 보장 */
++  --radius-shape-sm: 8px;                /* 자동 유틸: rounded-shape-sm */
++  --radius-shape-md: 12px;               /* 자동 유틸: rounded-shape-md */
++  --radius-shape-lg: 14px;               /* 자동 유틸: rounded-shape-lg */
++  --radius-frame: 24px;                  /* 자동 유틸: rounded-frame */
++  --shadow-btn: 0 4px 8px rgba(35, 37, 41, 0.08);   /* 자동 유틸: shadow-btn */
++  --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);  /* 자동 유틸: shadow-card */
 }
 ```
 
@@ -94,7 +119,8 @@
 
 1. `npm run build` 통과
 2. `npm run dev` → 13개 페이지 순회. 기존 색이 살짝 따뜻해진 정도만 변화. `bg-brand-primary`/`bg-brand-deep` 사용처는 아직 동작
-3. `:root`와 `@theme` 두 블록이 점차 비대칭화되는 것을 추적 (Phase 7-1 cleanup에서 통일)
+3. **유틸 생성 확인**: 빌드된 CSS에서 `.shadow-btn`, `.rounded-shape-md`, `.rounded-frame`, `.rounded-pill` 클래스가 실제로 생성되었는지 검색 (없으면 `@theme` 키 이름 재확인)
+4. **chip/badge spot check**: 현재 코드에서 `rounded-pill` 사용처(`grep -rn "rounded-pill" src/`)가 여전히 동작하는지 시각 확인 — `@theme`에 `--radius-pill`을 명시했으므로 OK여야 함
 
 #### 커밋
 
@@ -180,17 +206,17 @@ refactor(tokens): remove brand-primary/brand-deep aliases
 -  sm: 'h-8 px-3 text-sm gap-1.5',
 -  md: 'h-10 px-4 text-sm gap-2',
 -  lg: 'h-12 px-6 text-base gap-2.5',
-+  sm: 'h-9 px-3 text-sm gap-1.5 rounded-[8px]',
-+  md: 'h-11 px-4 text-base gap-2 rounded-[12px]',
-+  lg: 'h-14 px-6 text-lg font-bold gap-2.5 rounded-[12px] shadow-btn',
++  sm: 'h-9 px-3 text-sm gap-1.5 rounded-shape-sm',
++  md: 'h-11 px-4 text-base gap-2 rounded-shape-md',
++  lg: 'h-14 px-6 text-lg font-bold gap-2.5 rounded-shape-md shadow-btn',
 
   primary variant:
 -  'bg-brand text-white hover:bg-blue-600 active:bg-blue-700 focus-visible:ring-brand/40'
 +  'bg-brand text-white hover:brightness-95 active:brightness-90 focus-visible:ring-brand/40'
 ```
 
-- 핵심: **`rounded-pill` 기본값 제거** → 사이즈별 `rounded-[*]` 명시
-- `lg` 사이즈가 Figma의 primary CTA 스펙(`h-14`·`text-lg`·`font-bold`·`shadow-btn`)과 일치 — `shadow-btn`은 Phase 1-A에서 `@theme`에 추가한 토큰의 자동 생성 유틸
+- 핵심: **`rounded-pill` 기본값 제거** → 사이즈별 `rounded-shape-*` 단축 유틸 명시 (Phase 1-A `@theme`에서 자동 생성)
+- `lg` 사이즈가 Figma의 primary CTA 스펙(`h-14`·`text-lg`·`font-bold`·`shadow-btn`)과 일치
 - 알약형이 필요한 곳(chip/badge)은 별도 컴포넌트 사용 또는 `rounded-pill` className 직접 부여
 - `active:bg-blue-700`도 `active:brightness-90`로 함께 교체됨에 유의(Phase 1-B 게이트 2의 blue-* grep 결과 0건 만들기 위해 필요)
 
@@ -272,7 +298,7 @@ Props 그대로 유지: `label`, `required`, `placeholder`, `type`, `autoComplet
 
 | # | 작업 | 검증 |
 |---|---|---|
-| 7-1 | **인라인 컬러 전수 점검 + `:root`/`@theme` 동기화**: 화이트리스트(`#3688f4`, `#0680f9`, kakao/naver/google 등) 외 hex가 src에 잔존하는지 `grep -rnE "#[0-9a-fA-F]{3,6}" src/`로 확인. 두 블록의 토큰 셋이 비대칭이면 통일 | 화이트리스트 외 hex 0건 + `:root`/`@theme` 일치 |
+| 7-1 | **인라인 컬러 전수 점검 + `:root`/`@theme` 동기화**: 화이트리스트(`#3688f4`, `#0680f9`, kakao/naver/google 등) 외 hex가 src에 잔존하는지 `grep -rnE "#[0-9a-fA-F]{3,6}" src/`로 확인. `#3688f4`/`#0680f9`의 **정확한 사용 위치(파일:라인)를 PR description에 명시**하여 향후 디자인 변경 추적을 용이하게 함. 또한 `rounded-card`/`rounded-pill` 잔존 위치를 확인하고 `rounded-shape-*`/`rounded-frame`으로 정리할지 판단. `:root`/`@theme` 토큰 셋이 비대칭이면 통일 | 화이트리스트 외 hex 0건 + 예외 hex 위치 PR에 기록 + 두 블록 일치 |
 | 7-2 | `npm run lint` 통과 | exit 0 |
 | 7-3 | `npm run build` 통과 (타입 + 번들) | exit 0 |
 | 7-4 | Chrome DevTools MCP로 13개 페이지 모바일 viewport(390×844) 스크린샷 → figma-export 스크린샷과 최종 시각 비교. **`BriefDeliveryPage`도 포함**(대응 Figma는 없지만 토큰 회귀 여부 확인) | 페이지별 PASS/FAIL 기록 |
