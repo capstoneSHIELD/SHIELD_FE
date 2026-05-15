@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { User, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLawyerList } from '@/hooks/useLawyer';
-import { Badge, Spinner } from '@/components/ui';
+import { Spinner } from '@/components/ui';
 import { Header } from '@/components/layout/Header';
 import { DOMAIN_LABELS } from '@/lib/constants';
 import type { LawyerResponse } from '@/types';
@@ -75,13 +75,16 @@ function LawyerCard({ lawyer, onClick }: LawyerCardProps) {
         </p>
       )}
 
-      {/* Specialization badges — L1 대분류 배열을 모두 표시 */}
+      {/* Specialization chips — figma 13 (gray tone) */}
       {lawyer.domains && lawyer.domains.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-1.5">
           {lawyer.domains.map((d) => (
-            <Badge key={d} variant="primary" size="sm">
+            <span
+              key={d}
+              className="bg-gray-100/80 text-text-soft text-[11px] font-normal px-2 py-0.5 rounded-[10px]"
+            >
               {DOMAIN_LABELS[d] ?? d}
-            </Badge>
+            </span>
           ))}
         </div>
       )}
