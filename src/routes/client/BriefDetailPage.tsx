@@ -13,7 +13,7 @@ import {
   useDeliveries,
 } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner, Modal, Input } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { BRIEF_STATUS_LABELS, BRIEF_STATUS_BADGE } from '@/lib/constants';
 import { getDomainMeta } from '@/lib/domainIcons';
 import type { BriefUpdateRequest } from '@/types/brief';
@@ -139,9 +139,9 @@ export function BriefDetailPage() {
   // ── loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex flex-col flex-1">
-        <Header title="의뢰서" showBack onBack={() => navigate('/briefs')} />
-        <div className="flex items-center justify-center flex-1">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+        <PageHeader title="의뢰서" onBack={() => navigate('/briefs')} />
+        <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
         </div>
       </div>
@@ -150,9 +150,9 @@ export function BriefDetailPage() {
 
   if (!brief) {
     return (
-      <div className="flex flex-col flex-1">
-        <Header title="의뢰서" showBack onBack={() => navigate('/briefs')} />
-        <div className="flex items-center justify-center flex-1">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+        <PageHeader title="의뢰서" onBack={() => navigate('/briefs')} />
+        <div className="flex flex-1 items-center justify-center">
           <p className="text-sm text-gray-500">의뢰서를 찾을 수 없습니다.</p>
         </div>
       </div>
@@ -161,15 +161,21 @@ export function BriefDetailPage() {
 
   // ── render ───────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col flex-1">
-      <Header
-        title={brief.title}
-        showBack
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+      <PageHeader
+        title="분석리포트"
         onBack={() => navigate('/briefs')}
-        rightAction={editButton}
+        rightSlot={editButton}
       />
 
-      <main className="flex-1 px-4 py-4 space-y-4 pb-10">
+      {/* Page title — figma 08 */}
+      <div className="px-5 pt-4">
+        <h1 className="text-[20px] font-bold leading-7 text-[#161a1d]">
+          <span className="text-brand-primary">분석리포트</span>를 확인하세요
+        </h1>
+      </div>
+
+      <main className="flex-1 space-y-4 px-4 py-4 pb-20">
         {/* ── Brief content card ──────────────────────────────────────── */}
         <Card padding="md">
           {editMode ? (

@@ -1,12 +1,12 @@
-import { ArrowLeft, User, Mail, Phone, Info } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import type { UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
-import { Button, Input } from '@/components/ui';
-import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/lib/cn';
+import { PageHeader } from '@/components/mobile/PageHeader';
+import { useAuthStore } from '@/stores/authStore';
 import { userApi } from '@/lib/userApi';
 import type { PendingRegistrationState } from '@/lib/authFlow';
 
@@ -24,21 +24,68 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
+interface UnderlineFieldProps {
+  label: string;
+  required?: boolean;
+  placeholder?: string;
+  type?: string;
+  autoComplete?: string;
+  error?: string;
+  register: UseFormRegisterReturn;
+}
+
+function UnderlineField({
+  label,
+  required,
+  placeholder,
+  type = 'text',
+  autoComplete,
+  error,
+  register,
+}: UnderlineFieldProps) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-[14px] font-medium leading-5 text-[#171a1f]">
+        {required && <span className="text-warning-red">* </span>}
+        {label}
+      </label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className={cn(
+          'w-full border-b bg-transparent py-2 text-base leading-6 text-[#171a1f]',
+          'placeholder:text-text-soft',
+          'outline-none transition-colors',
+          'focus:border-brand-primary',
+          error ? 'border-warning-red' : 'border-[#e0e2e6]',
+        )}
+        {...register}
+      />
+      {error && (
+        <p className="mt-1 text-xs text-warning-red" role="alert">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export function ClientRegisterPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const login = useAuthStore((s) => s.login);
   const [agreed, setAgreed] = useState(false);
 
-  // 소셜 로그인에서 전달받은 사전 정보 (구글은 name/email 제공)
   const pending = (location.state ?? null) as PendingRegistrationState | null;
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    mode: 'onChange',
     defaultValues: {
       name: pending?.name ?? '',
       email: pending?.email ?? '',
@@ -47,9 +94,6 @@ export function ClientRegisterPage() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    // 확정된 플로우: 의뢰인(USER) 은 이미 소셜 로그인으로 기본 생성되어 있으므로
-    // 별도의 role 변경/register API 호출 불필요. 이름이 바뀌었으면 PATCH /api/users/me 에
-    // 만 반영.  전화번호는 현재 UserInfo 스키마에 없어 저장하지 않음 (서버 스키마 확장 시 추가 가능).
     try {
       const originalName = pending?.name?.trim() ?? '';
       const nextName = data.name.trim();
@@ -57,7 +101,6 @@ export function ClientRegisterPage() {
         await userApi.updateMe({ name: nextName });
       }
     } catch (err) {
-      // 이름 저장 실패로 가입 플로우 자체를 막지는 않는다.
       console.warn('[ClientRegister] 이름 업데이트 실패:', err);
     }
 
@@ -68,126 +111,107 @@ export function ClientRegisterPage() {
     navigate('/home', { replace: true });
   };
 
+  const canSubmit = agreed && isValid && !isSubmitting;
+
   return (
-    <div className="flex flex-col flex-1">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-[#e0e2e6] flex items-center h-17 px-2">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className={cn(
-            'flex items-center justify-center w-10 h-10 rounded-full',
-            'text-[#16181d] hover:bg-gray-100',
-            'transition-colors duration-150',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
-          )}
-          aria-label="뒤로 가기"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="flex-1 text-center text-lg font-semibold text-[#16181d] pr-10">
-          의뢰인 회원가입
-        </h1>
-      </div>
+    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="회원가입" />
 
-      <div className="flex-1 px-6 pt-8 pb-6">
-        {/* Welcome */}
-        <h2 className="text-2xl font-bold text-[#16181d] tracking-tight mb-2">반갑습니다!</h2>
-        <p className="text-sm text-[#575e6b] leading-6 mb-8">
-          SHIELD의 AI 법률 서비스를 이용하기 위해
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        className="flex flex-1 flex-col px-6 pt-4 pb-6"
+      >
+        {/* Title */}
+        <h2 className="text-[21px] font-bold leading-8 tracking-[-0.6px]">
+          <span className="text-brand-primary">SHIELD</span>
+          <span className="text-[#171a1f]">와 함께</span>
           <br />
-          기본 정보를 입력해 주세요.
-        </p>
+          <span className="text-[#171a1f]">법률 서비스를 사용해 볼까요?</span>
+        </h2>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
-          <Input
-            label="성함"
-            placeholder="홍길동"
-            error={errors.name?.message}
-            autoComplete="name"
-            leftAddon={<User size={16} />}
-            className="bg-[#f9fafb] rounded-xl"
-            {...register('name')}
-          />
-
-          <Input
-            label="이메일 주소"
-            type="email"
+        {/* Form fields */}
+        <div className="mt-8 flex flex-col gap-6">
+          <UnderlineField
+            label="이메일"
+            required
             placeholder="example@shield.ai"
-            error={errors.email?.message}
+            type="email"
             autoComplete="email"
-            leftAddon={<Mail size={16} />}
-            className="bg-[#f9fafb] rounded-xl"
-            {...register('email')}
+            error={errors.email?.message}
+            register={register('email')}
           />
-
-          <Input
-            label="휴대폰 번호"
-            type="tel"
+          <UnderlineField
+            label="이름"
+            required
+            placeholder="홍길동"
+            autoComplete="name"
+            error={errors.name?.message}
+            register={register('name')}
+          />
+          <UnderlineField
+            label="휴대전화"
+            required
             placeholder="010-1234-5678"
-            error={errors.phone?.message}
+            type="tel"
             autoComplete="tel"
-            leftAddon={<Phone size={16} />}
-            className="bg-[#f9fafb] rounded-xl"
-            {...register('phone')}
+            error={errors.phone?.message}
+            register={register('phone')}
           />
+        </div>
 
-          {/* Info banner */}
-          <div className="flex gap-3 bg-[#f0f7ff] border border-brand/10 rounded-[14px] p-4">
-            <Info size={20} className="text-brand shrink-0 mt-0.5" />
-            <p className="text-sm text-[#02264b] leading-5.75">
-              입력하신 정보는 변호사 상담 및 본인 확인 용도로만 안전하게 사용됩니다.
-            </p>
-          </div>
-
-          {/* Agreement checkbox */}
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-0.5 w-5 h-5 rounded-sm border-[#565d6d] text-brand focus:ring-brand/40"
-            />
-            <span className="text-sm font-medium text-[#16181d]/80">
-              <a
-                href="/terms"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-brand underline underline-offset-2 hover:text-brand/80"
-                onClick={(e) => e.stopPropagation()}
-              >
-                서비스 이용약관
-              </a>
-              {' 및 '}
-              <a
-                href="/privacy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-brand underline underline-offset-2 hover:text-brand/80"
-                onClick={(e) => e.stopPropagation()}
-              >
-                개인정보 처리방침
-              </a>
-              에 동의합니다.
-            </span>
-          </label>
-
-          <div className="pt-2">
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              fullWidth
-              disabled={!agreed}
-              isLoading={isSubmitting}
-              className="rounded-xl h-14 text-lg"
+        {/* Terms checkbox */}
+        <label className="mt-10 flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="mt-0.5 h-5 w-5 rounded-sm border border-[#565d6d] text-brand-primary focus:ring-brand-primary/40"
+          />
+          <span className="text-[14px] leading-5 text-[rgba(22,24,29,0.8)]">
+            <span className="font-medium text-[#e52e2e]">* </span>
+            <a
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-brand-primary"
+              onClick={(e) => e.stopPropagation()}
             >
-              회원가입 완료
-            </Button>
-          </div>
-        </form>
-      </div>
+              서비스 이용약관
+            </a>
+            {' 및 '}
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-brand-primary"
+              onClick={(e) => e.stopPropagation()}
+            >
+              개인정보 처리방침
+            </a>
+            에 동의합니다.
+          </span>
+        </label>
+
+        {/* Submit */}
+        <div className="mt-auto pt-6">
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className={cn(
+              'flex h-14 w-full items-center justify-center rounded-[12px]',
+              'text-[18px] font-bold text-white transition duration-150',
+              'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+              canSubmit
+                ? 'bg-brand-primary hover:brightness-95 active:scale-[0.99]'
+                : 'cursor-not-allowed bg-brand-primary opacity-50',
+            )}
+          >
+            {isSubmitting ? '처리 중...' : '회원가입 완료'}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { FileText, Shield, Scale, Pencil, TriangleAlert } from 'lucide-react';
 import { useBriefDetail } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { getDomainMeta } from '@/lib/domainIcons';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -39,9 +39,9 @@ export function FinalReviewPage() {
   // ── loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex flex-col flex-1">
-        <Header title="최종 검토" showBack onBack={() => navigate(-1)} />
-        <div className="flex items-center justify-center flex-1">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+        <PageHeader title="의뢰서 최종 확인" />
+        <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
         </div>
       </div>
@@ -50,9 +50,9 @@ export function FinalReviewPage() {
 
   if (!brief) {
     return (
-      <div className="flex flex-col flex-1">
-        <Header title="최종 검토" showBack onBack={() => navigate(-1)} />
-        <div className="flex items-center justify-center flex-1">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+        <PageHeader title="의뢰서 최종 확인" />
+        <div className="flex flex-1 items-center justify-center">
           <p className="text-sm text-gray-500">의뢰서를 찾을 수 없습니다.</p>
         </div>
       </div>
@@ -74,10 +74,10 @@ export function FinalReviewPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header title="최종 검토" showBack onBack={() => navigate(-1)} />
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="의뢰서 최종 확인" />
 
-      <main className="flex-1 px-6 py-6 space-y-5 pb-36">
+      <main className="flex-1 space-y-5 px-6 py-6 pb-36">
         {/* Intro */}
         <div>
           <h2 className="text-xl font-bold text-[#161a1d] tracking-tight leading-8">

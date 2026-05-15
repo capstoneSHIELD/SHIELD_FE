@@ -3,7 +3,7 @@ import { Search } from 'lucide-react';
 import { formatDateTime } from '@/lib/dateUtils';
 import { useDeliveries } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { DELIVERY_STATUS_BADGE, DELIVERY_STATUS_LABEL } from '@/lib/constants';
 import type { DeliveryStatus } from '@/types/enums';
 
@@ -18,14 +18,10 @@ export function BriefDeliveryPage() {
   const list = deliveries ?? [];
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header
-        title="전달 현황"
-        showBack
-        onBack={() => navigate(`/briefs/${id}`)}
-      />
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="변호사 찾기" onBack={() => navigate(`/briefs/${id}`)} />
 
-      <main className="flex-1 px-4 py-4 flex flex-col gap-4">
+      <main className="flex flex-1 flex-col gap-4 px-4 py-4">
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center h-48">

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figma export — Login (page)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;600;700&family=Russo+One&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #f3f4f6;
+        font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+      }
+      .page-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 24px 48px;
+      }
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #16181d;
+        margin: 0 0 4px;
+      }
+      .page-sub {
+        font-size: 13px;
+        color: #575e6b;
+        margin: 0 0 24px;
+      }
+      .states {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+      }
+      .state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .state-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #16181d;
+        background: #fff;
+        padding: 6px 14px;
+        border-radius: 999px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      }
+      .state-label small {
+        font-weight: 400;
+        color: #8a8f9a;
+        margin-left: 6px;
+      }
+      .frame {
+        width: 390px;
+        height: 844px;
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 3px 12px rgba(18, 15, 40, 0.12);
+        border-radius: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-wrap">
+      <h1 class="page-title">Login</h1>
+      <p class="page-sub">소셜 로그인 진입 화면 (node 1:4).</p>
+
+      <div class="states">
+        <div class="state">
+          <div class="frame" data-node-id="1:4" data-name="Login">
+            <!-- Background blur halo -->
+            <div class="absolute bg-[rgba(31,140,249,0.05)] blur-[64px] left-[214px] rounded-[128px] size-[256px] top-[-80px]" data-node-id="1:21"></div>
+
+            <!-- Status bar -->
+            <div class="absolute bg-[rgba(0,0,0,0)] h-[40px] left-0 top-0 w-[390px]" data-node-id="1:22">
+              <div class="absolute h-[40px] left-0 overflow-clip top-0 w-[70px]">
+                <div class="absolute inset-[41.96%_19.41%_31.28%_41.5%]">
+                  <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/login/statusbar-left.svg" />
+                </div>
+              </div>
+              <div class="absolute h-[40px] left-[294px] overflow-clip top-0 w-[96px]">
+                <div class="absolute inset-[41.68%_18.88%_31.92%_12.5%]">
+                  <div class="absolute inset-[-4.73%_0_0_0]">
+                    <img alt="" class="block max-w-none size-full" src="./assets/login/statusbar-right.svg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tagline above logo -->
+            <p class="-translate-x-1/2 absolute font-bold h-[20px] leading-[28px] left-[195px] text-[#16181d] text-[9px] text-center top-[180px] tracking-[-0.5px] w-[254px]" data-node-id="1:40" style="font-variation-settings: 'wdth' 100;">
+              더 스마트한 법률 파트너
+            </p>
+
+            <!-- Logo -->
+            <div class="absolute left-[159px] rounded-[13px] size-[71px] top-[212px]" data-node-id="1:5">
+              <img alt="" class="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[13px] size-full" src="./assets/login/logo.png" />
+            </div>
+
+            <!-- SHIELD wordmark -->
+            <p class="-translate-x-1/2 absolute h-[33px] leading-[26px] left-[198px] not-italic text-[#3688f4] text-[35px] text-center top-[301px] tracking-[-0.5px] w-[160px]" data-node-id="1:6" style="font-family: 'Russo One', sans-serif;">
+              SHIELD
+            </p>
+
+            <!-- Subtitle -->
+            <p class="-translate-x-1/2 absolute font-medium leading-[24px] left-[201px] text-[#575e6b] text-[14px] text-center top-[325px] whitespace-nowrap" data-node-id="1:39" style="font-variation-settings: 'wdth' 100;">
+              AI 법률 정보 구조화 플랫폼
+            </p>
+
+            <!-- Kakao button -->
+            <div class="-translate-x-1/2 absolute bg-[#fee500] h-[56px] left-1/2 rounded-[14px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(35,37,41,0.06)] top-[529px] w-[340px]" data-node-id="1:7">
+              <p class="-translate-x-1/2 absolute font-semibold leading-[24px] left-[170.5px] text-[#191919] text-[16px] text-center top-[15.5px] whitespace-nowrap" data-node-id="1:8" style="font-variation-settings: 'wdth' 100;">
+                카카오로 시작하기
+              </p>
+              <div class="absolute h-[15px] left-[83px] top-[19px] w-[17px]" data-node-id="1:9">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/login/kakao-icon.svg" />
+              </div>
+            </div>
+
+            <!-- Naver button -->
+            <div class="absolute bg-[#03c75a] h-[56px] left-[25px] rounded-[14px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(35,37,41,0.06)] top-[597px] w-[340px]" data-node-id="1:10">
+              <p class="-translate-x-1/2 absolute font-semibold leading-[24px] left-[174px] text-[16px] text-center text-white top-[16px] whitespace-nowrap" data-node-id="1:11" style="font-variation-settings: 'wdth' 100;">
+                네이버로 시작하기
+              </p>
+              <div class="absolute h-[15px] left-[90px] top-[19px] w-[14px]" data-node-id="1:12">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/login/naver-icon.svg" />
+              </div>
+            </div>
+
+            <!-- Google button -->
+            <div class="absolute bg-white border border-[#e0e2e6] border-solid h-[56px] left-[25px] rounded-[14px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(35,37,41,0.06)] top-[665px] w-[340px]" data-node-id="1:13">
+              <div class="absolute left-[56.5px] size-[25px] top-[14.5px]" data-node-id="1:14">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                  <img alt="" class="absolute left-0 max-w-none size-full top-0" src="./assets/login/google-icon.png" />
+                </div>
+              </div>
+              <p class="-translate-x-1/2 absolute font-semibold leading-[24px] left-[170px] text-[#16181d] text-[16px] text-center top-[14.5px] whitespace-nowrap" data-node-id="1:15" style="font-variation-settings: 'wdth' 100;">
+                Google 계정으로 시작하기
+              </p>
+              <div class="absolute h-[22.088px] left-[22px] top-[-15.09px] w-[66px]" data-node-id="1:16">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/login/quick-login-badge.svg" />
+              </div>
+              <p class="-translate-x-1/2 absolute font-normal h-[19px] leading-[24px] left-[55px] text-[11px] text-center text-white top-[-17px] w-[60px]" data-node-id="1:19" style="font-variation-settings: 'wdth' 100;">
+                간편 로그인
+              </p>
+            </div>
+
+            <!-- Footer terms -->
+            <p class="-translate-x-1/2 absolute font-normal h-[19px] left-[198px] text-[#575e6b] text-[0px] text-center top-[752.5px] w-[383px]" data-node-id="1:20" style="font-variation-settings: 'wdth' 100;">
+              <span class="leading-[18px] text-[10px]">로그인 시 SHIELD의 </span>
+              <span class="leading-[18px] text-[10px] underline font-medium">이용약관</span>
+              <span class="leading-[18px] text-[10px]"> 및 </span>
+              <span class="leading-[18px] text-[10px] underline font-medium">개인정보 처리방침</span>
+              <span class="leading-[18px] text-[10px]">에 동의하는 것으로 간주합니다.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

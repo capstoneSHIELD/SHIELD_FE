@@ -1,6 +1,10 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
+
+/* Explicit source list: scan only project source files, not figma-export reference HTMLs */
+@source "./**/*.{ts,tsx,js,jsx}";
+@source "../index.html";
 
 /* ===== CSS Custom Properties (Design Tokens) ===== */
 :root {
@@ -20,6 +24,11 @@
 /* ===== Tailwind v4 Theme ===== */
 @theme {
   --color-brand: #3B82F6;
+  --color-brand-primary: #258cf4;
+  --color-brand-deep: #0680f9;
+  --color-accent-orange: #c2410c;
+  --color-warning-red: #eb4747;
+  --color-text-soft: #575e6b;
   --color-kakao: #FEE500;
   --color-naver: #03C75A;
   --color-surface: #F8FAFC;

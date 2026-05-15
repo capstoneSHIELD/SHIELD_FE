@@ -1,13 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { RefreshCw, Shield } from 'lucide-react';
+import { Clock, Info, RefreshCw } from 'lucide-react';
+import { cn } from '@/lib/cn';
 import { usePolling } from '@/hooks/usePolling';
 import { consultationApi } from '@/lib/consultationApi';
 import { getDomainMeta } from '@/lib/domainIcons';
-import { Button, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { Button } from '@/components/ui';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { DomainSelectModal } from '@/components/client/DomainSelectModal';
 import type { ConsultationResponse } from '@/types/consultation';
+
+import loaderCircle from '@/assets/figma/processing-case/loader-circle.svg';
+import shieldCheck from '@/assets/figma/processing-case/shield-check.svg';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
@@ -23,14 +27,12 @@ export function AnalyzingPage() {
   const [domainUpdateError, setDomainUpdateError] = useState<string | null>(null);
 
   // ── 사용자가 분야를 직접 재선택했을 때 처리 ───────────────────────────────
-  // BE 의 PATCH /consultations/{id}/classify 호출로 분류를 override 한 뒤 의뢰서 생성 흐름으로 진입
   const handleDomainOverride = useCallback(
     async (domainId: string) => {
       if (!id || !classificationResult) return;
       setIsUpdatingDomain(true);
       setDomainUpdateError(null);
       try {
-        // 기존 subDomains/tags 는 유지하여 사용자 정보 손실 방지
         const subDomains = classificationResult.aiSubDomains ?? classificationResult.userSubDomains ?? [];
         const tags = classificationResult.aiTags ?? classificationResult.userTags ?? [];
         await consultationApi.updateClassify(id, {
@@ -51,7 +53,7 @@ export function AnalyzingPage() {
 
   // ── elapsed timer ───────────────────────────────────────────────────────
   useEffect(() => {
-    if (classificationResult) return; // stop timer when result arrives
+    if (classificationResult) return;
     const start = Date.now();
     const timer = setInterval(() => {
       setElapsedSecs(Math.floor((Date.now() - start) / 1000));
@@ -84,48 +86,51 @@ export function AnalyzingPage() {
     onTimeout: handleTimeout,
   });
 
-  // ── retry — remounts the page (clears timedOut) ─────────────────────────
   function handleRetry() {
     setTimedOut(false);
     setElapsedSecs(0);
   }
 
-  // ── classification result view ───────────────────────────────────────────
+  // ── classification result view (figma 06) ────────────────────────────────
   if (classificationResult) {
-    // 분석 완료 후 조회 단계 — AI 분류값 우선, 없으면 사용자 입력값으로 폴백
     const domains = classificationResult.aiDomains ?? classificationResult.userDomains ?? [];
     const primaryDomain = domains[0] ?? '';
     const meta = getDomainMeta(primaryDomain);
     const tags: string[] = classificationResult.aiTags ?? classificationResult.userTags ?? [];
 
     return (
-      <div className="flex flex-col flex-1">
-        <Header
-          title="분류 결과"
-          showBack
-          onBack={() => navigate(`/consultations/${id}`)}
-        />
-        <main className="flex-1 flex flex-col px-5 py-6">
-          <h2 className="text-xl font-bold text-[#181b20] leading-8">
-            사건 분류가 완료되었습니다
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+        <PageHeader title="분류 결과" onBack={() => navigate(`/consultations/${id}`)} />
+
+        <main className="flex flex-1 flex-col overflow-y-auto px-[20px] pt-[19px] pb-32">
+          {/* Title — figma 06 */}
+          <h2 className="text-[20px] font-bold leading-[30px] text-[#181b20]">
+            사건 분류가 <span className="text-brand-primary">완료</span>되었습니다
           </h2>
-          <p className="mt-2 text-sm text-[#555d6d] leading-relaxed">
+          <p className="mt-2 text-sm leading-relaxed text-text-soft">
             입력하신 내용을 바탕으로 AI가 가장 유사한 법률 분야를 선정했습니다. 결과를 확인해 주세요.
           </p>
 
-          {/* Classification result card */}
-          <div className="mt-6 bg-[#d8ebfd] rounded-[10px] shadow-lg p-6 flex flex-col items-center">
-            <div className="w-18 h-18 rounded-full bg-white/60 flex items-center justify-center mb-4">
-              <meta.Icon size={32} strokeWidth={1.75} className="text-brand" aria-hidden="true" />
+          {/* Big result card */}
+          <div className="mt-6 flex flex-col items-center rounded-[10px] bg-[#d8ebfd] px-6 pt-8 pb-7 shadow-[0px_8px_16px_0px_rgba(23,25,28,0.1)]">
+            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[12px] bg-brand-primary/10">
+              <meta.Icon
+                size={40}
+                strokeWidth={1.75}
+                className="text-brand-primary"
+                aria-hidden="true"
+              />
             </div>
-            <p className="text-sm font-medium text-brand/70">AI가 분석한 주요 분야</p>
-            <p className="text-4xl font-bold text-brand mt-1">{meta.label}</p>
+            <p className="mt-5 text-sm font-medium text-brand-primary/70">AI가 분석한 주요 분야</p>
+            <p className="mt-1 text-[36px] font-bold leading-[40px] tracking-[-0.9px] text-brand-primary">
+              {meta.label}
+            </p>
             {tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-4 justify-center">
-                {tags.map((tag) => (
+              <div className="mt-7 flex flex-wrap justify-center gap-2">
+                {tags.slice(0, 4).map((tag) => (
                   <span
                     key={tag}
-                    className="bg-white/80 text-[#31383f] text-xs font-medium px-3 py-1 rounded-full"
+                    className="rounded-[12px] bg-white/80 px-3 py-1 text-xs font-medium text-brand-primary"
                   >
                     #{tag}
                   </span>
@@ -134,44 +139,54 @@ export function AnalyzingPage() {
             )}
           </div>
 
-          {/* Info box */}
-          <div className="mt-4 bg-gray-50 border border-gray-200 rounded-[10px] px-4 py-3">
-            <p className="text-xs text-[#555d6d] text-center leading-relaxed">
+          {/* Warning bar — figma 06 */}
+          <div className="mt-4 flex items-start gap-2 rounded-[12px] border border-warning-red/20 bg-warning-red/5 px-4 py-2.5">
+            <Info size={20} className="shrink-0 text-warning-red" />
+            <p className="text-[10px] leading-5 text-[#ef6a6a]">
               AI의 분석은 틀릴 수 있습니다. 다른 법률 분야를 선택하시겠습니까?
             </p>
           </div>
 
           {domainUpdateError && (
-            <div className="mt-3 px-3 py-2 bg-red-50 rounded-lg">
-              <p className="text-xs text-red-600 text-center">{domainUpdateError}</p>
+            <div className="mt-3 rounded-lg bg-red-50 px-3 py-2">
+              <p className="text-center text-xs text-red-600">{domainUpdateError}</p>
             </div>
           )}
 
           <div className="flex-1" />
-
-          {/* Action buttons */}
-          <div className="space-y-3 pb-safe">
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              onClick={() => navigate('/briefs', { replace: true })}
-            >
-              확인
-            </Button>
-            <Button
-              variant="secondary"
-              size="lg"
-              fullWidth
-              onClick={() => setPickerOpen(true)}
-              className="border border-[#dee1e6]"
-            >
-              다른 분야 선택
-            </Button>
-          </div>
         </main>
 
-        {/* 분야 직접 선택 모달 — 현재 분야 미리 선택된 상태로 열림 */}
+        {/* Bottom action area (sticky, backdrop blur — figma 06) */}
+        <div className="sticky bottom-0 left-0 right-0 z-10 mx-auto w-full max-w-[390px] bg-white/80 backdrop-blur-[6px] pt-5 pb-6">
+          <div className="px-[25px]">
+            <button
+              type="button"
+              onClick={() => navigate('/briefs', { replace: true })}
+              className={cn(
+                'flex h-[52px] w-full items-center justify-center rounded-[12px]',
+                'bg-brand-primary text-base font-bold text-white',
+                'shadow-[0px_4px_8px_0px_rgba(37,140,244,0.2)]',
+                'transition duration-150 hover:brightness-95 active:scale-[0.99]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+              )}
+            >
+              확인
+            </button>
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              className={cn(
+                'mt-3 flex h-[52px] w-full items-center justify-center rounded-[12px]',
+                'border border-[#dee1e6] bg-white text-base font-bold text-black',
+                'transition duration-150 hover:bg-gray-50 active:scale-[0.99]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+              )}
+            >
+              다른 분야 선택
+            </button>
+          </div>
+        </div>
+
         {pickerOpen && (
           <DomainSelectModal
             current={primaryDomain}
@@ -183,22 +198,18 @@ export function AnalyzingPage() {
     );
   }
 
+  // ── loading state (figma 07) ─────────────────────────────────────────────
   return (
-    <div className="flex flex-col flex-1">
-      <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+      <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         {timedOut ? (
-          /* ── timeout state ──────────────────────────────────────────── */
           <>
-            <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
               <RefreshCw size={36} className="text-red-400" />
             </div>
-            <div className="space-y-1.5 mt-6">
-              <p className="text-base font-semibold text-gray-800">
-                시간이 초과되었습니다
-              </p>
-              <p className="text-sm text-gray-500">
-                새로고침해주세요.
-              </p>
+            <div className="mt-6 space-y-1.5">
+              <p className="text-base font-semibold text-gray-800">시간이 초과되었습니다</p>
+              <p className="text-sm text-gray-500">새로고침해주세요.</p>
             </div>
             <Button
               variant="primary"
@@ -211,52 +222,56 @@ export function AnalyzingPage() {
             </Button>
           </>
         ) : (
-          /* ── polling (loading) state ────────────────────────────────── */
           <>
-            {/* SHIELD branding */}
-            <div className="w-14 h-14 rounded-[28px] bg-[#161a1d] flex items-center justify-center">
-              <Shield size={32} className="text-white" strokeWidth={1.5} />
-            </div>
-            <p className="text-[22px] font-bold text-[#161a1d] mt-2">SHIELD</p>
-            <p className="text-xs font-medium text-[#31383f] tracking-[1.2px] uppercase">
-              Legal Intelligence System
-            </p>
-
-            {/* Loading animation */}
-            <div className="mt-10 mb-6 relative">
-              <div className="w-24 h-24 rounded-full border-4 border-brand/10 flex items-center justify-center">
-                <Spinner size="lg" className="text-brand" />
+            {/* Loader circle composition — figma 07 */}
+            <div className="relative flex h-24 w-24 items-center justify-center">
+              {/* Outer light ring */}
+              <div className="absolute inset-0 rounded-full border-[4px] border-brand-primary/10" />
+              {/* Spinning arc (76x76 SVG) */}
+              <div className="absolute inset-[10px] flex items-center justify-center">
+                <img
+                  src={loaderCircle}
+                  alt=""
+                  className="h-[76px] w-[76px] animate-spin"
+                  style={{ animationDuration: '1.4s' }}
+                />
               </div>
+              {/* Center shield-check */}
+              <img src={shieldCheck} alt="" className="relative z-10 h-4 w-4" />
+              {/* Small bottom-right circle */}
+              <div className="absolute right-[8px] top-[32px] h-8 w-8 rounded-2xl border-2 border-white shadow-[0px_4px_6px_0px_rgba(0,0,0,0.1)]" />
             </div>
 
-            {/* Main copy */}
-            <p className="text-xl font-bold text-[#161a1d] tracking-tight">
-              사건을 분석하고 있습니다...
+            {/* Title */}
+            <p className="mt-[112px] text-[20px] font-bold leading-7 tracking-[-0.5px] text-[#161a1d]">
+              채팅내용을 분석 하고 있습니다
             </p>
-            <p className="text-xs text-[#31383f] mt-2 leading-relaxed max-w-68.5">
-              입력하신 내용을 바탕으로 최적의 법률 프레임워크를 구성 중입니다.
-            </p>
+            <div className="mt-3 text-xs leading-5 text-[#31383f]">
+              <p>입력하신 내용을 바탕으로</p>
+              <p>최적의 법률 프레임워크를 구성 중입니다.</p>
+            </div>
 
-            {/* Duration badge */}
-            <div className="mt-6 bg-[#f3f5f6] border border-[#dde0e4] rounded-pill px-4 py-2 shadow-sm">
-              <span className="text-sm font-medium text-[#1d2125]">약 10~30초 소요</span>
+            {/* Time indicator */}
+            <div className="mt-7 flex items-center gap-2">
+              <Clock size={16} className="text-brand-primary" />
+              <span className="text-xs font-medium text-[#1d2125]">약 10~30초 소요</span>
             </div>
 
             {/* Elapsed */}
-            <p className="text-xs text-gray-400 mt-4 tabular-nums">
-              {elapsedSecs}초 경과
-            </p>
+            <p className="mt-4 text-xs tabular-nums text-gray-400">{elapsedSecs}초 경과</p>
           </>
         )}
       </main>
 
-      {/* Bottom security notice */}
-      {!timedOut && (
-        <div className="pb-8 pt-4 text-center">
-          <p className="text-[10px] font-bold text-[#31383f]/60 uppercase tracking-tight">
-            Secure Data Processing
-          </p>
-          <p className="text-[11px] text-[#31383f]/40 mt-1 px-12 leading-relaxed">
+      {/* Bottom security notice (figma 07) */}
+      {!timedOut && !classificationResult && (
+        <div className="px-6 pb-8 pt-4 text-center">
+          <div className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[-0.5px] text-[#31383f]/60">
+            <span className="h-px w-8 bg-[#dee1e6]" />
+            <span>Secure Data Processing</span>
+            <span className="h-px w-8 bg-[#dee1e6]" />
+          </div>
+          <p className="mt-2 text-[11px] leading-relaxed text-[#31383f]/40">
             SHIELD는 모든 데이터를 암호화하여 처리하며, 분석 완료 후 안전하게 결과를 전달합니다.
           </p>
         </div>

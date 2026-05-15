@@ -1,74 +1,56 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Check, Search } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useCreateConsultation } from '@/hooks/useConsultation';
-import { Button, Card } from '@/components/ui';
-import { CategoryPicker } from '@/components/ui/CategoryPicker';
-import { Header } from '@/components/layout/Header';
-import type { CategorySelection } from '@/lib/legalCategories';
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-/**
- * 선택된 CategorySelection[] 배열을 백엔드 3단계 분류 형태로 변환.
- *
- *  - path 길이 1 → 대분류(domains)
- *  - path 길이 2 → 중분류(subDomains) — 상위 대분류도 함께 포함
- *  - path 길이 3 → 소분류(tags) — 상위 대/중분류도 함께 포함
- *
- *  중복은 Set 으로 제거.
- */
-function toClassificationRequest(selections: CategorySelection[]): {
-  domains: string[];
-  subDomains: string[];
-  tags: string[];
-} {
-  const domains = new Set<string>();
-  const subDomains = new Set<string>();
-  const tags = new Set<string>();
-
-  for (const sel of selections) {
-    const [l1, l2, l3] = sel.path;
-    if (l1) domains.add(l1);
-    if (l2) subDomains.add(l2);
-    if (l3) tags.add(l3);
-  }
-
-  return {
-    domains: Array.from(domains),
-    subDomains: Array.from(subDomains),
-    tags: Array.from(tags),
-  };
-}
+import { PageHeader } from '@/components/mobile/PageHeader';
+import { LEGAL_CATEGORY_TREE } from '@/lib/legalCategories';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
 export function NewConsultationPage() {
   const navigate = useNavigate();
-  const [selected, setSelected] = useState<CategorySelection[]>([]);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [isUnknown, setIsUnknown] = useState(false);
+  const [query, setQuery] = useState('');
   const { mutate: createConsultation, isPending } = useCreateConsultation();
 
-  const isDomainChosen = selected.length > 0 || isUnknown;
+  // 평평한 L1 도메인 리스트 — figma 04 디자인은 단일 레벨
+  const domains = useMemo(() => LEGAL_CATEGORY_TREE.map((n) => n.name), []);
 
-  function handleCategoryChange(value: CategorySelection[]) {
-    setSelected(value);
-    if (value.length > 0) setIsUnknown(false);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return domains;
+    return domains.filter((d) => d.toLowerCase().includes(q));
+  }, [domains, query]);
+
+  const isDomainChosen = selected.size > 0 || isUnknown;
+
+  function toggleDomain(name: string) {
+    setIsUnknown(false);
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
   }
 
   function handleUnknownToggle() {
-    setIsUnknown(!isUnknown);
-    if (!isUnknown) setSelected([]);
+    setIsUnknown((v) => !v);
+    if (!isUnknown) setSelected(new Set());
   }
 
   function handleSubmit() {
     if (!isDomainChosen) return;
 
-    // "잘 모르겠어요" → 세 배열 모두 빈 값으로 전달.
-    // 그 외에는 선택된 경로를 domains/subDomains/tags 로 분해해 전달.
     const request = isUnknown
       ? { domains: [], subDomains: [], tags: [] }
-      : toClassificationRequest(selected);
+      : {
+          domains: Array.from(selected),
+          subDomains: [],
+          tags: [],
+        };
 
     createConsultation(request, {
       onSuccess: (res) => {
@@ -79,34 +61,88 @@ export function NewConsultationPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header
-        title="새 상담"
-        showBack
-        onBack={() => navigate(-1)}
-      />
+    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="분야 선택" />
 
-      <main className="flex-1 flex flex-col px-4 py-6 gap-6">
-        {/* Description card */}
-        <Card padding="md">
-          <p className="text-sm font-medium text-gray-500 mb-0.5">분야 선택</p>
-          <p className="text-base font-semibold text-gray-900">
-            어떤 분야의 상담이 필요하신가요?
-          </p>
-          <p className="mt-1.5 text-sm text-gray-500 leading-relaxed">
-            관련 분야를 모두 선택해 주세요. 정확하지 않아도 괜찮습니다.
-          </p>
-        </Card>
+      <main className="flex flex-1 flex-col overflow-y-auto px-[25px] pt-4 pb-24">
+        {/* Title — figma 04 */}
+        <h1 className="text-[20px] font-bold leading-[25px] text-[#181b20]">
+          어떤 <span className="text-brand-primary">법률 분야</span>를
+          <br />
+          선택 하시겠습니까?
+        </h1>
 
-        {/* Category picker */}
-        <CategoryPicker
-          value={selected}
-          onChange={handleCategoryChange}
-          placeholder="분야 검색 (예: 보증금 반환, 이혼, 해고...)"
-        />
+        {/* Search input — figma 04 */}
+        <div className="mt-[40px] relative">
+          <Search
+            size={20}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#adb5bd]"
+          />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="전문 분야 검색.."
+            className={cn(
+              'h-[45px] w-full rounded-[12px] border border-[#adb5bd] bg-white',
+              'pl-10 pr-4 text-sm',
+              'placeholder:text-[#adb5bd]',
+              'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.04)]',
+              'outline-none transition-colors',
+              'focus:border-brand-primary',
+            )}
+          />
+        </div>
+
+        {/* Domain list — figma 04 */}
+        <div className="mt-4 rounded-[12px] border border-[#adb5bd] bg-white overflow-hidden shadow-[0px_4px_8px_0px_rgba(35,37,41,0.04)]">
+          {filtered.length === 0 ? (
+            <div className="px-4 py-10 text-center text-sm text-[#adb5bd]">
+              검색 결과가 없습니다
+            </div>
+          ) : (
+            filtered.map((name, idx) => {
+              const isSelected = selected.has(name);
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => toggleDomain(name)}
+                  className={cn(
+                    'flex w-full items-center gap-3 px-4 py-3 text-left',
+                    'transition-colors duration-150',
+                    'hover:bg-brand-primary/5',
+                    'focus-visible:outline-none focus-visible:bg-brand-primary/10',
+                    idx !== filtered.length - 1 && 'border-b border-[#e0e2e6]',
+                    isSelected && 'bg-brand-primary/5',
+                  )}
+                >
+                  <span
+                    className={cn(
+                      'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors',
+                      isSelected
+                        ? 'border-brand-primary bg-brand-primary text-white'
+                        : 'border-[#adb5bd] bg-white',
+                    )}
+                  >
+                    {isSelected && <Check size={14} strokeWidth={3} />}
+                  </span>
+                  <span
+                    className={cn(
+                      'flex-1 text-sm',
+                      isSelected ? 'font-semibold text-[#16181d]' : 'text-black',
+                    )}
+                  >
+                    {name}
+                  </span>
+                </button>
+              );
+            })
+          )}
+        </div>
 
         {/* "잘 모르겠어요" option */}
-        <div className="flex justify-center">
+        <div className="mt-4 flex justify-center">
           <button
             type="button"
             onClick={handleUnknownToggle}
@@ -114,7 +150,7 @@ export function NewConsultationPage() {
               'text-sm font-medium transition-colors duration-150',
               'focus-visible:outline-none focus-visible:underline',
               isUnknown
-                ? 'text-brand underline'
+                ? 'text-brand-primary underline'
                 : 'text-gray-400 hover:text-gray-600',
             )}
           >
@@ -122,21 +158,26 @@ export function NewConsultationPage() {
           </button>
         </div>
 
-        {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Submit */}
-        <div className="pb-safe">
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            disabled={!isDomainChosen}
-            isLoading={isPending}
+        {/* "다음" button — sits above BottomNav */}
+        <div className="mt-6">
+          <button
+            type="button"
             onClick={handleSubmit}
+            disabled={!isDomainChosen || isPending}
+            className={cn(
+              'flex h-14 w-full items-center justify-center rounded-[12px]',
+              'text-[18px] font-bold text-white transition duration-150',
+              'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+              isDomainChosen && !isPending
+                ? 'bg-brand-primary hover:brightness-95 active:scale-[0.99]'
+                : 'cursor-not-allowed bg-gray-300',
+            )}
           >
-            상담 시작
-          </Button>
+            {isPending ? '처리 중...' : '다음'}
+          </button>
         </div>
       </main>
     </div>

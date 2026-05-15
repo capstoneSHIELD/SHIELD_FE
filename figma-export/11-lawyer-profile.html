@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figma export — Lawyer Profile (page)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body { margin: 0; background: #f3f4f6; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+      .page-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 48px; }
+      .page-title { font-size: 22px; font-weight: 700; color: #16181d; margin: 0 0 4px; }
+      .page-sub { font-size: 13px; color: #575e6b; margin: 0 0 24px; }
+      .states { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; }
+      .state { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      .frame { width: 390px; height: 1150px; position: relative; overflow: hidden; background: #fff; box-shadow: 0 3px 12px rgba(18,15,40,0.12); border-radius: 24px; }
+    </style>
+  </head>
+  <body>
+    <main class="page-wrap">
+      <h1 class="page-title">Lawyer Profile</h1>
+      <p class="page-sub">변호사 상세 프로필 (node 1:1494, 1150px).</p>
+
+      <div class="states">
+        <div class="state">
+          <div class="frame" data-node-id="1:1494" data-name="Lawyer Profile">
+
+            <!-- Body -->
+            <div class="absolute bg-[rgba(0,0,0,0)] h-[1026px] left-[0.5px] overflow-clip top-[103.5px] w-[390px]" data-node-id="1:1495">
+
+              <!-- Avatar -->
+              <div class="absolute bg-[#f0e4fc] left-[24px] overflow-clip rounded-[40px] size-[80px] top-[32px]">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                  <img alt="" class="absolute left-0 max-w-none size-full top-0" src="./assets/lawyer-profile/avatar.png" />
+                </div>
+              </div>
+              <!-- Name -->
+              <p class="absolute font-bold leading-[28px] left-[120px] not-italic text-[#16181d] text-[20px] top-[32px] whitespace-nowrap">김성민 변호사</p>
+              <!-- Experience tag -->
+              <div class="absolute bg-[#f0f7ff] h-[20px] left-[240px] overflow-clip rounded-[10px] top-[32px] w-[57px]">
+                <p class="absolute font-medium leading-[20px] left-[calc(50%-23.5px)] not-italic text-[#0680f9] text-[12px] top-[calc(50%-10px)] whitespace-nowrap">경력 15년</p>
+              </div>
+              <!-- 3 specialty chips -->
+              <div class="absolute bg-[#f3f4f6] h-[20px] left-[120px] rounded-[8px] top-[70px] w-[45px]">
+                <p class="absolute font-normal leading-[16px] left-[8px] not-italic text-[#575e6b] text-[12px] top-[2px] whitespace-nowrap">부동산</p>
+              </div>
+              <div class="absolute bg-[#f3f4f6] h-[20px] left-[170px] rounded-[8px] top-[70px] w-[45px]">
+                <p class="absolute font-normal leading-[16px] left-[7px] not-italic text-[#575e6b] text-[12px] top-[2px] whitespace-nowrap">임대차</p>
+              </div>
+              <div class="absolute bg-[#f3f4f6] h-[20px] left-[220px] rounded-[8px] top-[70px] w-[54px]">
+                <p class="absolute font-normal leading-[16px] left-[7px] not-italic text-[#575e6b] text-[12px] top-[2px] whitespace-nowrap">민사집행</p>
+              </div>
+
+              <!-- Match keywords card -->
+              <div class="absolute bg-[#f0f7ff] h-[178px] left-[24.5px] overflow-clip rounded-[12px] top-[152.5px] w-[341px]" data-node-id="1:1508">
+                <div class="absolute left-[16px] overflow-clip size-[18px] top-[17px]">
+                  <div class="absolute inset-[8.33%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/search-1.svg" /></div>
+                </div>
+                <p class="absolute font-medium leading-[20px] left-[42px] not-italic text-[#0680f9] text-[14px] top-[16px] whitespace-nowrap">내 사건과의 매칭 키워드</p>
+                <p class="absolute font-normal leading-[0] left-[16px] not-italic text-[0px] text-[rgba(2,38,75,0.8)] top-[47px] w-[316px]">
+                  <span class="leading-[18px] text-[14px]">사용자님의 사건 분석 결과, 다음 핵심 키워드에서 </span>
+                  <span class="font-bold leading-[18px] text-[14px]">5건</span>
+                  <span class="leading-[18px] text-[14px]">의 전문성이 확인되었습니다.</span>
+                </p>
+                <!-- Keyword badges row 1 -->
+                <div class="absolute bg-[#0680f9] h-[24px] left-[16px] overflow-clip rounded-[12px] top-[105px] w-[71px]">
+                  <p class="absolute font-medium leading-[20px] left-[calc(50%-28.5px)] not-italic text-[10px] text-white top-[calc(50%-10px)] whitespace-nowrap">#임대차 계약</p>
+                </div>
+                <div class="absolute bg-[#0680f9] h-[24px] left-[98px] overflow-clip rounded-[12px] top-[105px] w-[71px]">
+                  <p class="absolute font-medium leading-[20px] left-[calc(50%-28.5px)] not-italic text-[10px] text-white top-[calc(50%-10px)] whitespace-nowrap">#권리금 반환</p>
+                </div>
+                <div class="absolute bg-[#0680f9] h-[24px] left-[180px] overflow-clip rounded-[12px] top-[105px] w-[81px]">
+                  <p class="absolute font-medium leading-[20px] left-[calc(50%-34.5px)] not-italic text-[10px] text-white top-[calc(50%-10px)] whitespace-nowrap">#상가 수선 의무</p>
+                </div>
+                <!-- Row 2 -->
+                <div class="absolute bg-[#0680f9] h-[24px] left-[16.5px] overflow-clip rounded-[12px] top-[136.5px] w-[71px]">
+                  <p class="absolute font-medium leading-[20px] left-[calc(50%-29.5px)] not-italic text-[10px] text-white top-[calc(50%-10px)] whitespace-nowrap">#부동산 분쟁</p>
+                </div>
+                <div class="absolute bg-[#0680f9] h-[24px] left-[98px] overflow-clip rounded-[12px] top-[137px] w-[62px]">
+                  <p class="absolute font-medium leading-[20px] left-[calc(50%-23px)] not-italic text-[10px] text-white top-[calc(50%-10px)] whitespace-nowrap">#내용증명</p>
+                </div>
+              </div>
+
+              <!-- 주요 수행 사례 stat card -->
+              <div class="absolute bg-[#f9fafb] border border-[#e0e2e6] border-solid h-[117px] left-[24.5px] rounded-[10px] top-[353.5px] w-[341px]" data-node-id="1:1532">
+                <div class="absolute left-[16px] overflow-clip size-[16px] top-[18px]">
+                  <div class="absolute inset-[3.94%_29.06%_12.31%_29.06%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/briefcase-1.svg" /></div>
+                  <div class="absolute inset-[20.69%_3.94%_12.31%_3.94%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/briefcase-2.svg" /></div>
+                </div>
+                <p class="absolute font-medium leading-[20px] left-[40px] not-italic text-[#16181d] text-[14px] top-[15px] whitespace-nowrap">주요 수행 사례</p>
+                <!-- chevron-right rotated 90deg -->
+                <div class="absolute flex items-center justify-center left-[305px] size-[14px] top-[12px]">
+                  <div class="flex-none rotate-90">
+                    <div class="overflow-clip relative size-[14px]">
+                      <div class="absolute inset-[21%_33.43%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/chevron-right.svg" /></div>
+                    </div>
+                  </div>
+                </div>
+                <p class="absolute font-bold leading-[0] left-[16px] not-italic text-[#16181d] text-[20px] top-[52px] whitespace-nowrap">
+                  <span class="leading-[28px]">120</span>
+                  <span class="leading-[28px] text-[#0680f9]">+</span>
+                </p>
+                <p class="absolute font-normal leading-[15px] left-[16px] not-italic text-[#575e6b] text-[10px] top-[83px] whitespace-nowrap">부동산 관련 승소</p>
+                <p class="absolute font-bold leading-[28px] left-[178px] not-italic text-[#0680f9] text-[20px] top-[52px] whitespace-nowrap">15년</p>
+                <p class="absolute font-normal leading-[15px] left-[178px] not-italic text-[#575e6b] text-[10px] top-[83px] whitespace-nowrap">통합 실무 경력</p>
+              </div>
+
+              <!-- 전문 자격 및 약력 section -->
+              <div class="absolute left-[24px] size-[16px] top-[496px]">
+                <div class="absolute inset-[49.45%_24.88%_4.03%_24.88%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/award-1.svg" /></div>
+                <div class="absolute inset-[4%_20.69%_37.38%_20.69%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/award-2.svg" /></div>
+              </div>
+              <p class="absolute font-bold leading-[20px] left-[48px] not-italic text-[#0680f9] text-[14px] top-[494px] tracking-[0.7px] uppercase whitespace-nowrap">전문 자격 및 약력</p>
+
+              <!-- License item 1 -->
+              <div class="absolute left-[24px] size-[18px] top-[544px]">
+                <div class="absolute inset-[4.17%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-1.svg" /></div>
+                <div class="absolute inset-[37.5%_33.33%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-2.svg" /></div>
+              </div>
+              <p class="absolute font-medium leading-[20px] left-[54px] not-italic text-[#16181d] text-[14px] top-[542px] whitespace-nowrap">대한변호사협회 부동산 전문 변호사 등록</p>
+              <p class="absolute font-normal leading-[16px] left-[54px] not-italic text-[#575e6b] text-[12px] top-[562px] whitespace-nowrap">대한변호사협회</p>
+
+              <!-- License item 2 -->
+              <div class="absolute h-[61px] left-[24px] top-[590px] w-[342px]">
+                <div class="absolute h-0 left-0 top-0 w-[341.5px]"><div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/lawyer-profile/line.svg" /></div></div>
+                <div class="absolute left-0 size-[18px] top-[15px]">
+                  <div class="absolute inset-[4.17%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-1.svg" /></div>
+                  <div class="absolute inset-[37.5%_33.33%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-2.svg" /></div>
+                </div>
+                <p class="absolute font-medium leading-[20px] left-[30px] not-italic text-[#16181d] text-[14px] top-[12px] whitespace-nowrap">서울지방변호사협회 건설법 연수 수료</p>
+                <p class="absolute font-normal leading-[16px] left-[30px] not-italic text-[#575e6b] text-[12px] top-[32px] whitespace-nowrap">서울지방변호사협회</p>
+              </div>
+
+              <!-- License item 3 -->
+              <div class="absolute h-[61px] left-[24.5px] top-[651.5px] w-[340px]">
+                <div class="absolute h-0 left-0 top-0 w-[342px]"><div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/lawyer-profile/line2.svg" /></div></div>
+                <div class="absolute left-0 size-[18px] top-[15px]">
+                  <div class="absolute inset-[4.17%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-1.svg" /></div>
+                  <div class="absolute inset-[37.5%_33.33%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-2.svg" /></div>
+                </div>
+                <p class="absolute font-medium leading-[20px] left-[30px] not-italic text-[#16181d] text-[14px] top-[12px] whitespace-nowrap">전국 임대차 분쟁 조정위원회 위원</p>
+                <p class="absolute font-normal leading-[16px] left-[30px] not-italic text-[#575e6b] text-[12px] top-[32px] whitespace-nowrap">법무부</p>
+              </div>
+
+              <!-- License item 4 -->
+              <div class="absolute h-[61px] left-[24px] top-[712px] w-[342px]">
+                <div class="absolute h-0 left-0 top-0 w-[342px]"><div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/lawyer-profile/line2.svg" /></div></div>
+                <div class="absolute left-0 size-[18px] top-[15px]">
+                  <div class="absolute inset-[4.17%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-1.svg" /></div>
+                  <div class="absolute inset-[37.5%_33.33%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/circle-check-2.svg" /></div>
+                </div>
+                <p class="absolute font-medium leading-[20px] left-[30px] not-italic text-[#16181d] text-[14px] top-[12px] whitespace-nowrap">부동산 자산관리사(CPM) 자격 보유</p>
+                <p class="absolute font-normal leading-[16px] left-[30px] not-italic text-[#575e6b] text-[12px] top-[32px] whitespace-nowrap">IREM</p>
+              </div>
+
+              <!-- 소개 (Intro) section -->
+              <div class="absolute left-[24px] size-[16px] top-[799px]">
+                <div class="absolute inset-[58.25%_29%_8.25%_4%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/user-check-1.svg" /></div>
+                <div class="absolute inset-[8.25%_41.56%_49.88%_16.56%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/user-check-2.svg" /></div>
+                <div class="absolute inset-[33.25%_4.06%_41.63%_62.44%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/user-check-3.svg" /></div>
+              </div>
+              <p class="absolute font-bold leading-[20px] left-[48px] not-italic text-[#0680f9] text-[14px] top-[797px] tracking-[0.7px] uppercase whitespace-nowrap">소개</p>
+              <p class="absolute font-normal leading-[20px] left-[24px] not-italic text-[#16181d] text-[14px] top-[829px] w-[344px]">
+                김성민 변호사는 지난 15년간 부동산 및 임대차 분쟁 해결에 집중해 왔습니다. 단순한 법률 자문을 넘어 의뢰인의 실질적인 권리 회복을 최우선으로 하며, AI 분석 시스템을 통한 정교한 증거 구조화 서비스를 지원합니다.
+              </p>
+            </div>
+
+            <!-- Bottom action -->
+            <div class="absolute bg-white h-[89px] left-0 shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(23,25,28,0.06)] top-[1061px] w-[390px]" data-node-id="1:1672">
+              <div class="absolute h-0 left-0 top-0 w-[390px]"><div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/lawyer-profile/line3.svg" /></div></div>
+              <div class="absolute bg-[#0680f9] h-[56px] left-[25px] overflow-clip rounded-[14px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(23,25,28,0.06)] top-[10px] w-[340px]" data-node-id="1:1674">
+                <p class="-translate-x-1/2 absolute font-bold leading-[28px] left-[calc(50%+2px)] not-italic text-[18px] text-center text-white top-[calc(50%-14px)] whitespace-nowrap">의뢰서 전달</p>
+              </div>
+            </div>
+
+            <!-- Top header -->
+            <div class="absolute bg-white h-[108px] left-0 top-0 w-[390px]" data-node-id="1:1611">
+              <div class="absolute h-0 left-0 top-[108px] w-[390px]"><div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/lawyer-profile/line3.svg" /></div></div>
+              <!-- Back -->
+              <button class="absolute left-[8px] overflow-clip size-[40px] top-[53px]">
+                <div class="-translate-x-1/2 -translate-y-1/2 absolute left-[calc(50%+1px)] overflow-clip size-[24px] top-1/2">
+                  <div class="absolute inset-[20.83%_33.33%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/chevron-left.svg" /></div>
+                </div>
+              </button>
+              <!-- Title -->
+              <div class="absolute h-[32px] left-[145px] overflow-clip top-[53px] w-[112px]">
+                <p class="absolute font-medium leading-[24px] left-[6px] not-italic text-[#16181d] text-[16px] top-[8px] whitespace-nowrap">변호사 프로필</p>
+              </div>
+              <!-- Scale icon -->
+              <div class="absolute left-[338px] overflow-clip size-[36px] top-[55px]">
+                <div class="-translate-x-1/2 -translate-y-1/2 absolute left-1/2 overflow-clip size-[20px] top-1/2">
+                  <div class="absolute inset-[29.28%_4.25%_25.07%_62.55%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/scale-1.svg" /></div>
+                  <div class="absolute inset-[29.28%_62.55%_25.07%_4.25%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/scale-2.svg" /></div>
+                  <div class="absolute inset-[83.35%_25.1%_8.35%_25.1%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/scale-3.svg" /></div>
+                  <div class="absolute inset-[8.5%_45.85%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/scale-4.svg" /></div>
+                  <div class="absolute inset-[16.7%_8.5%_66.7%_8.5%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/scale-5.svg" /></div>
+                </div>
+              </div>
+              <!-- Status bar -->
+              <div class="absolute h-[40px] left-0 top-0 w-[390px]">
+                <div class="absolute h-[40px] left-0 overflow-clip top-0 w-[70px]">
+                  <div class="absolute inset-[41.96%_53%_31.28%_35.79%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb1.svg" /></div>
+                  <div class="absolute inset-[45.99%_47.31%_35.32%_49.49%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb2.svg" /></div>
+                  <div class="absolute inset-[42.6%_33.28%_31.91%_55.15%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb3.svg" /></div>
+                  <div class="absolute inset-[42.6%_25.13%_31.91%_68.48%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb4.svg" /></div>
+                </div>
+                <div class="absolute h-[40px] left-[294px] overflow-clip top-0 w-[96px]">
+                  <div class="absolute inset-[41.68%_27.78%_33.17%_51.1%]"><div class="absolute inset-[-4.97%_-2.47%]"><img alt="" class="block max-w-none size-full" src="./assets/lawyer-profile/sb5.svg" /></div></div>
+                  <div class="absolute inset-[51.06%_25.13%_39.96%_73.63%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb6.svg" /></div>
+                  <div class="absolute inset-[44.68%_29.03%_36.17%_52.35%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb7.svg" /></div>
+                  <div class="absolute inset-[42.55%_55.63%_32.27%_29.3%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb8.svg" /></div>
+                  <div class="absolute inset-[46.81%_82.23%_31.92%_15.12%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb9.svg" /></div>
+                  <div class="absolute inset-[42.55%_77.79%_31.92%_19.55%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb10.svg" /></div>
+                  <div class="absolute inset-[54.26%_86.66%_31.92%_10.68%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb11.svg" /></div>
+                  <div class="absolute inset-[59.57%_91.09%_31.92%_6.25%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/lawyer-profile/sb12.svg" /></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

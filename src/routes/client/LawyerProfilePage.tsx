@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 import { useLawyerDetail } from '@/hooks/useLawyer';
 import { useDeliverBrief, useDeliveries } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner, Modal } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { DOMAIN_LABELS } from '@/lib/constants';
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -38,14 +38,10 @@ export function LawyerProfilePage() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header
-        title="변호사 프로필"
-        showBack
-        onBack={() => navigate(-1)}
-      />
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="변호사 프로필" />
 
-      <main className="flex-1 px-4 py-4 pb-28 space-y-3">
+      <main className="flex-1 space-y-3 px-4 py-4 pb-28">
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center h-64">

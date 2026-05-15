@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figma export — Chat Consultation (page)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #f3f4f6;
+        font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+      }
+      .page-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 24px 48px;
+      }
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #16181d;
+        margin: 0 0 4px;
+      }
+      .page-sub {
+        font-size: 13px;
+        color: #575e6b;
+        margin: 0 0 24px;
+      }
+      .states {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+      }
+      .state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .frame {
+        width: 390px;
+        height: 980px;
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 3px 12px rgba(18, 15, 40, 0.12);
+        border-radius: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-wrap">
+      <h1 class="page-title">Chat Consultation</h1>
+      <p class="page-sub">AI 법률 상담 챗봇 화면 (node 1:589).</p>
+
+      <div class="states">
+        <div class="state">
+          <div class="frame" data-node-id="1:589" data-name="Chat Consultation">
+
+            <!-- AI notification bar -->
+            <div class="absolute bg-[rgba(243,244,246,0.5)] h-[34px] left-0 top-[108px] w-[390px]" data-node-id="1:605">
+              <div class="absolute h-0 left-0 top-[34px] w-[390px]">
+                <div class="absolute inset-[-0.5px_0]">
+                  <img alt="" class="block max-w-none size-full" src="./assets/chat-consultation/line.svg" />
+                </div>
+              </div>
+              <p class="absolute font-medium leading-[17px] left-[30px] text-[#555d6d] text-[11px] top-[7px] whitespace-nowrap" data-node-id="1:607" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                AI는 법률 상담이 아닌 정보 정리를 도와드립니다
+              </p>
+              <div class="absolute bg-[#258cf4] left-[16px] opacity-50 rounded-[3px] size-[6px] top-[13px]"></div>
+            </div>
+
+            <!-- Chat message scroll container -->
+            <div class="absolute bg-[rgba(0,0,0,0)] h-[729px] left-0 overflow-clip top-[141px] w-[390px]" data-node-id="1:609">
+
+              <!-- Bot message 1 -->
+              <div class="absolute bg-[rgba(37,140,244,0.1)] left-[24px] rounded-[10px] size-[20px] top-[24px]">
+                <div class="absolute left-[3px] overflow-clip size-[14px] top-[3px]">
+                  <div class="absolute inset-[12.57%_45.93%_62.57%_29.21%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-1.svg" /></div>
+                  <div class="absolute inset-[29.36%_12.71%_12.64%_12.71%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-2.svg" /></div>
+                  <div class="absolute inset-[54.21%_79.21%_37.5%_4.21%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-3.svg" /></div>
+                  <div class="absolute inset-[54.21%_4.21%_37.5%_79.21%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-4.svg" /></div>
+                  <div class="absolute inset-[50.07%_33.36%_33.36%_58.36%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-5.svg" /></div>
+                  <div class="absolute inset-[50.07%_58.36%_33.36%_33.36%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-6.svg" /></div>
+                </div>
+              </div>
+              <p class="absolute font-semibold leading-[18px] left-[50px] text-[#555d6d] text-[12px] top-[25px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings: 'wdth' 100;">SHIELD AI</p>
+              <div class="absolute bg-white border border-[#dee1e6] border-solid h-[79px] left-[20px] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(23,25,28,0.08)] top-[52px] w-[301px]">
+                <p class="absolute font-normal leading-[20px] left-[14px] text-[#181b20] text-[12px] top-[4px] w-[271px]" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                  반갑습니다. SHIELD 법률 AI입니다. 어떤 법률 문제로 어려움을 겪고 계신가요? 구체적인 상황을 말씀해 주시면 정보 정리를 도와드리겠습니다.
+                </p>
+              </div>
+              <p class="absolute font-normal leading-[15px] left-[24px] text-[#555d6d] text-[10px] top-[133px] whitespace-nowrap" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">오후 2:30</p>
+
+              <!-- User message -->
+              <p class="absolute font-semibold leading-[18px] left-[331px] text-[#555d6d] text-[12px] top-[166px] whitespace-nowrap" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">나</p>
+              <div class="absolute bg-[#f3f4f6] left-[346px] rounded-[10px] size-[20px] top-[165px]">
+                <div class="absolute left-[3px] overflow-clip size-[14px] top-[3px]">
+                  <div class="absolute inset-[58.43%_16.86%_8.43%_16.86%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/user-body.svg" /></div>
+                  <div class="absolute inset-[8.43%_29.29%_50.14%_29.29%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/user-head.svg" /></div>
+                </div>
+              </div>
+              <div class="absolute bg-[#258cf4] h-[158px] left-[78px] rounded-bl-[12px] rounded-br-[12px] rounded-tl-[12px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(23,25,28,0.08)] top-[193px] w-[292px]">
+                <p class="absolute font-normal leading-[20px] left-[10px] text-[12px] text-white top-[7px] w-[276px]" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                  최근 집주인이 저에게 사전 동의 없이 집을 제3자에게 매매하겠다고 통보했습니다. 그러면서 다음 달까지 집을 비워달라고 요구하고 있는 상황입니다. 저는 현재 확정일자도 받았고 전입신고도 마친 상태이며, 계약 기간은 아직 6개월이나 남았습니다. 제가 이사 비용이나 보상 없이 그냥 나가야 하는 건지, 아니면 계속 거주할 수 있는 권리가 있는지 궁금합니다.
+                </p>
+              </div>
+              <p class="absolute font-normal h-[14px] leading-[15px] left-[325px] text-[#555d6d] text-[10px] top-[353px] w-[41px]" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">오후 2:32</p>
+
+              <!-- Bot message 2 -->
+              <div class="absolute bg-[rgba(37,140,244,0.1)] left-[24px] rounded-[10px] size-[20px] top-[383px]">
+                <div class="absolute left-[3px] overflow-clip size-[14px] top-[3px]">
+                  <div class="absolute inset-[12.57%_45.93%_62.57%_29.21%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-1.svg" /></div>
+                  <div class="absolute inset-[29.36%_12.71%_12.64%_12.71%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-2.svg" /></div>
+                  <div class="absolute inset-[54.21%_79.21%_37.5%_4.21%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-3.svg" /></div>
+                  <div class="absolute inset-[54.21%_4.21%_37.5%_79.21%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-4.svg" /></div>
+                  <div class="absolute inset-[50.07%_33.36%_33.36%_58.36%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-5.svg" /></div>
+                  <div class="absolute inset-[50.07%_58.36%_33.36%_33.36%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/bot-6.svg" /></div>
+                </div>
+              </div>
+              <p class="absolute font-semibold leading-[18px] left-[50px] text-[#555d6d] text-[12px] top-[384px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings: 'wdth' 100;">SHIELD AI</p>
+              <div class="absolute bg-white border border-[#dee1e6] border-solid h-[162px] left-[20px] rounded-bl-[12px] rounded-br-[12px] rounded-tr-[12px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_2px_4px_0px_rgba(23,25,28,0.08)] top-[411px] w-[298px]">
+                <p class="absolute font-normal leading-[20px] left-[16px] text-[#181b20] text-[12px] top-[11px] w-[271px] whitespace-pre-line" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">상당히 당혹스러운 상황이시겠군요. 임차인의 대항력과 관련된 중요한 사안으로 보입니다. 보다 정확한 분석을 위해 몇 가지 더 여쭙겠습니다.
+
+1. 현재 거주 중인 주택의 종류(아파트, 빌라, 단독주택 등)는 무엇인가요?
+2. 집주인으로부터 퇴거 요청을 받은 방식(문자, 내용증명, 구두 등)이 무엇인가요?
+3. 계약서상에 '매매 시 계약 해지'와 같은 특약 사항이 기재되어 있나요?</p>
+              </div>
+              <p class="absolute font-normal h-[12px] leading-[15px] left-[27px] text-[#555d6d] text-[10px] top-[575px] w-[41px]" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">오후 2:33</p>
+
+              <!-- TIP card -->
+              <div class="absolute bg-[rgba(240,247,254,0.3)] border border-[rgba(37,140,244,0.3)] border-dashed h-[91px] left-[20px] rounded-[12px] top-[633px] w-[350px]">
+                <div class="absolute bg-[rgba(37,140,244,0.1)] left-[16px] rounded-[10px] size-[32px] top-[16px]">
+                  <div class="absolute left-[8px] overflow-clip size-[16px] top-[8px]">
+                    <div class="absolute inset-[3.94%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/info-1.svg" /></div>
+                    <div class="absolute inset-[45.75%_45.81%_29.13%_45.81%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/info-2.svg" /></div>
+                    <div class="absolute inset-[29.12%_45.77%_62.5%_45.81%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/info-3.svg" /></div>
+                  </div>
+                </div>
+                <p class="absolute font-semibold leading-[20px] left-[60px] text-[#258cf4] text-[13px] top-[15px] whitespace-nowrap" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                  TIP: 증거 확보가 중요합니다
+                </p>
+                <p class="absolute font-normal leading-[18px] left-[60px] text-[#555d6d] text-[12px] top-[39px] w-[281px]" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                  집주인과의 대화 내용이나 통보 받은 문자 메시지는 캡처하여 보관해 두시는 것이 나중에 유리할 수 있습니다.
+                </p>
+              </div>
+            </div>
+
+            <!-- Bottom input area -->
+            <div class="absolute bg-white h-[110px] left-0 shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_8px_16px_0px_rgba(23,25,28,0.1)] top-[870px] w-[390px]" data-node-id="1:590">
+              <div class="absolute h-0 left-0 top-0 w-[390px]">
+                <div class="absolute inset-[-0.5px_0]">
+                  <img alt="" class="block max-w-none size-full" src="./assets/chat-consultation/line.svg" />
+                </div>
+              </div>
+              <div class="absolute bg-[rgba(243,244,246,0.5)] border border-[#dee1e6] border-solid h-[54px] left-[16px] rounded-[12px] top-[17px] w-[358px]">
+                <div class="absolute bg-[rgba(0,0,0,0)] h-[34px] left-[16px] top-[9px] w-[276px]">
+                  <p class="absolute font-normal leading-[22px] left-0 right-[6px] text-[#555d6d] text-[14px] top-[6px]" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                    메시지를 입력하세요...
+                  </p>
+                </div>
+                <div class="absolute bg-[#258cf4] left-[304px] overflow-clip rounded-[12px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_4px_8px_0px_rgba(37,140,244,0.2)] size-[36px] top-[8px]">
+                  <div class="-translate-x-1/2 -translate-y-1/2 absolute left-1/2 overflow-clip size-[20px] top-1/2">
+                    <div class="absolute inset-[4.34%_4.34%_4.35%_4.35%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/send-1.svg" /></div>
+                    <div class="absolute inset-[4.89%_4.88%_41.42%_41.42%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/send-2.svg" /></div>
+                  </div>
+                </div>
+              </div>
+              <p class="-translate-x-1/2 absolute font-normal leading-[15px] left-[202.5px] text-[#555d6d] text-[10px] text-center top-[79px] whitespace-nowrap" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.
+              </p>
+            </div>
+
+            <!-- Top header -->
+            <div class="absolute bg-white h-[108px] left-0 top-0 w-[390px]" data-node-id="1:675">
+              <div class="absolute h-0 left-0 top-[108px] w-[390px]">
+                <div class="absolute inset-[-0.5px_0]">
+                  <img alt="" class="block max-w-none size-full" src="./assets/chat-consultation/line.svg" />
+                </div>
+              </div>
+              <!-- Logo (replaces back button on first chat screen) -->
+              <div class="absolute left-[17px] size-[32px] top-[48px]" data-node-id="1:725">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/logo.png" />
+              </div>
+              <div class="absolute bg-[rgba(0,0,0,0)] h-[33px] left-[122.5px] overflow-clip top-[53.5px] w-[144px]">
+                <p class="absolute font-bold leading-[28px] left-[21px] not-italic text-[#181b20] text-[18px] top-[5px] whitespace-nowrap" style="font-family: 'Inter', 'Noto Sans KR', sans-serif;">
+                  법률 상담 챗봇
+                </p>
+              </div>
+              <!-- Ellipsis -->
+              <div class="absolute bg-[rgba(0,0,0,0)] left-[338px] overflow-clip size-[36px] top-[55px]">
+                <div class="-translate-x-1/2 -translate-y-1/2 absolute left-1/2 overflow-clip size-[20px] top-1/2">
+                  <div class="absolute inset-[41.7%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/dot.svg" /></div>
+                  <div class="absolute inset-[12.55%_41.7%_70.85%_41.7%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/dot-top.svg" /></div>
+                  <div class="absolute inset-[70.85%_41.7%_12.55%_41.7%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/dot.svg" /></div>
+                </div>
+              </div>
+              <!-- Status bar -->
+              <div class="absolute bg-[rgba(0,0,0,0)] h-[40px] left-0 top-0 w-[390px]">
+                <div class="absolute h-[40px] left-0 overflow-clip top-0 w-[70px]">
+                  <div class="absolute inset-[41.96%_47.28%_31.28%_41.5%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb1.svg" /></div>
+                  <div class="absolute inset-[45.99%_41.59%_35.32%_55.2%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb2.svg" /></div>
+                  <div class="absolute inset-[42.6%_27.57%_31.92%_60.86%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb3.svg" /></div>
+                  <div class="absolute inset-[42.6%_19.41%_31.92%_74.2%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb4.svg" /></div>
+                </div>
+                <div class="absolute h-[40px] left-[294px] overflow-clip top-0 w-[96px]">
+                  <div class="absolute inset-[41.68%_21.53%_33.17%_57.35%]"><div class="absolute inset-[-4.97%_-2.47%]"><img alt="" class="block max-w-none size-full" src="./assets/chat-consultation/sb5.svg" /></div></div>
+                  <div class="absolute inset-[51.06%_18.88%_39.96%_79.88%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb6.svg" /></div>
+                  <div class="absolute inset-[44.68%_22.78%_36.17%_58.6%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb7.svg" /></div>
+                  <div class="absolute inset-[42.55%_49.38%_32.27%_35.55%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb8.svg" /></div>
+                  <div class="absolute inset-[46.81%_75.98%_31.92%_21.37%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb9.svg" /></div>
+                  <div class="absolute inset-[42.55%_71.54%_31.91%_25.8%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb10.svg" /></div>
+                  <div class="absolute inset-[54.26%_80.41%_31.92%_16.93%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb11.svg" /></div>
+                  <div class="absolute inset-[59.57%_84.84%_31.92%_12.5%]"><img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/chat-consultation/sb12.svg" /></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

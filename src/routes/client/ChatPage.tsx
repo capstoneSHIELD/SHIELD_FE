@@ -5,13 +5,12 @@ import { cn } from '@/lib/cn';
 import { useChat } from '@/hooks/useChat';
 import { useConsultationDetail, useRequestAnalyze } from '@/hooks/useConsultation';
 import { Button, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { ChatBubble } from '@/components/chat/ChatBubble';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { ClassifyBadge } from '@/components/chat/ClassifyBadge';
 import { ConsultationProgressBar } from '@/components/consultation/ConsultationProgressBar';
-import { DOMAIN_LABELS, CONSULTATION_STATUS_LABELS } from '@/lib/constants';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
@@ -53,18 +52,6 @@ export function ChatPage() {
     }
   }, [consultation, id, navigate]);
 
-  // ── derive page title ───────────────────────────────────────────────────
-  function buildTitle(): string {
-    if (!consultation) return '상담';
-    const statusLabel = CONSULTATION_STATUS_LABELS[consultation.status];
-    const domains = consultation.userDomains ?? consultation.aiDomains ?? [];
-    const domainLabel =
-      domains.length > 0
-        ? domains.map((f) => DOMAIN_LABELS[f] ?? f).join(' · ')
-        : null;
-    return domainLabel ? `${domainLabel} 상담` : statusLabel ?? '상담';
-  }
-
   // ── handle "의뢰서 생성" click ──────────────────────────────────────────
   function handleRequestAnalyze() {
     requestAnalyze(undefined, {
@@ -77,13 +64,9 @@ export function ChatPage() {
   // ── loading ─────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="flex flex-col flex-1">
-        <Header
-          title="상담"
-          showBack
-          onBack={() => navigate('/consultations')}
-        />
-        <div className="flex-1 flex items-center justify-center">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+        <PageHeader title="법률 상담 챗봇" onBack={() => navigate('/consultations')} />
+        <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
         </div>
       </div>
@@ -91,21 +74,17 @@ export function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
       {/* ── header ─────────────────────────────────────────────────────── */}
-      <Header
-        title={buildTitle()}
-        showBack
-        onBack={() => navigate('/consultations')}
-      />
+      <PageHeader title="법률 상담 챗봇" onBack={() => navigate('/consultations')} />
 
       {/* ── progress bar (sticky, BE PR #89) ─────────────────────────── */}
       <ConsultationProgressBar progress={progress} completed={allCompleted} />
 
-      {/* ── AI notice bar ─────────────────────────────────────────────── */}
-      <div className="bg-gray-50/50 border-b border-[#e0e2e6] flex items-center gap-2 px-4 py-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-brand/50" />
-        <p className="text-[11px] font-medium text-[#555d6d]">
+      {/* ── AI notice bar — figma 05 style ───────────────────────────── */}
+      <div className="flex items-center gap-2 border-b border-[#e0e2e6] bg-gray-50/50 px-4 py-2">
+        <span className="h-1.5 w-1.5 rounded-full bg-brand-primary/50" />
+        <p className="text-[11px] font-medium text-text-soft">
           AI는 법률 상담이 아닌 정보 정리를 도와드립니다
         </p>
       </div>
@@ -113,10 +92,7 @@ export function ChatPage() {
       {/* ── scrollable message area ─────────────────────────────────────── */}
       <div
         ref={scrollRef}
-        className={cn(
-          'chat-viewport flex-1 py-3',
-          'scrollbar-hide',
-        )}
+        className={cn('chat-viewport flex-1 py-3', 'scrollbar-hide')}
       >
         {/* Messages */}
         {messages.map((msg, idx) => (
@@ -143,7 +119,7 @@ export function ChatPage() {
       </div>
 
       {/* ── bottom area ─────────────────────────────────────────────────── */}
-      <div className="bg-white safe-area-bottom">
+      <div className="safe-area-bottom bg-white">
         {/* "의뢰서 생성" CTA — shown when allCompleted */}
         {allCompleted && (
           <div className="px-4 pt-3 pb-1">
@@ -154,7 +130,7 @@ export function ChatPage() {
               isLoading={isAnalyzing}
               leftIcon={<FileText size={18} />}
               onClick={handleRequestAnalyze}
-              className="bg-brand shadow-md"
+              className="bg-brand-primary shadow-md"
             >
               의뢰서 생성
             </Button>
@@ -166,7 +142,11 @@ export function ChatPage() {
           onSend={sendMessage}
           disabled={isSending || allCompleted}
           placeholder={allCompleted ? '상담이 완료되었습니다' : '메시지를 입력하세요...'}
-          subtext={allCompleted ? undefined : '상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.'}
+          subtext={
+            allCompleted
+              ? undefined
+              : '상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.'
+          }
         />
       </div>
     </div>
