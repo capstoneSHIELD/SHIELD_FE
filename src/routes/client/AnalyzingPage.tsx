@@ -122,7 +122,7 @@ export function AnalyzingPage() {
               />
             </div>
             <p className="mt-5 text-sm font-medium text-brand/70">AI가 분석한 주요 분야</p>
-            <p className="mt-1 text-[36px] font-bold leading-[40px] tracking-[-0.9px] text-brand">
+            <p className="mt-1 text-[36px] font-bold leading-[40px] tracking-[-0.9px] text-[#0680f9]">
               {meta.label}
             </p>
             {tags.length > 0 && (
@@ -139,10 +139,10 @@ export function AnalyzingPage() {
             )}
           </div>
 
-          {/* Warning bar — figma 06 */}
-          <div className="mt-4 flex items-start gap-2 rounded-[12px] border border-warning-red/20 bg-warning-red/5 px-4 py-2.5">
-            <Info size={20} className="shrink-0 text-warning-red" />
-            <p className="text-[10px] leading-5 text-[#ef6a6a]">
+          {/* Warning bar — figma 06 (bg-[#fef6f6] border-[#fad3d3] text-alert) */}
+          <div className="mt-4 flex items-start gap-2 rounded-[12px] border border-[#fad3d3] bg-[#fef6f6] px-4 py-2.5">
+            <Info size={20} className="shrink-0 text-alert" />
+            <p className="text-[10px] leading-5 text-alert">
               AI의 분석은 틀릴 수 있습니다. 다른 법률 분야를 선택하시겠습니까?
             </p>
           </div>
