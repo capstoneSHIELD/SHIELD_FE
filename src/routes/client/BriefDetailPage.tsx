@@ -309,8 +309,9 @@ export function BriefDetailPage() {
                     {brief.keywords.map((kw, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full bg-info-bg text-brand text-xs font-medium"
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info-bg text-brand text-xs font-medium"
                       >
+                        <span className="font-bold" aria-hidden="true">#</span>
                         {kw}
                       </span>
                     ))}
