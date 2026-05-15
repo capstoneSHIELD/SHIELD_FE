@@ -103,7 +103,7 @@ export function PrivacySettingsPage() {
               className={cn(
                 'w-full text-left rounded-card p-5 transition-all',
                 isSelected
-                  ? 'border-2 border-brand shadow-md bg-white'
+                  ? 'border-2 border-brand shadow-md bg-[#d8ebfd]'
                   : 'border-2 border-[#dde0e4] bg-[#f9fafb]',
               )}
             >
