@@ -271,7 +271,7 @@ export function AnalyzingPage() {
             <span>Secure Data Processing</span>
             <span className="h-px w-8 bg-[#dee1e6]" />
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-[#31383f]/40">
+          <p className="mt-2 text-[11px] leading-[17px] text-[#31383f]/40">
             SHIELD는 모든 데이터를 암호화하여 처리하며, 분석 완료 후 안전하게 결과를 전달합니다.
           </p>
         </div>
