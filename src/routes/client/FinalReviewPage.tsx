@@ -1,7 +1,7 @@
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { FileText, Shield, Scale, Pencil, TriangleAlert } from 'lucide-react';
+import { FileText, Scale, Pencil, TriangleAlert, Eye, Layers, CheckCircle2 } from 'lucide-react';
 import { useBriefDetail } from '@/hooks/useBrief';
-import { Button, Card, Badge, Spinner } from '@/components/ui';
+import { Button, Card, Spinner } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { getDomainMeta } from '@/lib/domainIcons';
 
@@ -90,34 +90,33 @@ export function FinalReviewPage() {
           </p>
         </div>
 
-        {/* Case Summary Card */}
-        <Card padding="md">
-          <SectionHeader title="사건 요약" editHref={`/briefs/${id}`} />
+        {/* Case Summary Card — B-9: 파란 strip 상단 + 분야 칩 + 제목 */}
+        <Card padding="none" className="overflow-hidden">
+          {/* 파란 상단 strip */}
+          <div className="h-1.5 w-full bg-brand" aria-hidden="true" />
 
-          <div className="space-y-3">
-            {/* Title */}
-            <div>
-              <p className="text-xs text-gray-400 mb-0.5">제목</p>
-              <div className="flex items-start gap-2">
-                <FileText size={15} className="text-brand flex-shrink-0 mt-0.5" aria-hidden="true" />
-                <p className="text-sm font-semibold text-gray-900 leading-snug">{brief.title}</p>
-              </div>
-            </div>
+          <div className="p-4 space-y-3">
+            <SectionHeader title="사건 요약" editHref={`/briefs/${id}`} />
 
-            {/* Legal field */}
+            {/* Legal field chip (제목 위방) */}
             <div>
-              <p className="text-xs text-gray-400 mb-1">법률 분야</p>
               {(() => {
                 const meta = getDomainMeta(brief.legalField);
                 return (
-                  <Badge variant="primary" size="sm">
-                    <span className="inline-flex items-center gap-1">
-                      <meta.Icon size={12} strokeWidth={2} aria-hidden="true" />
-                      {meta.label}
-                    </span>
-                  </Badge>
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full ${meta.bgColor} ${meta.color} text-xs font-medium`}
+                  >
+                    <meta.Icon size={12} strokeWidth={2} aria-hidden="true" />
+                    {meta.label}
+                  </span>
                 );
               })()}
+            </div>
+
+            {/* Title (large) */}
+            <div className="flex items-start gap-2">
+              <FileText size={18} className="text-brand flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <p className="text-[17px] font-bold text-[#161a1d] leading-snug">{brief.title}</p>
             </div>
 
             {/* Content excerpt */}
@@ -125,21 +124,6 @@ export function FinalReviewPage() {
               <p className="text-xs text-gray-400 mb-0.5">내용 요약</p>
               <p className="text-sm text-gray-700 leading-relaxed">{contentExcerpt}</p>
             </div>
-
-            {/* Key issues */}
-            {brief.keyIssues && brief.keyIssues.length > 0 && (
-              <div>
-                <p className="text-xs text-gray-400 mb-1.5">주요 쟁점</p>
-                <ul className="space-y-1">
-                  {brief.keyIssues.map((issue, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0" />
-                      {issue.title}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
 
             {/* Keywords */}
             {brief.keywords && brief.keywords.length > 0 && (
@@ -157,32 +141,43 @@ export function FinalReviewPage() {
                 </div>
               </div>
             )}
+
+            {/* P-4: 분석 리포트 포함됨 한 줄 */}
+            <div className="flex items-center gap-1.5 pt-2 border-t border-[#f0f1f3] mt-1">
+              <CheckCircle2 size={14} className="text-brand" aria-hidden="true" />
+              <span className="text-xs font-medium text-[#3d434a]">분석 리포트 포함됨</span>
+            </div>
           </div>
         </Card>
 
-        {/* Privacy Settings Summary */}
-        <Card padding="md">
-          <SectionHeader title="개인정보 설정" editHref={`/briefs/${id}/privacy`} />
+        {/* B-10: 2분할 메타 카드 (쟁점 / 개인정보) */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* 매타 1: 분석된 쟁점 */}
+          <Card padding="md" className="flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5 text-[#62686f]">
+              <Layers size={14} aria-hidden="true" />
+              <span className="text-[11px] font-medium">분석된 쟁점</span>
+            </div>
+            <p className="text-[15px] font-bold text-[#161a1d]">
+              {brief.keyIssues?.length ?? 0}건
+            </p>
+          </Card>
 
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-3">
-              <Shield size={15} className="text-brand flex-shrink-0" aria-hidden="true" />
-              <div className="flex-1 flex items-center justify-between">
-                <span className="text-sm text-gray-700">공개 설정</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {privacyLabels[brief.privacySetting] ?? brief.privacySetting}
-                </span>
+          {/* 매타 2: 개인정보 설정 */}
+          <Link to={`/briefs/${id}/privacy`} className="block">
+            <Card padding="md" className="flex flex-col gap-1.5 h-full">
+              <div className="flex items-center gap-1.5 text-[#62686f]">
+                <Eye size={14} aria-hidden="true" />
+                <span className="text-[11px] font-medium">개인정보 설정</span>
               </div>
-            </div>
-            <div className="rounded-lg bg-info-bg px-3 py-2.5">
-              <p className="text-xs text-brand leading-relaxed">
-                사건 상세 공유 · AI 모델 개선 동의 · 푸시 알림 허용
+              <p className="text-[15px] font-bold text-[#161a1d]">
+                {privacyLabels[brief.privacySetting] ?? brief.privacySetting}
               </p>
-            </div>
-          </div>
-        </Card>
+            </Card>
+          </Link>
+        </div>
 
-        {/* Lawyer Requirements */}
+        {/* Lawyer Requirements (기존 운영 캴텍스트 유지) */}
         <Card padding="md">
           <SectionHeader title="변호사 요건" editHref={`/briefs/${id}`} />
 

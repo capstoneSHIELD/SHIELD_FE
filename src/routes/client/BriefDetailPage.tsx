@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Edit2, Check, X, ChevronRight, User, CheckCircle2 } from 'lucide-react';
+import { Edit2, Check, X, ChevronRight, User, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { cn } from '@/lib/cn';
 import { formatDateTime } from '@/lib/dateUtils';
@@ -160,11 +160,13 @@ export function BriefDetailPage() {
   }
 
   // ── render ───────────────────────────────────────────────────────────────
+  // 핵심 키워드 컬러 분류 (P-2): 상위 3개는 파란 강조 칩, 나머지는 회색 보조 칩
+  const primaryKeywordCount = 3;
+
   return (
     <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
       <PageHeader
-        title="분석리포트"
-        onBack={() => navigate('/briefs')}
+        logoVariant="wordmark"
         rightSlot={editButton}
       />
 
@@ -245,20 +247,19 @@ export function BriefDetailPage() {
               </div>
             </form>
           ) : (
-            /* ── View mode ─── */
+            /* ── View mode ─── B-7: 사건 요약 카드 (분야 / 자동 생성 요약문 행 구조) */
             <div className="space-y-4">
-              {/* Title + status + domain */}
-              <div className="flex items-start justify-between gap-2">
-                <h2 className="text-base font-semibold text-gray-900 leading-snug flex-1">
-                  {brief.title}
-                </h2>
+              {/* Centered card header */}
+              <div className="flex items-center justify-center gap-2 pb-2 border-b border-[#f0f1f3]">
+                <h2 className="text-[15px] font-bold text-[#161a1d]">사건 요약</h2>
                 <Badge variant={BRIEF_STATUS_BADGE[brief.status]} size="sm">
                   {BRIEF_STATUS_LABELS[brief.status] ?? brief.status}
                 </Badge>
               </div>
 
-              {/* Legal field */}
-              <div>
+              {/* Row 1: 법률 분야 라벨 ↔ 칩 */}
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-medium text-[#62686f]">법률 분야</span>
                 {(() => {
                   const meta = getDomainMeta(brief.legalField);
                   return (
@@ -272,60 +273,34 @@ export function BriefDetailPage() {
                 })()}
               </div>
 
-              {/* Content */}
+              {/* Row 2: 자동 생성 요약문 라벨 ↔ 수정 아이콘 */}
               <div>
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                  내용
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-medium text-[#62686f]">자동 생성 요약문</span>
+                  {isEditable && (
+                    <button
+                      type="button"
+                      onClick={enterEditMode}
+                      aria-label="요약문 수정"
+                      className="text-[#62686f] hover:text-brand transition-colors"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                  )}
+                </div>
+                <p className="text-[15px] font-semibold text-[#161a1d] leading-snug mb-2">
+                  {brief.title}
                 </p>
-                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-[#3d434a] leading-relaxed whitespace-pre-wrap">
                   {brief.content}
                 </p>
               </div>
 
-              {/* Key issues */}
-              {brief.keyIssues && brief.keyIssues.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                    주요 쟁점
-                  </p>
-                  <ul className="space-y-1">
-                    {brief.keyIssues.map((issue, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-gray-800">
-                        <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0" />
-                        {issue.title}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Keywords */}
-              {brief.keywords && brief.keywords.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
-                    키워드
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {brief.keywords.map((kw, i) => (
-                      <span
-                        key={i}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-info-bg text-brand text-xs font-medium"
-                      >
-                        <span className="font-bold" aria-hidden="true">#</span>
-                        {kw}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Strategy */}
+              {/* Strategy (kept inside summary card) */}
               {brief.strategy && (
                 <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                    전략
-                  </p>
-                  <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-xs font-medium text-[#62686f] mb-1">전략</p>
+                  <p className="text-sm text-[#3d434a] leading-relaxed whitespace-pre-wrap">
                     {brief.strategy}
                   </p>
                 </div>
@@ -356,6 +331,65 @@ export function BriefDetailPage() {
             </div>
           )}
         </Card>
+
+        {/* ── B-8: 핵심 쟁점 (카드 외부 헤더 + 번호 배지 + 2-line 구조) ──── */}
+        {brief.keyIssues && brief.keyIssues.length > 0 && (
+          <section>
+            <div className="flex items-center gap-1.5 mb-2 px-1">
+              <AlertCircle size={16} className="text-[#e42020]" aria-hidden="true" />
+              <h2 className="text-sm font-bold text-[#161a1d]">핵심 쟁점</h2>
+            </div>
+            <Card padding="md">
+              <ul className="space-y-3">
+                {brief.keyIssues.map((issue, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-brand text-white text-xs font-bold flex items-center justify-center mt-0.5">
+                      {i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#161a1d] leading-snug mb-1">
+                        {issue.title}
+                      </p>
+                      {issue.description && (
+                        <p className="text-xs text-[#62686f] leading-relaxed">
+                          {issue.description}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </section>
+        )}
+
+        {/* ── P-2: 핵심 키워드 (상위 N개 파란 강조 / 나머지 회색 보조) ──── */}
+        {brief.keywords && brief.keywords.length > 0 && (
+          <section>
+            <h2 className="text-sm font-bold text-[#161a1d] mb-2 px-1">핵심 키워드</h2>
+            <Card padding="md">
+              <div className="flex flex-wrap gap-1.5">
+                {brief.keywords.map((kw, i) => {
+                  const isPrimary = i < primaryKeywordCount;
+                  return (
+                    <span
+                      key={i}
+                      className={cn(
+                        'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border',
+                        isPrimary
+                          ? 'bg-info-bg text-brand border-transparent'
+                          : 'bg-white text-[#62686f] border-[#e0e2e6]',
+                      )}
+                    >
+                      <span className="font-bold" aria-hidden="true">#</span>
+                      {kw}
+                    </span>
+                  );
+                })}
+              </div>
+            </Card>
+          </section>
+        )}
 
         {/* ── 담당 변호사 확정 — 추천 리스트 대신 노출 ─────────────────── */}
         {hasAcceptedLawyer && brief && (
