@@ -121,17 +121,7 @@ export function LoginPage() {
               className="bg-[#03c75a] text-white hover:brightness-95"
             />
             <div className="relative">
-              {/* "간편 로그인" 배지 */}
-              <div className="absolute -top-[15px] left-[22px] flex h-[22px] w-[66px] items-center justify-center">
-                <img
-                  src={quickLoginBadge}
-                  alt=""
-                  className="absolute inset-0 h-full w-full"
-                />
-                <span className="relative z-10 text-[11px] font-normal text-white">
-                  간편 로그인
-                </span>
-              </div>
+      
               <SocialButton
                 label="Google 계정으로 시작하기"
                 icon={
