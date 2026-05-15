@@ -9,6 +9,7 @@
 /* ===== CSS Custom Properties (Design Tokens) ===== */
 :root {
   --color-brand: #1f8cf9;
+  --color-accent-orange: #c2410c;
   --color-kakao: #FEE500;
   --color-naver: #03C75A;
   --color-google-border: #DADCE0;
@@ -31,16 +32,17 @@
 @theme {
   --color-brand: #1f8cf9;
   --color-accent-orange: #c2410c;
-  --color-warning-red: #eb4747;
-  --color-text-soft: #575e6b;
   --color-kakao: #FEE500;
   --color-naver: #03C75A;
+  --color-google-border: #DADCE0;
   --color-surface: #F8FAFC;
   --color-info-bg: #f0f7ff;
   --color-error: #e42020;
   --color-alert: #ef6a6a;
+  --color-warning-red: #eb4747;
   --color-text-primary: #171a1f;
   --color-text-secondary: #575e6b;
+  --color-text-soft: #575e6b;
   --color-border: #e0e2e6;
   --font-family-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif;
   --radius-card: 12px;
