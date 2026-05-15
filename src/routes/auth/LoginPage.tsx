@@ -15,7 +15,6 @@ import logoImg from '@/assets/figma/login/logo.png';
 import kakaoIcon from '@/assets/figma/login/kakao-icon.svg';
 import naverIcon from '@/assets/figma/login/naver-icon.svg';
 import googleIcon from '@/assets/figma/login/google-icon.png';
-import quickLoginBadge from '@/assets/figma/login/quick-login-badge.svg';
 
 interface SocialButtonProps {
   className?: string;
