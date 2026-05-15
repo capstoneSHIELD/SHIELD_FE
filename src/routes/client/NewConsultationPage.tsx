@@ -14,11 +14,12 @@ import {
 
 // ─── types ──────────────────────────────────────────────────────────────────
 
-/** 선택된 leaf — path는 [대분류, 중분류, 소분류] */
-interface LeafSelection {
+/** 선택된 카테고리 — level에 따라 l2/l3가 채워짐 */
+interface Selection {
+  level: 1 | 2 | 3;
   l1: string;
-  l2: string;
-  l3: string;
+  l2?: string;
+  l3?: string;
 }
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -26,11 +27,11 @@ interface LeafSelection {
 /**
  * 와이어프레임 04 (Manual Field Selection, 노드 1:316 / 1:406 / 1:496) 정합:
  *   - 대분류(L1) → 중분류(L2) → 소분류(L3) accordion 트리
- *   - L1/L2 클릭은 펼침/접힘 토글 (chevron `>` ↔ `v` 회전)
- *   - L3는 단일 선택 체크박스 (선택된 leaf 1개만 유효)
+ *   - 각 레벨에서 선택 가능 (단일 선택 — 다른 레벨 선택 시 이전 해제)
+ *   - chevron 영역 탭: 펼침/접힘 / 텍스트 영역 탭: 선택
+ *   - 선택된 항목은 검색창 아래 brand-crumb chip (L1 › L2 › L3) 으로 표시
  *   - 검색창 입력 시 leaf 검색 결과를 평면 리스트로 렌더
- *   - 선택된 leaf는 검색창 아래 파란 chip으로 표시
- *   - 하단 fixed `다음` 버튼 — leaf 선택 시 활성화, 탭하면 상담 생성
+ *   - 하단 fixed `다음` 버튼 — 선택 시 활성화, 탭하면 상담 생성
  */
 export function NewConsultationPage() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export function NewConsultationPage() {
 
   const [expandedL1, setExpandedL1] = useState<Set<string>>(new Set());
   const [expandedL2, setExpandedL2] = useState<Set<string>>(new Set());
-  const [selected, setSelected] = useState<LeafSelection | null>(null);
+  const [selected, setSelected] = useState<Selection | null>(null);
   const [query, setQuery] = useState('');
 
   const trimmedQuery = query.trim();
@@ -66,8 +67,16 @@ export function NewConsultationPage() {
     });
   }
 
-  function selectLeaf(leaf: LeafSelection) {
-    setSelected(leaf);
+  function selectL1(l1: string) {
+    setSelected({ level: 1, l1 });
+  }
+
+  function selectL2(l1: string, l2: string) {
+    setSelected({ level: 2, l1, l2 });
+  }
+
+  function selectL3(l1: string, l2: string, l3: string) {
+    setSelected({ level: 3, l1, l2, l3 });
   }
 
   function clearSelection() {
@@ -78,25 +87,23 @@ export function NewConsultationPage() {
     // 검색 결과 항목 탭 시 해당 경로를 펼치고 leaf 선택
     setExpandedL1((prev) => new Set(prev).add(l1));
     setExpandedL2((prev) => new Set(prev).add(`${l1}|${l2}`));
-    setSelected({ l1, l2, l3 });
+    setSelected({ level: 3, l1, l2, l3 });
     setQuery('');
   }
 
   function handleNext() {
     if (!selected || isPending) return;
-    createConsultation(
-      {
-        domains: [selected.l1],
-        subDomains: [selected.l2],
-        tags: [selected.l3],
+    const request = {
+      domains: [selected.l1],
+      subDomains: selected.l2 ? [selected.l2] : [],
+      tags: selected.l3 ? [selected.l3] : [],
+    };
+    createConsultation(request, {
+      onSuccess: (res) => {
+        const newId = res.data.data.consultationId;
+        navigate(`/consultations/${newId}`);
       },
-      {
-        onSuccess: (res) => {
-          const newId = res.data.data.consultationId;
-          navigate(`/consultations/${newId}`);
-        },
-      },
-    );
+    });
   }
 
   return (
@@ -145,20 +152,34 @@ export function NewConsultationPage() {
           />
         </div>
 
-        {/* 선택된 leaf chip */}
+        {/* 선택된 항목 brand-crumb chip */}
         {selected && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             <button
               type="button"
               onClick={clearSelection}
               className={cn(
-                'inline-flex items-center gap-1 rounded-full border border-brand/40 bg-brand/5',
-                'px-2.5 py-1 text-xs font-medium text-brand',
+                'inline-flex max-w-full items-center gap-1.5 rounded-full border border-brand/40 bg-brand/5',
+                'px-3 py-1 text-xs font-medium text-brand',
                 'transition-colors hover:bg-brand/10',
               )}
             >
-              <span>{selected.l3}</span>
-              <X size={12} aria-hidden="true" />
+              <span className="truncate">
+                {selected.l1}
+                {selected.l2 && (
+                  <>
+                    <span className="mx-1 text-brand/50">›</span>
+                    {selected.l2}
+                  </>
+                )}
+                {selected.l3 && (
+                  <>
+                    <span className="mx-1 text-brand/50">›</span>
+                    {selected.l3}
+                  </>
+                )}
+              </span>
+              <X size={12} aria-hidden="true" className="shrink-0" />
               <span className="sr-only">선택 해제</span>
             </button>
           </div>
@@ -179,7 +200,9 @@ export function NewConsultationPage() {
             selected={selected}
             onToggleL1={toggleL1}
             onToggleL2={toggleL2}
-            onSelectLeaf={selectLeaf}
+            onSelectL1={selectL1}
+            onSelectL2={selectL2}
+            onSelectL3={selectL3}
           />
         )}
       </main>
@@ -211,10 +234,12 @@ interface TreeViewProps {
   tree: CategoryNode[];
   expandedL1: Set<string>;
   expandedL2: Set<string>;
-  selected: LeafSelection | null;
+  selected: Selection | null;
   onToggleL1: (name: string) => void;
   onToggleL2: (l1: string, l2: string) => void;
-  onSelectLeaf: (leaf: LeafSelection) => void;
+  onSelectL1: (l1: string) => void;
+  onSelectL2: (l1: string, l2: string) => void;
+  onSelectL3: (l1: string, l2: string, l3: string) => void;
 }
 
 function TreeView({
@@ -224,19 +249,25 @@ function TreeView({
   selected,
   onToggleL1,
   onToggleL2,
-  onSelectLeaf,
+  onSelectL1,
+  onSelectL2,
+  onSelectL3,
 }: TreeViewProps) {
   return (
     <div className="mt-4 overflow-hidden rounded-2xl border border-[#e9ecef]">
       <ul className="divide-y divide-[#e9ecef]">
         {tree.map((l1) => {
           const isL1Open = expandedL1.has(l1.name);
+          const isL1Selected =
+            selected?.level === 1 && selected.l1 === l1.name;
           return (
             <li key={l1.name}>
               <L1Row
                 name={l1.name}
                 isOpen={isL1Open}
+                isSelected={isL1Selected}
                 onToggle={() => onToggleL1(l1.name)}
+                onSelect={() => onSelectL1(l1.name)}
               />
               {isL1Open && (
                 <ul>
@@ -248,7 +279,8 @@ function TreeView({
                       isOpen={expandedL2.has(`${l1.name}|${l2.name}`)}
                       selected={selected}
                       onToggleL2={onToggleL2}
-                      onSelectLeaf={onSelectLeaf}
+                      onSelectL2={onSelectL2}
+                      onSelectL3={onSelectL3}
                     />
                   ))}
                 </ul>
@@ -261,36 +293,64 @@ function TreeView({
   );
 }
 
-// ─── L1 row ──────────────────────────────────────────────────────────────────
+// ─── L1 row (chevron 영역 = 펼침 / 텍스트 영역 = 선택) ──────────────────────
 
 interface L1RowProps {
   name: string;
   isOpen: boolean;
+  isSelected: boolean;
   onToggle: () => void;
+  onSelect: () => void;
 }
 
-function L1Row({ name, isOpen, onToggle }: L1RowProps) {
+function L1Row({ name, isOpen, isSelected, onToggle, onSelect }: L1RowProps) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-expanded={isOpen}
+    <div
       className={cn(
-        'flex w-full items-center gap-3 px-4 py-4 text-left',
-        'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+        'flex w-full items-stretch',
+        isSelected && 'bg-brand/5',
       )}
     >
-      <ChevronRight
-        size={18}
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-label={isOpen ? `${name} 접기` : `${name} 펼치기`}
+        aria-expanded={isOpen}
         className={cn(
-          'shrink-0 text-[#31383f] transition-transform',
-          isOpen && 'rotate-90',
+          'flex shrink-0 items-center justify-center px-3 py-4',
+          'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
         )}
-        aria-hidden="true"
-      />
-      <span className="text-[15px] font-bold text-[#161a1d]">{name}</span>
-    </button>
+      >
+        <ChevronRight
+          size={18}
+          className={cn(
+            'text-[#31383f] transition-transform',
+            isOpen && 'rotate-90',
+          )}
+          aria-hidden="true"
+        />
+      </button>
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-pressed={isSelected}
+        className={cn(
+          'flex-1 py-4 pr-4 text-left',
+          'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
+        )}
+      >
+        <span
+          className={cn(
+            'text-[15px] font-bold',
+            isSelected ? 'text-brand' : 'text-[#161a1d]',
+          )}
+        >
+          {name}
+        </span>
+      </button>
+    </div>
   );
 }
 
@@ -300,9 +360,10 @@ interface L2BlockProps {
   l1Name: string;
   l2: CategoryLevel2;
   isOpen: boolean;
-  selected: LeafSelection | null;
+  selected: Selection | null;
   onToggleL2: (l1: string, l2: string) => void;
-  onSelectLeaf: (leaf: LeafSelection) => void;
+  onSelectL2: (l1: string, l2: string) => void;
+  onSelectL3: (l1: string, l2: string, l3: string) => void;
 }
 
 function L2Block({
@@ -311,39 +372,64 @@ function L2Block({
   isOpen,
   selected,
   onToggleL2,
-  onSelectLeaf,
+  onSelectL2,
+  onSelectL3,
 }: L2BlockProps) {
+  const isL2Selected =
+    selected?.level === 2 && selected.l1 === l1Name && selected.l2 === l2.name;
   return (
     <li>
-      <button
-        type="button"
-        onClick={() => onToggleL2(l1Name, l2.name)}
-        aria-expanded={isOpen}
+      <div
         className={cn(
-          'flex w-full items-center gap-2.5 py-3 pr-4 text-left',
-          // L2 들여쓰기 (chevron + L1 padding-left 만큼)
-          'pl-9',
-          'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+          'flex w-full items-stretch',
+          isL2Selected && 'bg-brand/5',
         )}
       >
-        <ChevronRight
-          size={16}
+        <button
+          type="button"
+          onClick={() => onToggleL2(l1Name, l2.name)}
+          aria-label={isOpen ? `${l2.name} 접기` : `${l2.name} 펼치기`}
+          aria-expanded={isOpen}
           className={cn(
-            'shrink-0 transition-transform',
-            isOpen ? 'rotate-90 text-brand' : 'text-[#9aa0a6]',
-          )}
-          aria-hidden="true"
-        />
-        <span
-          className={cn(
-            'text-sm',
-            isOpen ? 'font-semibold text-brand' : 'text-[#62686f]',
+            'flex shrink-0 items-center justify-center py-3',
+            // L2 chevron 들여쓰기 (L1 chevron 영역 + 약간 안쪽)
+            'pl-9 pr-2',
+            'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
           )}
         >
-          {l2.name}
-        </span>
-      </button>
+          <ChevronRight
+            size={16}
+            className={cn(
+              'transition-transform',
+              isOpen || isL2Selected ? 'text-brand' : 'text-[#9aa0a6]',
+              isOpen && 'rotate-90',
+            )}
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          type="button"
+          onClick={() => onSelectL2(l1Name, l2.name)}
+          aria-pressed={isL2Selected}
+          className={cn(
+            'flex-1 py-3 pr-4 text-left',
+            'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
+          )}
+        >
+          <span
+            className={cn(
+              'text-sm',
+              isOpen || isL2Selected
+                ? 'font-semibold text-brand'
+                : 'text-[#62686f]',
+            )}
+          >
+            {l2.name}
+          </span>
+        </button>
+      </div>
       {isOpen && (
         <ul>
           {l2.children.map((leaf) => (
@@ -353,11 +439,12 @@ function L2Block({
               l2Name={l2.name}
               leaf={leaf}
               isSelected={
-                selected?.l1 === l1Name &&
-                selected?.l2 === l2.name &&
-                selected?.l3 === leaf.name
+                selected?.level === 3 &&
+                selected.l1 === l1Name &&
+                selected.l2 === l2.name &&
+                selected.l3 === leaf.name
               }
-              onSelect={onSelectLeaf}
+              onSelect={onSelectL3}
             />
           ))}
         </ul>
@@ -366,14 +453,14 @@ function L2Block({
   );
 }
 
-// ─── L3 row (checkbox leaf) ────────────────────────────────────────────────
+// ─── L3 row (checkbox leaf — 전체 클릭 = 선택) ─────────────────────────────
 
 interface L3RowProps {
   l1Name: string;
   l2Name: string;
   leaf: CategoryLeaf;
   isSelected: boolean;
-  onSelect: (leaf: LeafSelection) => void;
+  onSelect: (l1: string, l2: string, l3: string) => void;
 }
 
 function L3Row({ l1Name, l2Name, leaf, isSelected, onSelect }: L3RowProps) {
@@ -381,14 +468,15 @@ function L3Row({ l1Name, l2Name, leaf, isSelected, onSelect }: L3RowProps) {
     <li>
       <button
         type="button"
-        onClick={() => onSelect({ l1: l1Name, l2: l2Name, l3: leaf.name })}
+        onClick={() => onSelect(l1Name, l2Name, leaf.name)}
         aria-pressed={isSelected}
         className={cn(
           'flex w-full items-center gap-3 py-2.5 pr-4 text-left',
-          // L3 들여쓰기 (L2 chevron 폭 + L2 padding-left)
+          // L3 들여쓰기 (L2 chevron 폭 + 약간 더 안쪽)
           'pl-[60px]',
           'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
+          isSelected && 'bg-brand/5',
         )}
       >
         <span
@@ -435,7 +523,7 @@ function L3Row({ l1Name, l2Name, leaf, isSelected, onSelect }: L3RowProps) {
 
 interface SearchResultsProps {
   results: ReturnType<typeof searchCategories>;
-  selected: LeafSelection | null;
+  selected: Selection | null;
   onPick: (l1: string, l2: string, l3: string) => void;
 }
 
@@ -454,7 +542,10 @@ function SearchResults({ results, selected, onPick }: SearchResultsProps) {
       {results.map(({ leaf, path }) => {
         const [l1, l2, l3] = path;
         const isSelected =
-          selected?.l1 === l1 && selected?.l2 === l2 && selected?.l3 === l3;
+          selected?.level === 3 &&
+          selected.l1 === l1 &&
+          selected.l2 === l2 &&
+          selected.l3 === l3;
         return (
           <li key={`${l1}|${l2}|${l3}`}>
             <button
