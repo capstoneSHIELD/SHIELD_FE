@@ -30,8 +30,6 @@
 /* ===== Tailwind v4 Theme ===== */
 @theme {
   --color-brand: #1f8cf9;
-  --color-brand-primary: #258cf4;
-  --color-brand-deep: #0680f9;
   --color-accent-orange: #c2410c;
   --color-warning-red: #eb4747;
   --color-text-soft: #575e6b;
