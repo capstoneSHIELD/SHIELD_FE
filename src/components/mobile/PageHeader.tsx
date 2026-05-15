@@ -9,11 +9,49 @@ interface PageHeaderProps {
   hideBack?: boolean;
   rightSlot?: ReactNode;
   className?: string;
+  /**
+   * 헤더 좌측 가운데 영역에 SHIELD 워드마크 + 사각 로고를 함께 노출.
+   * 와이어프레임 05/08/13에서 사용되는 상단 브랜드 헤더 variant.
+   * - 'none' (default): 기존 chevron + 가운데 title
+   * - 'wordmark': 좌측 작은 로고 + 가운데 SHIELD 워드마크 (title 무시)
+   */
+  logoVariant?: 'none' | 'wordmark';
 }
 
-export function PageHeader({ title, onBack, hideBack, rightSlot, className }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  onBack,
+  hideBack,
+  rightSlot,
+  className,
+  logoVariant = 'none',
+}: PageHeaderProps) {
   const navigate = useNavigate();
   const handleBack = onBack ?? (() => navigate(-1));
+
+  if (logoVariant === 'wordmark') {
+    return (
+      <header
+        className={cn(
+          'sticky top-0 z-10 flex h-[68px] w-full items-center justify-center border-b border-[#e0e2e6] bg-white px-2',
+          className,
+        )}
+      >
+        <div className="absolute left-3 flex items-center gap-1.5">
+          <img src="/logo.png" alt="SHIELD" className="h-7 w-7 object-contain" />
+        </div>
+
+        <span
+          className="text-lg font-extrabold tracking-tight"
+          style={{ color: '#3688f4' }}
+        >
+          SHIELD
+        </span>
+
+        {rightSlot && <div className="absolute right-2 flex items-center gap-1">{rightSlot}</div>}
+      </header>
+    );
+  }
 
   return (
     <header

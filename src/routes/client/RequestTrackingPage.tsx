@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Check, Clock, MessageSquare, Calendar } from 'lucide-react';
+import { Check, Clock, MessageSquare, Calendar, User, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/dateUtils';
 import { useDeliveries } from '@/hooks/useBrief';
-import { DELIVERY_STATUS_LABEL } from '@/lib/constants';
-import { Button, Card, Badge, Spinner } from '@/components/ui';
+import { useLawyerDetail } from '@/hooks/useLawyer';
+import { DELIVERY_STATUS_LABEL, DOMAIN_LABELS } from '@/lib/constants';
+import { Button, Card, Badge, Spinner, Modal } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import type { DeliveryResponse } from '@/types/brief';
 
@@ -124,7 +126,9 @@ function VerticalStepper({ steps }: { steps: TrackingStep[] }) {
                 {step.label}
               </p>
               {step.timestamp && (
-                <p className="text-xs text-gray-400 mt-1">{step.timestamp}</p>
+                <span className="inline-block mt-1 px-2 py-0.5 rounded-md bg-gray-100 text-[11px] text-gray-600">
+                  {step.timestamp}
+                </span>
               )}
               {step.status === 'active' && !step.timestamp && (
                 <p className="text-xs text-brand mt-1">진행 중</p>
@@ -195,10 +199,52 @@ function DeliveryCard({ delivery }: { delivery: DeliveryResponse }) {
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
+// LawyerHeaderCard for B-15 — 상단 변호사 프로필 카드
+function LawyerHeaderCard({ delivery }: { delivery: DeliveryResponse }) {
+  const { data: lawyer } = useLawyerDetail(delivery.lawyerId);
+
+  return (
+    <Card padding="md">
+      <div className="flex items-start gap-3">
+        <div className="w-14 h-14 rounded-full bg-info-bg flex items-center justify-center shrink-0 overflow-hidden">
+          {lawyer?.profileImageUrl ? (
+            <img
+              src={lawyer.profileImageUrl}
+              alt={delivery.lawyerName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <User size={24} className="text-brand/50" aria-hidden="true" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <p className="text-base font-bold text-[#161a1d] truncate">{delivery.lawyerName}</p>
+            <span className="text-[10px] font-bold text-brand bg-info-bg px-1.5 py-0.5 rounded-md tracking-wider">
+              MATCHED
+            </span>
+          </div>
+          {lawyer?.domains && lawyer.domains.length > 0 && (
+            <p className="text-xs text-gray-500 mb-0.5">
+              {lawyer.domains.map((d: string) => DOMAIN_LABELS[d] ?? d).join(' · ')}
+            </p>
+          )}
+          {lawyer?.experienceYears !== undefined && (
+            <p className="text-xs text-gray-500">경력 {lawyer.experienceYears}년</p>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export function RequestTrackingPage() {
   const { id = '' } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: deliveries, isLoading } = useDeliveries(id);
+
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelInfoOpen, setCancelInfoOpen] = useState(false);
 
   // 첫 번째 delivery 기준으로 스텝 생성 (다수 delivery 시 각각 카드 표시)
   const firstDelivery = deliveries?.[0];
@@ -219,6 +265,9 @@ export function RequestTrackingPage() {
           </Card>
         ) : (
           <>
+            {/* B-15: 상단 변호사 헤더 카드 */}
+            {firstDelivery && <LawyerHeaderCard delivery={firstDelivery} />}
+
             {/* Progress stepper section */}
             <Card padding="md">
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
@@ -250,17 +299,85 @@ export function RequestTrackingPage() {
           </div>
         </div>
 
-        {/* Bottom action */}
-        <div className="pt-2">
+        {/* B-16: 하단 의뢰 취소 버튼 + 고객센터 링크 */}
+        <div className="pt-2 space-y-3">
           <Button
             variant="secondary"
             fullWidth
+            onClick={() => setCancelOpen(true)}
+            disabled={!firstDelivery}
+          >
+            의뢰 취소하기
+          </Button>
+          <button
+            type="button"
             onClick={() => navigate('/lawyers')}
+            className="w-full text-xs text-[#62686f] hover:text-brand transition-colors"
           >
             다른 변호사 찾기
-          </Button>
+          </button>
+          <div className="text-center text-xs text-[#62686f]">
+            <span>문제가 발생했나요? </span>
+            <a
+              href="mailto:support@shield.kr"
+              className="inline-flex items-center gap-0.5 text-brand font-medium hover:brightness-90"
+            >
+              <HelpCircle size={12} aria-hidden="true" />
+              고객센터 문의
+            </a>
+          </div>
         </div>
       </main>
+
+      {/* 의뢰 취소 확인 모달 */}
+      <Modal
+        isOpen={cancelOpen}
+        onClose={() => setCancelOpen(false)}
+        title="의뢰 취소"
+      >
+        <p className="text-sm text-gray-700 mb-5 leading-relaxed">
+          의뢰를 취소하면 변호사에게 전달된 의뢰서가 회수되며,
+          이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?
+        </p>
+        <div className="flex gap-2">
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={() => {
+              setCancelOpen(false);
+              setCancelInfoOpen(true);
+            }}
+          >
+            의뢰 취소
+          </Button>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setCancelOpen(false)}
+          >
+            닫기
+          </Button>
+        </div>
+      </Modal>
+
+      {/* TODO: 의뢰 취소 API 연동 (현재 백엔드 명세에 없음) */}
+      <Modal
+        isOpen={cancelInfoOpen}
+        onClose={() => setCancelInfoOpen(false)}
+        title="서비스 준비 중"
+      >
+        <p className="text-sm text-gray-700 mb-5 leading-relaxed">
+          의뢰 취소 기능은 준비 중입니다. 급한 경우
+          고객센터로 연락해 주세요.
+        </p>
+        <Button
+          variant="primary"
+          fullWidth
+          onClick={() => setCancelInfoOpen(false)}
+        >
+          확인
+        </Button>
+      </Modal>
     </div>
   );
 }

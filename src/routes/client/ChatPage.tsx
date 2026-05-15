@@ -65,7 +65,7 @@ export function ChatPage() {
   if (isLoading) {
     return (
       <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
-        <PageHeader title="법률 상담 챗봇" onBack={() => navigate('/consultations')} />
+        <PageHeader logoVariant="wordmark" />
         <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
         </div>
@@ -76,7 +76,7 @@ export function ChatPage() {
   return (
     <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
       {/* ── header ─────────────────────────────────────────────────────── */}
-      <PageHeader title="법률 상담 챗봇" onBack={() => navigate('/consultations')} />
+      <PageHeader logoVariant="wordmark" />
 
       {/* ── progress bar (sticky, BE PR #89) ─────────────────────────── */}
       <ConsultationProgressBar progress={progress} completed={allCompleted} />

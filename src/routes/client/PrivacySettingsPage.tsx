@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { UserCheck, ShieldCheck, UserX, CircleCheck, Circle } from 'lucide-react';
+import { UserCheck, ShieldCheck, UserX, CircleCheck, Circle, User } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useUpdateBrief } from '@/hooks/useBrief';
 import { Button } from '@/components/ui';
@@ -131,7 +131,9 @@ export function PrivacySettingsPage() {
                   'rounded-[10px] border p-4 flex items-center gap-3',
                   isSelected ? 'bg-[#f0faff] border-brand/30' : 'bg-[#f3f5f6]/30 border-[#dde0e4]',
                 )}>
-                  <div className="w-10 h-10 rounded-full bg-[#e1f1fd] shrink-0" />
+                  <div className="w-10 h-10 rounded-full bg-[#e1f1fd] shrink-0 flex items-center justify-center">
+                    <User size={20} className="text-brand/60" aria-hidden="true" />
+                  </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-bold text-[#31383f]">{opt.previewName}</span>
