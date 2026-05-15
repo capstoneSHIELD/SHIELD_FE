@@ -4,6 +4,7 @@ import { Check, Search } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useCreateConsultation } from '@/hooks/useConsultation';
 import { PageHeader } from '@/components/mobile/PageHeader';
+import { Button } from '@/components/ui';
 import { LEGAL_CATEGORY_TREE } from '@/lib/legalCategories';
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -160,24 +161,19 @@ export function NewConsultationPage() {
 
         <div className="flex-1" />
 
-        {/* "다음" button — sits above BottomNav */}
+        {/* "다음" button — figma 04: Button lg */}
         <div className="mt-6">
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={handleSubmit}
-            disabled={!isDomainChosen || isPending}
-            className={cn(
-              'flex h-14 w-full items-center justify-center rounded-[12px]',
-              'text-[18px] font-bold text-white transition duration-150',
-              'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
-              isDomainChosen && !isPending
-                ? 'bg-brand hover:brightness-95 active:scale-[0.99]'
-                : 'cursor-not-allowed bg-gray-300',
-            )}
+            disabled={!isDomainChosen}
+            isLoading={isPending}
           >
-            {isPending ? '처리 중...' : '다음'}
-          </button>
+            다음
+          </Button>
         </div>
       </main>
     </div>
