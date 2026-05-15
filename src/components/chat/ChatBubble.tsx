@@ -66,7 +66,7 @@ export function ChatBubble({ sender, content, timestamp }: ChatBubbleProps) {
             <span className="w-8 h-8 rounded-[10px] bg-brand/10 flex items-center justify-center">
               <Lightbulb className="h-4 w-4 text-brand" />
             </span>
-            <span className="text-[13px] font-semibold text-[#31383f]">TIP</span>
+            <span className="text-[13px] font-semibold leading-5 text-brand">TIP</span>
           </div>
           <p className="text-xs text-[#555d6d] leading-relaxed">{content}</p>
         </div>

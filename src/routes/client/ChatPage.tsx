@@ -81,10 +81,10 @@ export function ChatPage() {
       {/* ── progress bar (sticky, BE PR #89) ─────────────────────────── */}
       <ConsultationProgressBar progress={progress} completed={allCompleted} />
 
-      {/* ── AI notice bar — figma 05 style ───────────────────────────── */}
-      <div className="flex items-center gap-2 border-b border-[#e0e2e6] bg-gray-50/50 px-4 py-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-brand/50" />
-        <p className="text-[11px] font-medium text-text-soft">
+      {/* ── AI notice bar — figma 05 (h-[34px], 사각 dot rounded-[3px]) ─ */}
+      <div className="flex h-[34px] items-center gap-2 border-b border-border bg-gray-100/50 px-4">
+        <span className="size-1.5 rounded-[3px] bg-brand/50" />
+        <p className="text-[11px] font-medium leading-[17px] text-text-soft">
           AI는 법률 상담이 아닌 정보 정리를 도와드립니다
         </p>
       </div>
