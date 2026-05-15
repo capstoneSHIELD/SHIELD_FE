@@ -23,7 +23,7 @@ export function ConsultationListPage() {
       aria-label="새 상담 시작"
       className={cn(
         'flex items-center gap-1 text-sm font-medium text-brand',
-        'hover:text-blue-700 active:text-blue-800 transition-colors',
+        'hover:brightness-90 active:brightness-80 transition-colors',
         '-mr-1 px-1 py-1',
       )}
     >
@@ -48,8 +48,8 @@ export function ConsultationListPage() {
         {!isLoading && consultations.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-5 pt-20 pb-8 text-center">
             {/* Illustration placeholder */}
-            <div className="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center">
-              <MessageSquare size={40} className="text-blue-300" />
+            <div className="w-24 h-24 rounded-full bg-info-bg flex items-center justify-center">
+              <MessageSquare size={40} className="text-brand/40" />
             </div>
             <div className="space-y-1.5">
               <p className="text-base font-semibold text-gray-800">

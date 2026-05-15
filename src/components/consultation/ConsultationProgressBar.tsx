@@ -76,7 +76,7 @@ export function ConsultationProgressBar({
             'h-full rounded-full transition-[width] duration-500 ease-out',
             isCompleted
               ? 'bg-emerald-500 animate-pulse'
-              : 'bg-gradient-to-r from-brand to-blue-400',
+              : 'bg-gradient-to-r from-brand to-brand/60',
           )}
           style={{ width: `${percent}%` }}
         />

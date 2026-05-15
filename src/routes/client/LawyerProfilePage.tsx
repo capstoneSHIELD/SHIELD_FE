@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { User, MapPin, Award, Briefcase, CheckCircle2 } from 'lucide-react';
+import { User, MapPin, Award, CheckCircle2, Search, Landmark } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useLawyerDetail } from '@/hooks/useLawyer';
-import { useDeliverBrief, useDeliveries } from '@/hooks/useBrief';
-import { Button, Card, Badge, Spinner, Modal } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { useDeliverBrief, useDeliveries, useLawyerRecommendations } from '@/hooks/useBrief';
+import { Button, Card, Spinner, Modal } from '@/components/ui';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { DOMAIN_LABELS } from '@/lib/constants';
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -26,6 +26,11 @@ export function LawyerProfilePage() {
   const { data: deliveries } = useDeliveries(briefId ?? '');
   const alreadyDelivered = (deliveries ?? []).some((d) => d.lawyerId === id);
 
+  // B-12: 추천 진입(briefId 존재)일 때만 매칭 키워드 카드 표시
+  const { data: recommendations } = useLawyerRecommendations(briefId ?? '', !!briefId);
+  const matchedKeywords =
+    recommendations?.find((r) => r.lawyerId === id)?.matchedKeywords ?? null;
+
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [alreadyOpen, setAlreadyOpen] = useState(false);
@@ -38,14 +43,10 @@ export function LawyerProfilePage() {
   }
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header
-        title="변호사 프로필"
-        showBack
-        onBack={() => navigate(-1)}
-      />
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="변호사 프로필" />
 
-      <main className="flex-1 px-4 py-4 pb-28 space-y-3">
+      <main className="flex-1 space-y-3 px-4 py-4 pb-28">
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center h-64">
@@ -67,13 +68,13 @@ export function LawyerProfilePage() {
 
         {lawyer && (
           <>
-            {/* ── Profile card ── */}
+            {/* ── B-11: 가로형 프로필 헤더 카드 ── */}
             <Card padding="md">
-              <div className="flex flex-col items-center text-center gap-3">
-                {/* Avatar */}
+              <div className="flex items-start gap-4">
+                {/* Avatar (left) */}
                 <div
                   className={cn(
-                    'w-20 h-20 rounded-full bg-gray-100',
+                    'w-20 h-20 rounded-full bg-gray-100 flex-shrink-0',
                     'flex items-center justify-center overflow-hidden',
                   )}
                 >
@@ -88,88 +89,138 @@ export function LawyerProfilePage() {
                   )}
                 </div>
 
-                {/* Name + experience badge */}
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold text-[#16181d]">{lawyer.name}</h2>
-                  <span className="bg-[#f0f7ff] text-[#0680f9] text-xs font-medium px-2.5 py-0.5 rounded-full">
-                    경력 {lawyer.experienceYears}년
-                  </span>
-                </div>
-
-                {/* Specialization — L1 대분류 배열을 Badge 로 나열 */}
-                {lawyer.domains && lawyer.domains.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-1.5">
-                    {lawyer.domains.map((d: string) => (
-                      <Badge key={d} variant="primary" size="sm">
-                        {DOMAIN_LABELS[d] ?? d}
-                      </Badge>
-                    ))}
+                {/* Right column */}
+                <div className="flex-1 min-w-0 flex flex-col gap-2">
+                  {/* Name + experience badge */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-[18px] font-bold text-[#16181d]">
+                      {lawyer.name} 변호사
+                    </h2>
+                    <span className="bg-info-bg text-[#0680f9] text-xs font-medium px-2 py-1 rounded-[8px]">
+                      경력 {lawyer.experienceYears}년
+                    </span>
                   </div>
-                )}
 
-                {/* Experience + Region */}
-                <div className="flex items-center gap-3 text-sm text-gray-500">
-                  <span>{lawyer.experienceYears}년 경력</span>
+                  {/* Specialty chips */}
+                  {lawyer.domains && lawyer.domains.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {lawyer.domains.map((d: string) => (
+                        <span
+                          key={d}
+                          className="bg-gray-100 text-text-soft text-xs font-normal px-2 py-0.5 rounded-[8px]"
+                        >
+                          {DOMAIN_LABELS[d] ?? d}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Region */}
                   {lawyer.region && (
-                    <>
-                      <span className="text-gray-300">|</span>
-                      <span className="flex items-center gap-1">
-                        <MapPin size={13} aria-hidden="true" />
-                        {lawyer.region}
-                      </span>
-                    </>
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <MapPin size={12} aria-hidden="true" />
+                      {lawyer.region}
+                    </div>
                   )}
                 </div>
-
-                {/* Case count */}
-                {lawyer.caseCount > 0 && (
-                  <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                    <Briefcase size={13} aria-hidden="true" />
-                    <span>처리 사건 {lawyer.caseCount}건</span>
-                  </div>
-                )}
               </div>
             </Card>
 
-            {/* ── Bio card ── */}
-            {lawyer.bio && (
-              <Card padding="md">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">소개</h3>
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {lawyer.bio}
+            {/* ── B-12: 내 사건과의 매칭 키워드 카드 (추천 진입 시만) ── */}
+            {briefId && matchedKeywords && matchedKeywords.length > 0 && (
+              <Card padding="md" className="!bg-[#e1f1fd] !border-transparent">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Search size={14} className="text-brand" aria-hidden="true" />
+                  <h3 className="text-sm font-bold text-[#0680f9]">내 사건과의 매칭 키워드</h3>
+                </div>
+                <p className="text-xs text-[#3d434a] leading-relaxed mb-3">
+                  사건 분석 결과, 다음 핵심 키워드에서
+                  <strong className="text-brand"> {matchedKeywords.length}건</strong>의 전문성이 확인되었습니다.
                 </p>
-              </Card>
-            )}
-
-            {/* ── Tags card ── */}
-            {lawyer.tags && lawyer.tags.length > 0 && (
-              <Card padding="md">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">태그</h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {lawyer.tags.map((tag) => (
+                  {matchedKeywords.map((kw) => (
                     <span
-                      key={tag}
-                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium"
+                      key={kw}
+                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-white text-brand text-xs font-medium border border-brand/20"
                     >
-                      {tag}
+                      #{kw}
                     </span>
                   ))}
                 </div>
               </Card>
             )}
 
-            {/* ── Certifications card ── */}
+            {/* ── B-13: 주요 수행 사례 (수치 강조 2분할) ── */}
+            <Card padding="md">
+              <div className="flex items-center gap-1.5 mb-3">
+                <Landmark size={14} className="text-brand" aria-hidden="true" />
+                <h3 className="text-sm font-bold text-[#161a1d]">주요 수행 사례</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-brand leading-tight">
+                    {lawyer.caseCount > 0 ? `${lawyer.caseCount}+` : '–'}
+                  </p>
+                  <p className="text-xs text-[#62686f] mt-1">관련 승소 사례</p>
+                </div>
+                <div className="text-center border-l border-[#f0f1f3]">
+                  <p className="text-2xl font-bold text-brand leading-tight">
+                    {lawyer.experienceYears}년
+                  </p>
+                  <p className="text-xs text-[#62686f] mt-1">통합 실무 경력</p>
+                </div>
+              </div>
+            </Card>
+
+            {/* ── B-14: 전문 자격 및 약력 ── */}
             {lawyer.certifications && lawyer.certifications.length > 0 && (
               <Card padding="md">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">자격/인증</h3>
-                <ul className="space-y-1.5">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Award size={14} className="text-brand" aria-hidden="true" />
+                  <h3 className="text-sm font-bold text-[#161a1d]">전문 자격 및 약력</h3>
+                </div>
+                <ul className="space-y-2.5">
                   {lawyer.certifications.map((cert) => (
-                    <li key={cert} className="flex items-center gap-2 text-sm text-gray-700">
-                      <Award size={14} className="text-gray-400 flex-shrink-0" aria-hidden="true" />
-                      {cert}
+                    <li key={cert} className="flex items-start gap-2 text-sm">
+                      <CheckCircle2
+                        size={16}
+                        className="text-brand flex-shrink-0 mt-0.5"
+                        aria-hidden="true"
+                      />
+                      <span className="text-[#161a1d] font-semibold leading-snug">{cert}</span>
                     </li>
                   ))}
                 </ul>
+              </Card>
+            )}
+
+            {/* ── B-14: 소개 ── */}
+            {lawyer.bio && (
+              <Card padding="md">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <User size={14} className="text-brand" aria-hidden="true" />
+                  <h3 className="text-sm font-bold text-[#161a1d]">소개</h3>
+                </div>
+                <p className="text-sm text-[#3d434a] leading-relaxed whitespace-pre-wrap">
+                  {lawyer.bio}
+                </p>
+              </Card>
+            )}
+
+            {/* ── Tags (전문 분야 상세) ── */}
+            {lawyer.tags && lawyer.tags.length > 0 && (
+              <Card padding="md">
+                <h3 className="text-sm font-bold text-[#161a1d] mb-2">전문 분야 상세</h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {lawyer.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-info-bg text-brand text-xs font-medium"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </Card>
             )}
           </>

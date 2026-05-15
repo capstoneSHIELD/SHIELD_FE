@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figma export — Processing Case (page)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body { margin: 0; background: #f3f4f6; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+      .page-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 48px; }
+      .page-title { font-size: 22px; font-weight: 700; color: #16181d; margin: 0 0 4px; }
+      .page-sub { font-size: 13px; color: #575e6b; margin: 0 0 24px; }
+      .states { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; }
+      .state { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      .frame { width: 390px; height: 841px; position: relative; overflow: hidden; background: #fff; box-shadow: 0 3px 12px rgba(18,15,40,0.12); border-radius: 24px; }
+    </style>
+  </head>
+  <body>
+    <main class="page-wrap">
+      <h1 class="page-title">Processing Case</h1>
+      <p class="page-sub">AI 분석 처리 중 화면 (node 1:824, 첫 변형). Figma에는 5개 변형이 있으나 스피너 회전 각도/메시지만 다를 가능성.</p>
+
+      <div class="states">
+        <div class="state">
+          <div class="frame" data-node-id="1:824" data-name="Processing Case">
+
+            <!-- Status bar -->
+            <div class="absolute bg-[rgba(0,0,0,0)] h-[40px] left-0 top-0 w-[390px]" data-node-id="1:833">
+              <div class="absolute h-[40px] left-0 overflow-clip top-0 w-[70px]">
+                <div class="absolute inset-[41.96%_19.41%_31.28%_41.5%]">
+                  <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/processing-case/sb-left.svg" />
+                </div>
+              </div>
+              <div class="absolute h-[40px] left-[294px] overflow-clip top-0 w-[96px]">
+                <div class="absolute inset-[41.68%_18.88%_31.92%_12.5%]">
+                  <div class="absolute inset-[-4.73%_0_0_0]">
+                    <img alt="" class="block max-w-none size-full" src="./assets/processing-case/sb-right.svg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Loader circle group -->
+            <!-- Outer light blue ring -->
+            <div class="absolute bg-[rgba(0,0,0,0)] border-4 border-[rgba(31,177,249,0.1)] border-solid left-[153px] rounded-[48px] size-[96px] top-[224px]" data-node-id="1:851"></div>
+            <!-- Rotating spinner -->
+            <div class="absolute flex items-center justify-center left-[155.92px] size-[90.151px] top-[226.92px]">
+              <div class="flex-none rotate-[-167.99deg]">
+                <div class="relative size-[76px]" data-node-id="1:852">
+                  <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/processing-case/loader-circle.svg" />
+                </div>
+              </div>
+            </div>
+            <!-- Shield check icon (center) -->
+            <div class="absolute left-[193px] overflow-clip size-[16px] top-[264px]" data-node-id="1:854">
+              <div class="absolute inset-[3.94%_12.31%_3.93%_12.31%]">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/processing-case/shield-check.svg" />
+              </div>
+            </div>
+            <!-- Small bottom-right indicator circle -->
+            <div class="absolute bg-[rgba(0,0,0,0)] border-2 border-solid border-white left-[185px] rounded-[16px] shadow-[0px_4px_6px_0px_rgba(0,0,0,0.1),0px_2px_4px_0px_rgba(0,0,0,0.06)] size-[32px] top-[256px]" data-node-id="1:858"></div>
+
+            <!-- Title -->
+            <p class="-translate-x-1/2 absolute font-bold leading-[28px] left-[201px] not-italic text-[#161a1d] text-[20px] text-center top-[340px] tracking-[-0.5px] whitespace-nowrap" data-node-id="1:830" style="font-family: 'Inter', 'Noto Sans KR', sans-serif;">
+              채팅내용을 분석 하고 있습니다
+            </p>
+
+            <!-- Description -->
+            <div class="-translate-x-1/2 absolute font-normal h-[47px] leading-[0] left-[202px] not-italic text-[#31383f] text-[12px] text-center top-[368px] w-[274px] whitespace-pre-wrap" data-node-id="1:831" style="font-family: 'Inter', 'Noto Sans KR', sans-serif;">
+              <p class="leading-[20px] mb-0">입력하신 내용을 바탕으로 </p>
+              <p class="leading-[20px]">최적의 법률 프레임워크를 구성 중입니다.</p>
+            </div>
+
+            <!-- Clock icon -->
+            <div class="absolute left-[129px] size-[24px] top-[427px]" data-node-id="1:859">
+              <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/processing-case/clock.svg" />
+            </div>
+            <!-- Time estimate -->
+            <p class="-translate-x-1/2 absolute font-medium leading-[20px] left-[207px] not-italic text-[#1d2125] text-[12px] text-center top-[430px] whitespace-nowrap" data-node-id="1:832" style="font-family: 'Inter', 'Noto Sans KR', sans-serif;">
+              약 10~30초 소요
+            </p>
+
+            <!-- Footer security label -->
+            <p class="-translate-x-1/2 absolute font-bold leading-[15px] left-[195.5px] not-italic text-[10px] text-[rgba(49,56,63,0.6)] text-center top-[708px] tracking-[-0.5px] uppercase whitespace-nowrap" data-node-id="1:826" style="font-family: 'Inter', sans-serif;">
+              Secure Data Processing
+            </p>
+            <div class="absolute h-0 left-[92px] top-[716px] w-[32px]">
+              <div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/processing-case/line.svg" /></div>
+            </div>
+            <div class="absolute h-0 left-[265px] top-[716px] w-[32px]">
+              <div class="absolute inset-[-0.5px_0]"><img alt="" class="block max-w-none size-full" src="./assets/processing-case/line.svg" /></div>
+            </div>
+            <p class="-translate-x-1/2 absolute font-normal leading-[17px] left-[197.5px] not-italic text-[11px] text-[rgba(49,56,63,0.4)] text-center top-[731px] w-[283px]" data-node-id="1:829" style="font-family: 'Inter', 'Noto Sans KR', sans-serif;">
+              SHIELD는 모든 데이터를 암호화하여 처리하며, 분석 완료 후 안전하게 결과를 전달합니다.
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -52,12 +52,12 @@ export function HomePage() {
           className={cn(
             'w-full flex items-center justify-between',
             'bg-brand text-white rounded-2xl px-5 py-4',
-            'hover:bg-blue-600 active:bg-blue-700 transition-colors duration-150',
+            'hover:brightness-95 active:brightness-90 transition-colors duration-150',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand/60',
           )}
         >
           <div className="flex flex-col items-start gap-0.5">
-            <span className="text-sm font-medium text-blue-100">법률 상담</span>
+            <span className="text-sm font-medium text-white/80">법률 상담</span>
             <span className="text-base font-bold leading-snug">
               새로운 법률 상담 시작하기
             </span>
@@ -72,7 +72,7 @@ export function HomePage() {
               <h2 className="text-sm font-semibold text-gray-700">최근 상담</h2>
               <Link
                 to="/consultations"
-                className="flex items-center gap-0.5 text-xs text-brand hover:text-blue-700 font-medium transition-colors"
+                className="flex items-center gap-0.5 text-xs text-brand hover:brightness-90 font-medium transition-colors"
               >
                 전체 보기
                 <ChevronRight size={14} aria-hidden="true" />
@@ -150,7 +150,7 @@ export function HomePage() {
               <h2 className="text-sm font-semibold text-gray-700">최근 의뢰서</h2>
               <Link
                 to="/briefs"
-                className="flex items-center gap-0.5 text-xs text-brand hover:text-blue-700 font-medium transition-colors"
+                className="flex items-center gap-0.5 text-xs text-brand hover:brightness-90 font-medium transition-colors"
               >
                 전체 보기
                 <ChevronRight size={14} aria-hidden="true" />

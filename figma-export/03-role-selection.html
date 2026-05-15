@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figma export — Role Selection (page)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&family=Roboto:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        margin: 0;
+        background: #f3f4f6;
+        font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+      }
+      .page-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 24px 48px;
+      }
+      .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #16181d;
+        margin: 0 0 4px;
+      }
+      .page-sub {
+        font-size: 13px;
+        color: #575e6b;
+        margin: 0 0 24px;
+      }
+      .states {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+      }
+      .state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .frame {
+        width: 390px;
+        height: 844px;
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 3px 12px rgba(18, 15, 40, 0.12);
+        border-radius: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-wrap">
+      <h1 class="page-title">Role Selection</h1>
+      <p class="page-sub">의뢰인 / 변호사 역할 선택 화면 (node 1:134).</p>
+
+      <div class="states">
+        <div class="state">
+          <div class="frame" data-node-id="1:134" data-name="Role Selection">
+
+            <!-- Title -->
+            <div class="absolute h-[73px] left-[28px] top-[138px] w-[270px]">
+              <div class="absolute font-bold inset-0 leading-[0] not-italic text-[#16181d] text-[24px] tracking-[-0.7px]" style="font-family: 'Inter', 'Noto Sans KR', sans-serif;">
+                <p class="mb-0"><span class="leading-[32px]">어떤</span><span class="leading-[32px] text-[#1f8cf9]"> 역할</span><span class="leading-[32px]">로</span></p>
+                <p class="leading-[32px]">이용하시겠습니까?</p>
+              </div>
+            </div>
+
+            <!-- Client card border -->
+            <div class="absolute border-2 border-[#e0e2e6] border-solid h-[130px] left-[25px] rounded-[13px] top-[247px] w-[340px]" data-node-id="1:222"></div>
+
+            <!-- Client icon container -->
+            <div class="absolute bg-[rgba(31,140,249,0.1)] left-[42px] rounded-[28px] size-[56px] top-[291px]" data-node-id="1:139">
+              <div class="absolute left-[14px] overflow-clip size-[28px] top-[14px]" data-node-id="1:140">
+                <div class="absolute inset-[58.29%_16.57%_8.29%_16.57%]">
+                  <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/user-body.svg" />
+                </div>
+                <div class="absolute inset-[8.29%_29.11%_49.93%_29.11%]">
+                  <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/user-head.svg" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Client title -->
+            <p class="absolute font-bold leading-[0] left-[125px] text-[#16181d] text-[0px] top-[287px] whitespace-nowrap" data-node-id="1:147" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+              <span class="leading-[28px] text-[18px]">의뢰인</span>
+              <span class="leading-[28px] text-[15px]"> (Client)</span>
+            </p>
+            <!-- Client description -->
+            <p class="absolute font-normal leading-[15px] left-[125px] text-[#575e6b] text-[11px] top-[316px] w-[224px]" data-node-id="1:148" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+              인공지능 법률 상담을 통해 고민을 해결하고 적합한 변호사를 찾고 싶습니다.
+            </p>
+            <!-- Client chevron-right -->
+            <div class="absolute left-[327px] opacity-60 overflow-clip size-[20px] top-[343px]" data-node-id="1:149">
+              <div class="absolute inset-[20.95%_33.4%]">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/chevron-right.svg" />
+              </div>
+            </div>
+
+            <!-- Lawyer card border -->
+            <div class="absolute border-2 border-[#e0e2e6] border-solid h-[130px] left-[25px] rounded-[13px] top-[389px] w-[340px]" data-node-id="1:223"></div>
+
+            <!-- Lawyer icon -->
+            <div class="absolute left-[43px] size-[56px] top-[424px]" data-node-id="1:209">
+              <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/lawyer-icon.svg" />
+            </div>
+
+            <!-- Lawyer title -->
+            <p class="absolute font-bold leading-[0] left-[126px] text-[#16181d] text-[0px] top-[420px] whitespace-nowrap" data-node-id="1:154" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+              <span class="leading-[28px] text-[18px]">변호사</span>
+              <span class="leading-[28px] text-[15px]"> (Lawyer)</span>
+            </p>
+            <!-- Lawyer description -->
+            <p class="absolute font-normal h-[46px] leading-[15px] left-[131px] text-[#575e6b] text-[11px] top-[449px] w-[224px]" data-node-id="1:155" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+              전문적인 법률 지식을 공유하고 새로운 의뢰인과 사건을 수임하고 싶습니다.
+            </p>
+            <!-- Lawyer chevron-right -->
+            <div class="absolute left-[328px] opacity-60 overflow-clip size-[20px] top-[476px]" data-node-id="1:156">
+              <div class="absolute inset-[20.95%_33.4%]">
+                <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/chevron-right.svg" />
+              </div>
+            </div>
+
+            <!-- "다음" submit button -->
+            <div class="absolute bg-[#1f8cf9] h-[56px] left-[25px] overflow-clip rounded-[12px] shadow-[0px_0px_0px_0px_rgba(23,26,31,0),0px_4px_8px_0px_rgba(35,37,41,0.08)] top-[729px] w-[340px]" data-node-id="1:207">
+              <p class="-translate-x-1/2 absolute font-bold leading-[28px] left-1/2 text-[18px] text-center text-white top-[calc(50%-14px)] whitespace-nowrap" data-node-id="1:208" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                다음
+              </p>
+            </div>
+
+            <!-- Footer security notice -->
+            <div class="absolute bg-[rgba(0,0,0,0)] h-[47px] left-[9px] opacity-60 top-[767px] w-[342px]" data-node-id="1:161">
+              <p class="absolute font-medium leading-[16px] left-[68px] text-[#575e6b] text-[10px] top-[28px] whitespace-nowrap" data-node-id="1:162" style="font-family: 'Roboto', 'Noto Sans KR', sans-serif; font-variation-settings: 'wdth' 100;">
+                SHIELD의 모든 데이터는 강력한 보안 기술로 보호됩니다
+              </p>
+            </div>
+
+            <!-- Top header -->
+            <div class="absolute bg-white h-[108px] left-0 top-0 w-[390px]" data-node-id="1:163">
+              <div class="absolute h-0 left-0 top-[108px] w-[390px]">
+                <div class="absolute inset-[-0.5px_0]">
+                  <img alt="" class="block max-w-none size-full" src="./assets/role-selection/line.svg" />
+                </div>
+              </div>
+              <button class="absolute bg-[rgba(0,0,0,0)] block cursor-pointer left-[8px] overflow-clip size-[40px] top-[53px]" data-node-id="1:165">
+                <div class="-translate-x-1/2 -translate-y-1/2 absolute left-1/2 overflow-clip size-[24px] top-1/2">
+                  <div class="absolute inset-[20.83%_33.33%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/chevron-left.svg" />
+                  </div>
+                </div>
+              </button>
+              <div class="absolute bg-[rgba(0,0,0,0)] h-[40px] left-0 top-0 w-[390px]" data-node-id="1:172">
+                <div class="absolute h-[40px] left-0 overflow-clip top-0 w-[70px]">
+                  <div class="absolute inset-[41.96%_47.28%_31.28%_41.5%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb1.svg" />
+                  </div>
+                  <div class="absolute inset-[45.99%_41.59%_35.32%_55.2%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb2.svg" />
+                  </div>
+                  <div class="absolute inset-[42.6%_27.57%_31.92%_60.86%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb3.svg" />
+                  </div>
+                  <div class="absolute inset-[42.6%_19.41%_31.92%_74.2%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb4.svg" />
+                  </div>
+                </div>
+                <div class="absolute h-[40px] left-[294px] overflow-clip top-0 w-[96px]">
+                  <div class="absolute inset-[41.68%_21.53%_33.17%_57.35%]">
+                    <div class="absolute inset-[-4.97%_-2.47%]">
+                      <img alt="" class="block max-w-none size-full" src="./assets/role-selection/sb5.svg" />
+                    </div>
+                  </div>
+                  <div class="absolute inset-[51.06%_18.88%_39.96%_79.88%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb6.svg" />
+                  </div>
+                  <div class="absolute inset-[44.68%_22.78%_36.17%_58.6%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb7.svg" />
+                  </div>
+                  <div class="absolute inset-[42.55%_49.38%_32.27%_35.55%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb8.svg" />
+                  </div>
+                  <div class="absolute inset-[46.81%_75.98%_31.92%_21.37%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb9.svg" />
+                  </div>
+                  <div class="absolute inset-[42.55%_71.54%_31.91%_25.8%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb10.svg" />
+                  </div>
+                  <div class="absolute inset-[54.26%_80.41%_31.92%_16.93%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb11.svg" />
+                  </div>
+                  <div class="absolute inset-[59.57%_84.84%_31.92%_12.5%]">
+                    <img alt="" class="absolute block inset-0 max-w-none size-full" src="./assets/role-selection/sb12.svg" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

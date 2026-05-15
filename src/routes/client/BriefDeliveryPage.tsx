@@ -3,7 +3,7 @@ import { Search } from 'lucide-react';
 import { formatDateTime } from '@/lib/dateUtils';
 import { useDeliveries } from '@/hooks/useBrief';
 import { Button, Card, Badge, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { PageHeader } from '@/components/mobile/PageHeader';
 import { DELIVERY_STATUS_BADGE, DELIVERY_STATUS_LABEL } from '@/lib/constants';
 import type { DeliveryStatus } from '@/types/enums';
 
@@ -18,14 +18,10 @@ export function BriefDeliveryPage() {
   const list = deliveries ?? [];
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header
-        title="전달 현황"
-        showBack
-        onBack={() => navigate(`/briefs/${id}`)}
-      />
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+      <PageHeader title="변호사 찾기" onBack={() => navigate(`/briefs/${id}`)} />
 
-      <main className="flex-1 px-4 py-4 flex flex-col gap-4">
+      <main className="flex flex-1 flex-col gap-4 px-4 py-4">
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center h-48">
@@ -36,8 +32,8 @@ export function BriefDeliveryPage() {
         {/* Empty state */}
         {!isLoading && list.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-4 pt-20 pb-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center">
-              <Search size={32} className="text-blue-300" aria-hidden="true" />
+            <div className="w-20 h-20 rounded-full bg-info-bg flex items-center justify-center">
+              <Search size={32} className="text-brand/40" aria-hidden="true" />
             </div>
             <p className="text-sm text-gray-500">아직 전달 내역이 없습니다</p>
           </div>

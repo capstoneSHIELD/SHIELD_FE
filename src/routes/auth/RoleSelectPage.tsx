@@ -1,9 +1,17 @@
-import { ArrowLeft, Briefcase, ChevronRight, User } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronRight, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/cn';
+import { PageHeader } from '@/components/mobile/PageHeader';
+import { Button } from '@/components/ui';
 import type { PendingRegistrationState } from '@/lib/authFlow';
 
+import lawyerIcon from '@/assets/figma/role-selection/lawyer-icon.svg';
+
+type Role = 'client' | 'lawyer';
+
 interface RoleCardProps {
+  selected: boolean;
   icon: React.ReactNode;
   iconBg: string;
   title: string;
@@ -11,29 +19,29 @@ interface RoleCardProps {
   onClick: () => void;
 }
 
-function RoleCard({ icon, iconBg, title, description, onClick }: RoleCardProps) {
+function RoleCard({ selected, icon, iconBg, title, description, onClick }: RoleCardProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        'w-full text-left relative',
-        'bg-white rounded-card',
-        'hover:shadow-md transition-all duration-200',
-        'h-32.5 px-6 cursor-pointer',
-        'border-2 border-[#e0e2e6] hover:border-brand',
+        'relative h-[130px] w-full rounded-[13px] border-2 bg-white px-6 text-left',
+        'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+        selected
+          ? 'border-brand shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]'
+          : 'border-[#e0e2e6] hover:border-brand/50',
       )}
     >
       <div className="flex items-center gap-4">
-        <div className={cn('shrink-0 flex items-center justify-center w-14 h-14 rounded-full', iconBg)}>
+        <div className={cn('flex h-14 w-14 shrink-0 items-center justify-center rounded-full', iconBg)}>
           {icon}
         </div>
-        <div className="flex flex-col gap-1 flex-1">
-          <span className="text-lg font-bold text-[#16181d]">{title}</span>
-          <span className="text-sm text-[#575e6b] leading-5.75">{description}</span>
+        <div className="flex flex-1 flex-col gap-1">
+          <span className="text-[18px] font-bold leading-7 text-[#16181d]">{title}</span>
+          <span className="text-[11px] leading-[15px] text-text-soft">{description}</span>
         </div>
-        <ChevronRight size={20} className="text-[#575e6b] opacity-60 shrink-0" />
+        <ChevronRight size={20} className="shrink-0 text-text-soft opacity-60" />
       </div>
     </button>
   );
@@ -42,68 +50,64 @@ function RoleCard({ icon, iconBg, title, description, onClick }: RoleCardProps) 
 export function RoleSelectPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  // 소셜 로그인 콜백에서 넘어올 때 state로 accessToken / name / email / provider 를 전달한다.
-  // 직접 URL 입력 등으로 들어온 경우엔 state 가 없을 수 있다.
   const pending = (location.state ?? null) as PendingRegistrationState | null;
+  const [selected, setSelected] = useState<Role | null>(null);
 
-  const goToRegister = (role: 'client' | 'lawyer') => {
-    navigate(`/register/${role}`, {
+  const handleNext = () => {
+    if (!selected) return;
+    navigate(`/register/${selected}`, {
       state: pending ?? undefined,
     });
   };
 
   return (
-    <div className="flex flex-col flex-1">
-      {/* Header with back button */}
-      <div className="sticky top-0 z-10 bg-white border-b border-[#e0e2e6] px-2 pt-2 pb-3">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className={cn(
-            'flex items-center justify-center w-10 h-10',
-            'text-[#16181d] hover:bg-gray-100 rounded-full',
-            'transition-colors duration-150',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
-          )}
-          aria-label="뒤로 가기"
-        >
-          <ArrowLeft size={24} />
-        </button>
-      </div>
+    <div className="mx-auto flex min-h-dvh w-full max-w-[390px] flex-col bg-white">
+      <PageHeader />
 
-      <div className="flex-1 px-6 pt-8 pb-6 flex flex-col">
-        {/* Title — left aligned, two lines */}
-        <h1 className="text-2xl font-bold text-[#16181d] tracking-tight leading-8 mb-2">
-          어떤 역할로
+      <div className="relative flex flex-1 flex-col px-[25px]">
+        {/* Title */}
+        <h1 className="mt-[30px] text-[24px] font-bold leading-8 tracking-[-0.7px] text-[#16181d]">
+          어떤 <span className="text-brand">역할</span>로
           <br />
           이용하시겠습니까?
         </h1>
-        <p className="text-sm text-[#575e6b] mb-10">
-          회원님의 이용 목적에 맞는 역할을 선택해 주세요.
-        </p>
 
-        {/* Role cards */}
-        <div className="flex flex-col gap-4.75">
+        {/* Cards */}
+        <div className="mt-10 flex flex-col gap-4">
           <RoleCard
+            selected={selected === 'client'}
             icon={<User size={28} className="text-brand" />}
             iconBg="bg-brand/10"
             title="의뢰인 (Client)"
             description="인공지능 법률 상담을 통해 고민을 해결하고 적합한 변호사를 찾고 싶습니다."
-            onClick={() => goToRegister('client')}
+            onClick={() => setSelected('client')}
           />
           <RoleCard
-            icon={<Briefcase size={28} className="text-green-500" />}
-            iconBg="bg-green-500/10"
+            selected={selected === 'lawyer'}
+            icon={<img src={lawyerIcon} alt="" className="h-7 w-7" />}
+            iconBg="bg-green-400/15"
             title="변호사 (Lawyer)"
             description="전문적인 법률 지식을 공유하고 새로운 의뢰인과 사건을 수임하고 싶습니다."
-            onClick={() => goToRegister('lawyer')}
+            onClick={() => setSelected('lawyer')}
           />
         </div>
 
-        {/* Secure text */}
-        <p className="mt-auto pt-10 text-center text-xs text-[#575e6b] opacity-60 leading-relaxed">
-          SHIELD의 모든 데이터는 강력한 보안 기술로 보호됩니다
-        </p>
+        {/* Next button — figma 03: Button lg */}
+        <div className="mt-auto pt-10 pb-6">
+          <Button
+            type="button"
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={handleNext}
+            disabled={!selected}
+          >
+            다음
+          </Button>
+          <p className="mt-6 text-center text-[10px] font-medium leading-4 text-text-soft opacity-60">
+            SHIELD의 모든 데이터는 강력한 보안 기술로 보호됩니다
+          </p>
+        </div>
       </div>
     </div>
   );

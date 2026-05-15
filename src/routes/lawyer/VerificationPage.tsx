@@ -30,10 +30,10 @@ const STATUS_CONFIG: Record<VerificationStatus, StatusConfig> = {
   REVIEWING: {
     label: '심사 진행 중',
     description: '제출하신 서류를 검토 중입니다. 조금만 기다려 주세요.',
-    colorClass: 'text-blue-700',
-    bgClass: 'bg-blue-50',
-    borderClass: 'border-blue-200',
-    icon: <Search size={24} className="text-blue-500" />,
+    colorClass: 'text-brand',
+    bgClass: 'bg-info-bg',
+    borderClass: 'border-brand/20',
+    icon: <Search size={24} className="text-brand" />,
   },
   VERIFIED: {
     label: '인증 완료',
@@ -167,7 +167,7 @@ export function VerificationPage() {
                   to="/lawyer/documents"
                   className={cn(
                     'inline-flex items-center px-3 py-2 rounded-xl text-sm font-medium',
-                    'bg-brand text-white hover:bg-blue-600 active:bg-blue-700',
+                    'bg-brand text-white hover:brightness-95 active:brightness-90',
                     'transition-colors duration-150',
                   )}
                 >

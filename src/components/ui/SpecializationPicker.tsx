@@ -59,7 +59,7 @@ export function SpecializationPicker({ value, onChange, error }: SpecializationP
               <button
                 type="button"
                 onClick={() => remove(name)}
-                className="ml-0.5 rounded-full hover:bg-blue-200 p-0.5 transition-colors"
+                className="ml-0.5 rounded-full hover:bg-brand/20 p-0.5 transition-colors"
                 aria-label={`${name} 제거`}
               >
                 <X size={12} />

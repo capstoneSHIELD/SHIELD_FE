@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import json; data = json.load(open(r'C:\Users\to264\.claude\projects\c--SHIELD-FE\84db18cb-1882-4869-85d8-41c1c8c798db\tool-results\mcp-figma-get_design_context-1778774990847.txt', 'r', encoding='utf-8')); print(data[0]['text'])
+                                                                                                                                                                                                                  ~~~~~^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'cp949' codec can't encode character '\u200b' in position 54747: illegal multibyte sequence

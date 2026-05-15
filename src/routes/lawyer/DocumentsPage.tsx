@@ -96,7 +96,7 @@ function statusColor(status: UploadStatus): string {
     case 'pending':
       return 'text-gray-400';
     case 'uploading':
-      return 'text-blue-500';
+      return 'text-brand';
     case 'success':
       return 'text-emerald-600';
     case 'error':
@@ -247,7 +247,7 @@ export function DocumentsPage() {
                 'border-2 border-dashed rounded-xl py-6 px-4',
                 'cursor-pointer transition-colors duration-150',
                 isDragging
-                  ? 'border-brand bg-blue-50'
+                  ? 'border-brand bg-info-bg'
                   : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
               )}
             >
@@ -400,7 +400,7 @@ export function DocumentsPage() {
                         href={doc.fileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-brand font-medium hover:text-blue-700 transition-colors flex-shrink-0"
+                        className="text-xs text-brand font-medium hover:brightness-90 transition-colors flex-shrink-0"
                       >
                         보기
                       </a>

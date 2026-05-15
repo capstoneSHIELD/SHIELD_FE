@@ -59,8 +59,8 @@ const META_LIST: DomainMeta[] = [
     id: '근로계약·해고·임금',
     label: '근로계약·해고·임금',
     Icon: Briefcase,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-brand',
+    bgColor: 'bg-info-bg',
   },
   {
     id: '손해배상·불법행위',
@@ -95,8 +95,8 @@ const META_LIST: DomainMeta[] = [
     id: 'CIVIL',
     label: '민사',
     Icon: Briefcase,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-brand',
+    bgColor: 'bg-info-bg',
   },
   {
     id: 'CRIMINAL',
@@ -109,8 +109,8 @@ const META_LIST: DomainMeta[] = [
     id: 'LABOR',
     label: '노동',
     Icon: Briefcase,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-brand',
+    bgColor: 'bg-info-bg',
   },
   {
     id: 'SCHOOL_VIOLENCE',

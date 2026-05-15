@@ -1,31 +1,58 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+@import 'tailwindcss' source(none);
+
+/* Explicit source list: scan only project source files, not figma-export reference HTMLs */
+@source "./**/*.{ts,tsx,js,jsx}";
+@source "../index.html";
 
 /* ===== CSS Custom Properties (Design Tokens) ===== */
 :root {
-  --color-brand: #3B82F6;
+  --color-brand: #1f8cf9;
+  --color-accent-orange: #c2410c;
   --color-kakao: #FEE500;
   --color-naver: #03C75A;
   --color-google-border: #DADCE0;
   --color-surface: #F8FAFC;
-  --color-info-bg: #EFF6FF;
-  --color-error: #EF4444;
-  --color-text-primary: #1E293B;
-  --color-text-secondary: #64748B;
+  --color-info-bg: #f0f7ff;
+  --color-error: #e42020;
+  --color-alert: #ef6a6a;
+  --color-warning-red: #eb4747;
+  --color-text-primary: #171a1f;
+  --color-text-secondary: #575e6b;
+  --color-text-soft: #575e6b;
+  --color-border: #e0e2e6;
   --radius-card: 12px;
   --radius-pill: 9999px;
+  --shadow-btn: 0 4px 8px rgba(35, 37, 41, 0.08);
+  --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);
 }
 
 /* ===== Tailwind v4 Theme ===== */
 @theme {
-  --color-brand: #3B82F6;
+  --color-brand: #1f8cf9;
+  --color-accent-orange: #c2410c;
   --color-kakao: #FEE500;
   --color-naver: #03C75A;
+  --color-google-border: #DADCE0;
   --color-surface: #F8FAFC;
-  --color-info-bg: #EFF6FF;
+  --color-info-bg: #f0f7ff;
+  --color-error: #e42020;
+  --color-alert: #ef6a6a;
+  --color-warning-red: #eb4747;
+  --color-text-primary: #171a1f;
+  --color-text-secondary: #575e6b;
+  --color-text-soft: #575e6b;
+  --color-border: #e0e2e6;
   --font-family-sans: 'Pretendard Variable', Pretendard, system-ui, -apple-system, sans-serif;
   --radius-card: 12px;
   --radius-pill: 9999px;
+  --radius-shape-sm: 8px;
+  --radius-shape-md: 12px;
+  --radius-shape-lg: 14px;
+  --radius-frame: 24px;
+  --shadow-btn: 0 4px 8px rgba(35, 37, 41, 0.08);
+  --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);
 }
 
 /* ===== Global Resets ===== */

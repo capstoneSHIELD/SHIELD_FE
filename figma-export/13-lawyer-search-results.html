@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Figma export — Lawyer Search Results (page)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body { margin: 0; background: #f3f4f6; font-family: 'Inter', 'Noto Sans KR', sans-serif; }
+      .page-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 48px; }
+      .page-title { font-size: 22px; font-weight: 700; color: #16181d; margin: 0 0 4px; }
+      .page-sub { font-size: 13px; color: #575e6b; margin: 0 0 24px; }
+      .states { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; }
+      .state { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      .frame { width: 390px; height: 1442px; position: relative; overflow: hidden; background: #fff; box-shadow: 0 3px 12px rgba(18,15,40,0.12); border-radius: 24px; }
+      .lawyer-card { position: absolute; left: 24px; width: 342px; height: 197px; background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05); }
+      .lc-avatar { position: absolute; left: 16px; top: 16px; width: 56px; height: 56px; border-radius: 28px; overflow: hidden; }
+      .lc-name { position: absolute; left: 88px; top: 17px; font-weight: 700; font-size: 18px; color: #16181d; white-space: nowrap; }
+      .lc-exp { position: absolute; left: 106px; top: 46px; font-size: 12px; color: #575e6b; white-space: nowrap; }
+      .lc-briefcase { position: absolute; left: 88px; top: 49px; width: 14px; height: 14px; }
+      .lc-chev { position: absolute; left: 306px; top: 20px; width: 20px; height: 20px; opacity: .6; }
+      .lc-tag { position: absolute; top: 76px; height: 19px; padding: 0 8px; background: rgba(243,244,246,0.5); border-radius: 10px; font-size: 11px; color: #1f2228; line-height: 19px; }
+      .lc-band { position: absolute; left: 0; top: 110px; height: 70px; width: 342px; background: #f0f7ff; border-top: 1px solid rgba(6,128,249,0.1); border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+      .lc-band-label { position: absolute; left: 24px; top: 11px; color: #0680f9; font-weight: 700; font-size: 12px; letter-spacing: 0.3px; }
+      .lc-band-accent { position: absolute; left: 14px; top: 14px; width: 3px; height: 14px; background: #0680f9; border-radius: 2px; }
+      .lc-kw { position: absolute; top: 41px; font-size: 12px; color: #02264b; display: flex; align-items: center; gap: 4px; }
+      .lc-kw::before { content: '✓'; color: #0680f9; font-weight: 700; font-size: 11px; margin-right: 2px; }
+      .filter-chip { display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 12px; border-radius: 15px; font-size: 12px; font-weight: 500; border: 1px solid; }
+    </style>
+  </head>
+  <body>
+    <main class="page-wrap">
+      <h1 class="page-title">Lawyer Search Results</h1>
+      <p class="page-sub">변호사 검색 결과 (node 1:1846, 1442px). 의뢰인 검색 키워드 매칭 4명 표시.</p>
+
+      <div class="states">
+        <div class="state">
+          <div class="frame" data-node-id="1:1846" data-name="Lawyer Search Results">
+
+            <!-- Body container -->
+            <div class="absolute h-[1408px] left-0 overflow-clip top-[111px] w-[390px]">
+
+              <!-- Sort/filter sticky bar -->
+              <div class="absolute h-[61px] left-0 top-0 w-[390px] bg-white" style="backdrop-filter: blur(6px);">
+                <div class="absolute h-[34px] left-[25px] top-[13px] w-[93px] bg-white border border-[#e0e2e6] rounded-[10px] flex items-center justify-center gap-[6px] text-[12px] font-medium text-[#16181d]">
+                  <span>관련도순</span>
+                  <span class="text-[10px]">▼</span>
+                </div>
+                <div class="absolute h-[1px] left-0 top-[60px] w-[390px] bg-[#eaeaea]"></div>
+              </div>
+
+              <!-- Keyword filter card -->
+              <div class="absolute h-[217px] left-0 top-[61px] w-[390px] bg-white border-b border-[#e2e2e2]">
+                <p class="absolute font-bold left-[24px] not-italic text-[#31383f] text-[14px] top-[16px] tracking-[0.7px] uppercase whitespace-nowrap leading-[20px]">핵심 키워드</p>
+                <!-- Pencil icon -->
+                <div class="absolute left-[344px] size-[21px] top-[20px]"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup.svg" /></div>
+
+                <!-- Row 1 chips -->
+                <div class="filter-chip absolute left-[24px] top-[60px]" style="background: rgba(231,241,255,0.5); border-color: #ccdcf2; color: #3690de;"><span class="font-bold opacity-70">#</span>손해배상</div>
+                <div class="filter-chip absolute left-[121px] top-[60px]" style="background: #fff7ee; border-color: #fed7aa; color: #c2410c;"><span class="font-bold opacity-70">#</span>공작물하자</div>
+                <div class="filter-chip absolute left-[229px] top-[60px] w-[105px] justify-center" style="background: #fff7ee; border-color: #fed7aa; color: #c2410c;"><span class="font-bold opacity-70">#</span>영업주 책임</div>
+
+                <!-- Row 2 chips -->
+                <div class="filter-chip absolute left-[24px] top-[114px]" style="background: #f3f8fe; border-color: #ccdcf2; color: #3690de;"><span class="font-bold opacity-50">#</span>과실상계</div>
+                <div class="filter-chip absolute left-[121px] top-[114px]" style="background: #fff7ee; border-color: #fed7aa; color: #c2410c;"><span class="font-bold opacity-70">#</span>민법 제 758조</div>
+                <div class="filter-chip absolute left-[244px] top-[114px]" style="background: #f9fafb; border-color: #dcdbdb; color: #5d534f;"><span class="font-bold opacity-70">#</span>물기방지</div>
+
+                <!-- Stats line -->
+                <p class="absolute left-[24px] top-[170px] text-[12px] text-[#575e6b]">
+                  총 <span class="font-bold text-[#16181d]">124</span>명의 변호사가 검색되었습니다
+                </p>
+
+                <!-- Card chip -->
+                <div class="filter-chip absolute left-[24px] top-[193px]" style="background: #f9fafb; border-color: #dcdbdb; color: #5d534f;"><span class="font-bold opacity-70">#</span>카페사고</div>
+              </div>
+
+              <!-- Lawyer Card 1 — 김철수 변호사 -->
+              <div class="lawyer-card" style="top: 321px;">
+                <div class="lc-avatar" style="background: #f4fdcc;"><img alt="" class="w-full h-full object-cover" src="./assets/lawyer-search-results/imgAvatar.png" /></div>
+                <div class="lc-name">김철수 변호사</div>
+                <div class="lc-briefcase"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup23.svg" /></div>
+                <div class="lc-exp">경력 15년</div>
+                <div class="lc-chev"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup25.svg" /></div>
+                <div class="lc-tag" style="left: 88px;">형사</div>
+                <div class="lc-tag" style="left: 129px;">경제범죄</div>
+                <div class="lc-tag" style="left: 187px;">기업법무</div>
+                <div class="lc-band">
+                  <div class="lc-band-accent"></div>
+                  <div class="lc-band-label">MATCHED KEYWORDS</div>
+                  <div class="lc-kw" style="left: 28px;">배임/횡령</div>
+                  <div class="lc-kw" style="left: 120px;">증거 수집</div>
+                  <div class="lc-kw" style="left: 215px;">합의 전략</div>
+                </div>
+              </div>
+
+              <!-- Lawyer Card 2 — 이영희 변호사 -->
+              <div class="lawyer-card" style="top: 533.5px;">
+                <div class="lc-avatar" style="background: #f3f9e2;"><img alt="" class="w-full h-full object-cover" src="./assets/lawyer-search-results/imgAvatar1.png" /></div>
+                <div class="lc-name" style="left: 88.5px; top: 15.5px;">이영희 변호사</div>
+                <div class="lc-briefcase"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup23.svg" /></div>
+                <div class="lc-exp" style="top: 45px;">경력 8년</div>
+                <div class="lc-chev"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup25.svg" /></div>
+                <div class="lc-tag" style="left: 88px;">민사</div>
+                <div class="lc-tag" style="left: 129px;">손해배상</div>
+                <div class="lc-tag" style="left: 187px;">의료</div>
+                <div class="lc-band">
+                  <div class="lc-band-accent"></div>
+                  <div class="lc-band-label">MATCHED KEYWORDS</div>
+                  <div class="lc-kw" style="left: 28px;">의료 과실</div>
+                  <div class="lc-kw" style="left: 120px;">인과관계 증명</div>
+                  <div class="lc-kw" style="left: 230px;">정신적 위자료</div>
+                </div>
+              </div>
+
+              <!-- Lawyer Card 3 — 박지민 변호사 -->
+              <div class="lawyer-card" style="top: 746.5px;">
+                <div class="lc-avatar" style="background: #fde1e8;"><img alt="" class="w-full h-full object-cover" src="./assets/lawyer-search-results/imgAvatar2.png" /></div>
+                <div class="lc-name" style="top: 14.5px;">박지민 변호사</div>
+                <div class="lc-briefcase"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup23.svg" /></div>
+                <div class="lc-exp">경력 12년</div>
+                <div class="lc-chev"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup25.svg" /></div>
+                <div class="lc-tag" style="left: 88px;">이혼</div>
+                <div class="lc-tag" style="left: 129px;">가사</div>
+                <div class="lc-tag" style="left: 170px;">상속</div>
+                <div class="lc-band">
+                  <div class="lc-band-accent"></div>
+                  <div class="lc-band-label">MATCHED KEYWORDS</div>
+                  <div class="lc-kw" style="left: 28px;">재산 분할</div>
+                  <div class="lc-kw" style="left: 122px;">양육권 분쟁</div>
+                  <div class="lc-kw" style="left: 220px;">기여도 산정</div>
+                </div>
+              </div>
+
+              <!-- Lawyer Card 4 — 최도현 변호사 -->
+              <div class="lawyer-card" style="top: 959.5px;">
+                <div class="lc-avatar" style="background: #fae7ef;"><img alt="" class="w-full h-full object-cover" src="./assets/lawyer-search-results/imgAvatar3.png" /></div>
+                <div class="lc-name" style="top: 12.5px;">최도현 변호사</div>
+                <div class="lc-briefcase"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup23.svg" /></div>
+                <div class="lc-exp">경력 20년</div>
+                <div class="lc-chev"><img alt="" class="w-full h-full" src="./assets/lawyer-search-results/imgGroup25.svg" /></div>
+                <div class="lc-tag" style="left: 88px;">부동산</div>
+                <div class="lc-tag" style="left: 138px;">재건축/재개발</div>
+                <div class="lc-tag" style="left: 220px;">행정</div>
+                <div class="lc-band">
+                  <div class="lc-band-accent"></div>
+                  <div class="lc-band-label">MATCHED KEYWORDS</div>
+                  <div class="lc-kw" style="left: 28px;">조합 설립</div>
+                  <div class="lc-kw" style="left: 120px;">토지 보상</div>
+                  <div class="lc-kw" style="left: 215px;">관리처분계획</div>
+                </div>
+              </div>
+
+              <!-- Pagination -->
+              <div class="absolute h-[36px] left-[45px] top-[1198px] w-[300px] flex gap-[8px]">
+                <button class="w-[36px] h-[36px] bg-white border border-[#e0e2e6] rounded-[10px] opacity-50 flex items-center justify-center text-[14px] text-[#16181d]">‹</button>
+                <button class="w-[36px] h-[36px] bg-[#0680f9] rounded-[10px] text-white font-bold text-[14px]">1</button>
+                <button class="w-[36px] h-[36px] bg-white border border-[#e0e2e6] rounded-[10px] text-[#575e6b] text-[14px]">2</button>
+                <button class="w-[36px] h-[36px] bg-white border border-[#e0e2e6] rounded-[10px] text-[#575e6b] text-[14px]">3</button>
+                <button class="w-[36px] h-[36px] bg-white border border-[#e0e2e6] rounded-[10px] text-[#575e6b] text-[14px]">4</button>
+                <button class="w-[36px] h-[36px] bg-white border border-[#e0e2e6] rounded-[10px] text-[#575e6b] text-[14px]">5</button>
+                <button class="w-[36px] h-[36px] bg-white border border-[#e0e2e6] rounded-[10px] text-[#16181d] flex items-center justify-center">›</button>
+              </div>
+
+              <!-- Bottom tab bar -->
+              <div class="absolute h-[65px] left-0 top-[1268.5px] w-[390px] bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+                <div class="absolute h-[1px] top-0 left-0 w-[390px] bg-[#eaeaea]"></div>
+                <!-- 검색 tab (active) -->
+                <div class="absolute left-0 top-0 w-[128px] h-full flex flex-col items-center justify-center gap-[4px]">
+                  <div class="relative w-[24px] h-[24px] overflow-clip">
+                    <div class="absolute" style="inset: 65.25% 8.33% 8.33% 65.25%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup33.svg" /></div>
+                    <div class="absolute" style="inset: 8.33% 16.67% 16.67% 8.33%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup34.svg" /></div>
+                  </div>
+                  <p class="font-bold text-[#0680f9] text-[10px]">검색</p>
+                </div>
+                <!-- 의뢰현황 tab with badge -->
+                <div class="absolute left-[128px] top-0 w-[128px] h-full flex flex-col items-center justify-center gap-[4px]">
+                  <div class="relative">
+                    <div class="relative w-[24px] h-[24px] overflow-clip">
+                      <div class="absolute" style="inset: 4.17%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup29.svg" /></div>
+                      <div class="absolute" style="inset: 20.83% 29.17% 37.5% 45.83%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup30.svg" /></div>
+                    </div>
+                    <div class="absolute -top-[2px] -right-[6px] w-[16px] h-[16px] rounded-full bg-[#eb4747] text-white text-[9px] font-bold flex items-center justify-center">9</div>
+                  </div>
+                  <p class="text-[#575e6b] text-[10px]">의뢰현황</p>
+                </div>
+                <!-- 내 정보 tab -->
+                <div class="absolute left-[256px] top-0 w-[128px] h-full flex flex-col items-center justify-center gap-[4px]">
+                  <div class="relative w-[24px] h-[24px] overflow-clip">
+                    <div class="absolute" style="inset: 58.33% 16.67% 8.33% 16.67%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup31.svg" /></div>
+                    <div class="absolute" style="bottom: 50%; left: 29.17%; right: 29.17%; top: 8.33%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup32.svg" /></div>
+                  </div>
+                  <p class="text-[#575e6b] text-[10px]">내 정보</p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Top header -->
+            <div class="absolute bg-white h-[108px] left-0 top-0 w-[390px]">
+              <div class="absolute h-[1px] left-0 top-[108px] w-[390px] bg-[#eaeaea]"></div>
+              <!-- SHIELD logo box -->
+              <div class="absolute left-[25px] top-[57px] size-[32px] bg-[#16181d] rounded-[6px] overflow-hidden">
+                <img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/img321.png" />
+              </div>
+              <!-- Title -->
+              <p class="absolute left-[148px] top-[54px] font-medium text-[#16181d] text-[18px]">변호사 찾기</p>
+              <!-- Search button (header) -->
+              <div class="absolute left-[298px] top-[55px] size-[36px] flex items-center justify-center">
+                <div class="relative w-[20px] h-[20px] overflow-clip">
+                  <div class="absolute" style="inset: 65.3% 8.39% 8.39% 65.3%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup36.svg" /></div>
+                  <div class="absolute" style="inset: 8.5% 16.8% 16.8% 8.5%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup37.svg" /></div>
+                </div>
+              </div>
+              <!-- Bell button -->
+              <div class="absolute left-[338px] top-[55px] size-[36px] flex items-center justify-center">
+                <div class="relative w-[20px] h-[20px] overflow-clip">
+                  <div class="absolute" style="inset: 83.37% 38.66% 4.17% 38.66%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup38.svg" /></div>
+                  <div class="absolute" style="inset: 4.32% 8.5% 25.13% 8.5%;"><img alt="" class="absolute inset-0 w-full h-full" src="./assets/lawyer-search-results/imgGroup39.svg" /></div>
+                </div>
+              </div>
+              <!-- Status bar (simplified placeholder — page omits decomposed icons) -->
+              <div class="absolute h-[40px] left-0 top-0 w-[390px] flex items-center justify-between px-[24px] text-[14px]">
+                <span class="font-semibold">9:41</span>
+                <span class="text-[12px] tracking-tight">●●● 📶 🔋</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
