@@ -3,6 +3,7 @@ import { ChevronRight, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/cn';
 import { PageHeader } from '@/components/mobile/PageHeader';
+import { Button } from '@/components/ui';
 import type { PendingRegistrationState } from '@/lib/authFlow';
 
 import lawyerIcon from '@/assets/figma/role-selection/lawyer-icon.svg';
@@ -91,25 +92,19 @@ export function RoleSelectPage() {
           />
         </div>
 
-        {/* Next button */}
+        {/* Next button — figma 03: Button lg */}
         <div className="mt-auto pt-10 pb-6">
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="lg"
+            fullWidth
             onClick={handleNext}
             disabled={!selected}
-            className={cn(
-              'flex h-14 w-full items-center justify-center rounded-[12px]',
-              'text-[18px] font-bold text-white transition duration-150',
-              'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
-              selected
-                ? 'bg-brand hover:brightness-95 active:scale-[0.99]'
-                : 'cursor-not-allowed bg-gray-300',
-            )}
           >
             다음
-          </button>
-          <p className="mt-6 text-center text-[10px] leading-4 text-text-soft opacity-60">
+          </Button>
+          <p className="mt-6 text-center text-[10px] font-medium leading-4 text-text-soft opacity-60">
             SHIELD의 모든 데이터는 강력한 보안 기술로 보호됩니다
           </p>
         </div>
