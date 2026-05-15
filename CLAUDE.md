@@ -6,9 +6,9 @@ SHIELD_FE — AI 법률정보 구조화 플랫폼 프론트엔드. USER/LAWYER/A
 
 ## Commands
 
-- `pnpm dev` — Vite dev (port 5173, `/api` → `localhost:8080`)
-- `pnpm build` — `tsc -b && vite build` (타입체크 게이트)
-- `pnpm lint` — ESLint
+- `npm run dev` — Vite dev (port 5173, `/api` → `localhost:8080`)
+- `npm run build` — `tsc -b && vite build` (타입체크 게이트)
+- `npm run lint` — ESLint
 
 ## Key Rules
 
@@ -24,9 +24,9 @@ SHIELD_FE — AI 법률정보 구조화 플랫폼 프론트엔드. USER/LAWYER/A
 
 ## Workflow
 
-- 코드 변경 후 반드시 `pnpm build` 통과 확인. 타입 에러를 린터/tsconfig 설정 변경으로 우회 금지
+- 코드 변경 후 반드시 `npm run build` 통과 확인. 타입 에러를 린터/tsconfig 설정 변경으로 우회 금지
 - 커밋은 작고 원자적으로: 한 커밋 = 한 논리적 변경. 여러 기능을 하나에 섞지 않기
-- 커밋 전 `pnpm lint && pnpm build` 통과 필수
+- 커밋 전 `npm run lint && npm run build` 통과 필수
 - UI 변경은 dev 서버에서 브라우저로 직접 확인 후 완료 선언
 
 ## Status Flows
