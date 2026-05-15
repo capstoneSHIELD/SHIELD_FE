@@ -19,7 +19,7 @@ function SectionHeader({
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</p>
       <Link
         to={editHref}
-        className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:brightness-90 transition-colors"
+        className="inline-flex items-center gap-1 text-[13px] font-medium text-[#0680f9] hover:brightness-90 transition-colors"
       >
         <Pencil size={11} aria-hidden="true" />
         수정
@@ -196,14 +196,14 @@ export function FinalReviewPage() {
           </div>
         </Card>
 
-        {/* Warning box */}
-        <div className="bg-red-500/5 border border-red-500/20 rounded-card p-4 flex gap-3">
-          <div className="shrink-0 w-9 h-9 rounded-[18px] bg-red-500/10 flex items-center justify-center mt-1">
-            <TriangleAlert size={20} className="text-red-500" />
+        {/* Warning box — figma 10 (warning-red 토큰 정합) */}
+        <div className="bg-warning-red/5 border border-warning-red/20 rounded-card p-4 flex gap-3">
+          <div className="shrink-0 w-9 h-9 rounded-[18px] bg-warning-red/10 flex items-center justify-center mt-1">
+            <TriangleAlert size={20} className="text-warning-red" />
           </div>
           <div>
-            <p className="text-sm font-bold text-red-500 mb-1">제출 전 확인 필수</p>
-            <p className="text-[10px] text-red-500/80 leading-4.5">
+            <p className="text-sm font-bold text-warning-red mb-1">제출 전 확인 필수</p>
+            <p className="text-[10px] text-warning-red/80 leading-[18px]">
               의뢰서 제출 버튼을 누른 후에는{' '}
               <span className="underline">내용을 수정할 수 없습니다.</span>
               <br />
