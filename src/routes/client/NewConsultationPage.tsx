@@ -14,12 +14,24 @@ import {
 
 // ─── types ──────────────────────────────────────────────────────────────────
 
-/** 선택된 카테고리 — level에 따라 l2/l3가 채워짐 */
-interface Selection {
+/** 선택된 항목 — level에 따라 l2/l3가 채워짐 */
+interface SelectedItem {
   level: 1 | 2 | 3;
   l1: string;
   l2?: string;
   l3?: string;
+}
+
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+function itemKey(item: SelectedItem): string {
+  if (item.level === 1) return `l1|${item.l1}`;
+  if (item.level === 2) return `l2|${item.l1}|${item.l2}`;
+  return `l3|${item.l1}|${item.l2}|${item.l3}`;
+}
+
+function uniqStrings(arr: (string | undefined)[]): string[] {
+  return Array.from(new Set(arr.filter((s): s is string => Boolean(s))));
 }
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -27,11 +39,11 @@ interface Selection {
 /**
  * 와이어프레임 04 (Manual Field Selection, 노드 1:316 / 1:406 / 1:496) 정합:
  *   - 대분류(L1) → 중분류(L2) → 소분류(L3) accordion 트리
- *   - 각 레벨에서 선택 가능 (단일 선택 — 다른 레벨 선택 시 이전 해제)
- *   - chevron 영역 탭: 펼침/접힘 / 텍스트 영역 탭: 선택
- *   - 선택된 항목은 검색창 아래 brand-crumb chip (L1 › L2 › L3) 으로 표시
+ *   - 자유 조합 멀티 셀렉트 — L1/L2/L3 어느 레벨이든 여러 개 동시 선택 가능
+ *   - chevron 영역 탭: 펼침/접힘 / 텍스트 영역 탭: 선택 토글
+ *   - 선택된 항목마다 검색창 아래 brand-crumb chip (× 클릭 = 해제)
  *   - 검색창 입력 시 leaf 검색 결과를 평면 리스트로 렌더
- *   - 하단 fixed `다음` 버튼 — 선택 시 활성화, 탭하면 상담 생성
+ *   - 하단 fixed `다음` 버튼 — 1개 이상 선택 시 활성, 탭하면 상담 생성
  */
 export function NewConsultationPage() {
   const navigate = useNavigate();
@@ -39,7 +51,7 @@ export function NewConsultationPage() {
 
   const [expandedL1, setExpandedL1] = useState<Set<string>>(new Set());
   const [expandedL2, setExpandedL2] = useState<Set<string>>(new Set());
-  const [selected, setSelected] = useState<Selection | null>(null);
+  const [selected, setSelected] = useState<SelectedItem[]>([]);
   const [query, setQuery] = useState('');
 
   const trimmedQuery = query.trim();
@@ -48,7 +60,13 @@ export function NewConsultationPage() {
     [trimmedQuery],
   );
 
-  function toggleL1(name: string) {
+  /** 빠른 lookup용 selected key set */
+  const selectedKeys = useMemo(
+    () => new Set(selected.map(itemKey)),
+    [selected],
+  );
+
+  function toggleL1Expand(name: string) {
     setExpandedL1((prev) => {
       const next = new Set(prev);
       if (next.has(name)) next.delete(name);
@@ -57,7 +75,7 @@ export function NewConsultationPage() {
     });
   }
 
-  function toggleL2(l1Name: string, l2Name: string) {
+  function toggleL2Expand(l1Name: string, l2Name: string) {
     const key = `${l1Name}|${l2Name}`;
     setExpandedL2((prev) => {
       const next = new Set(prev);
@@ -67,43 +85,50 @@ export function NewConsultationPage() {
     });
   }
 
-  function selectL1(l1: string) {
-    setSelected({ level: 1, l1 });
+  function toggleItem(item: SelectedItem) {
+    const key = itemKey(item);
+    setSelected((prev) => {
+      if (prev.some((i) => itemKey(i) === key)) {
+        return prev.filter((i) => itemKey(i) !== key);
+      }
+      return [...prev, item];
+    });
   }
 
-  function selectL2(l1: string, l2: string) {
-    setSelected({ level: 2, l1, l2 });
-  }
-
-  function selectL3(l1: string, l2: string, l3: string) {
-    setSelected({ level: 3, l1, l2, l3 });
-  }
-
-  function clearSelection() {
-    setSelected(null);
+  function removeItem(item: SelectedItem) {
+    const key = itemKey(item);
+    setSelected((prev) => prev.filter((i) => itemKey(i) !== key));
   }
 
   function pickFromSearch(l1: string, l2: string, l3: string) {
-    // 검색 결과 항목 탭 시 해당 경로를 펼치고 leaf 선택
+    // 검색 결과 항목 탭 시 해당 경로를 펼치고 leaf 토글 선택
     setExpandedL1((prev) => new Set(prev).add(l1));
     setExpandedL2((prev) => new Set(prev).add(`${l1}|${l2}`));
-    setSelected({ level: 3, l1, l2, l3 });
+    toggleItem({ level: 3, l1, l2, l3 });
     setQuery('');
   }
 
   function handleNext() {
-    if (!selected || isPending) return;
-    const request = {
-      domains: [selected.l1],
-      subDomains: selected.l2 ? [selected.l2] : [],
-      tags: selected.l3 ? [selected.l3] : [],
-    };
-    createConsultation(request, {
-      onSuccess: (res) => {
-        const newId = res.data.data.consultationId;
-        navigate(`/consultations/${newId}`);
+    if (selected.length === 0 || isPending) return;
+
+    // level별로 분류하여 API payload 구성
+    const domains = uniqStrings(selected.map((s) => s.l1));
+    const subDomains = uniqStrings(
+      selected.filter((s) => s.level >= 2).map((s) => s.l2),
+    );
+    const tags = uniqStrings(
+      selected.filter((s) => s.level === 3).map((s) => s.l3),
+    );
+
+    createConsultation(
+      { domains, subDomains, tags },
+      {
+        onSuccess: (res) => {
+          const newId = res.data.data.consultationId;
+          navigate(`/consultations/${newId}`);
+        },
       },
-    });
+    );
   }
 
   return (
@@ -131,6 +156,9 @@ export function NewConsultationPage() {
           <br />
           선택 하시겠습니까?
         </h1>
+        <p className="mt-1.5 text-xs text-[#62686f]">
+          여러 항목을 동시에 선택할 수 있습니다.
+        </p>
 
         {/* 검색창 */}
         <div className="relative mt-5">
@@ -152,36 +180,16 @@ export function NewConsultationPage() {
           />
         </div>
 
-        {/* 선택된 항목 brand-crumb chip */}
-        {selected && (
+        {/* 선택된 항목 chip 리스트 — 각 항목 개별 chip + breadcrumb */}
+        {selected.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={clearSelection}
-              className={cn(
-                'inline-flex max-w-full items-center gap-1.5 rounded-full border border-brand/40 bg-brand/5',
-                'px-3 py-1 text-xs font-medium text-brand',
-                'transition-colors hover:bg-brand/10',
-              )}
-            >
-              <span className="truncate">
-                {selected.l1}
-                {selected.l2 && (
-                  <>
-                    <span className="mx-1 text-brand/50">›</span>
-                    {selected.l2}
-                  </>
-                )}
-                {selected.l3 && (
-                  <>
-                    <span className="mx-1 text-brand/50">›</span>
-                    {selected.l3}
-                  </>
-                )}
-              </span>
-              <X size={12} aria-hidden="true" className="shrink-0" />
-              <span className="sr-only">선택 해제</span>
-            </button>
+            {selected.map((item) => (
+              <SelectedChip
+                key={itemKey(item)}
+                item={item}
+                onRemove={() => removeItem(item)}
+              />
+            ))}
           </div>
         )}
 
@@ -189,7 +197,7 @@ export function NewConsultationPage() {
         {trimmedQuery ? (
           <SearchResults
             results={searchResults}
-            selected={selected}
+            selectedKeys={selectedKeys}
             onPick={pickFromSearch}
           />
         ) : (
@@ -197,12 +205,10 @@ export function NewConsultationPage() {
             tree={LEGAL_CATEGORY_TREE}
             expandedL1={expandedL1}
             expandedL2={expandedL2}
-            selected={selected}
-            onToggleL1={toggleL1}
-            onToggleL2={toggleL2}
-            onSelectL1={selectL1}
-            onSelectL2={selectL2}
-            onSelectL3={selectL3}
+            selectedKeys={selectedKeys}
+            onToggleL1Expand={toggleL1Expand}
+            onToggleL2Expand={toggleL2Expand}
+            onToggleItem={toggleItem}
           />
         )}
       </main>
@@ -211,7 +217,7 @@ export function NewConsultationPage() {
       <div className="sticky bottom-0 left-0 right-0 mx-auto w-full max-w-[390px] bg-white px-5 pb-6 pt-3">
         <button
           type="button"
-          disabled={!selected || isPending}
+          disabled={selected.length === 0 || isPending}
           onClick={handleNext}
           className={cn(
             'flex h-14 w-full items-center justify-center rounded-2xl',
@@ -221,10 +227,53 @@ export function NewConsultationPage() {
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2',
           )}
         >
-          {isPending ? '생성 중…' : '다음'}
+          {isPending
+            ? '생성 중…'
+            : selected.length > 0
+              ? `다음 (${selected.length}개 선택)`
+              : '다음'}
         </button>
       </div>
     </div>
+  );
+}
+
+// ─── selected chip ──────────────────────────────────────────────────────────
+
+interface SelectedChipProps {
+  item: SelectedItem;
+  onRemove: () => void;
+}
+
+function SelectedChip({ item, onRemove }: SelectedChipProps) {
+  return (
+    <button
+      type="button"
+      onClick={onRemove}
+      className={cn(
+        'inline-flex max-w-full items-center gap-1.5 rounded-full border border-brand/40 bg-brand/5',
+        'px-3 py-1 text-xs font-medium text-brand',
+        'transition-colors hover:bg-brand/10',
+      )}
+    >
+      <span className="truncate">
+        {item.l1}
+        {item.l2 && (
+          <>
+            <span className="mx-1 text-brand/50">›</span>
+            {item.l2}
+          </>
+        )}
+        {item.l3 && (
+          <>
+            <span className="mx-1 text-brand/50">›</span>
+            {item.l3}
+          </>
+        )}
+      </span>
+      <X size={12} aria-hidden="true" className="shrink-0" />
+      <span className="sr-only">선택 해제</span>
+    </button>
   );
 }
 
@@ -234,40 +283,37 @@ interface TreeViewProps {
   tree: CategoryNode[];
   expandedL1: Set<string>;
   expandedL2: Set<string>;
-  selected: Selection | null;
-  onToggleL1: (name: string) => void;
-  onToggleL2: (l1: string, l2: string) => void;
-  onSelectL1: (l1: string) => void;
-  onSelectL2: (l1: string, l2: string) => void;
-  onSelectL3: (l1: string, l2: string, l3: string) => void;
+  selectedKeys: Set<string>;
+  onToggleL1Expand: (name: string) => void;
+  onToggleL2Expand: (l1: string, l2: string) => void;
+  onToggleItem: (item: SelectedItem) => void;
 }
 
 function TreeView({
   tree,
   expandedL1,
   expandedL2,
-  selected,
-  onToggleL1,
-  onToggleL2,
-  onSelectL1,
-  onSelectL2,
-  onSelectL3,
+  selectedKeys,
+  onToggleL1Expand,
+  onToggleL2Expand,
+  onToggleItem,
 }: TreeViewProps) {
   return (
     <div className="mt-4 overflow-hidden rounded-2xl border border-[#e9ecef]">
       <ul className="divide-y divide-[#e9ecef]">
         {tree.map((l1) => {
           const isL1Open = expandedL1.has(l1.name);
-          const isL1Selected =
-            selected?.level === 1 && selected.l1 === l1.name;
+          const isL1Selected = selectedKeys.has(`l1|${l1.name}`);
           return (
             <li key={l1.name}>
               <L1Row
                 name={l1.name}
                 isOpen={isL1Open}
                 isSelected={isL1Selected}
-                onToggle={() => onToggleL1(l1.name)}
-                onSelect={() => onSelectL1(l1.name)}
+                onToggleExpand={() => onToggleL1Expand(l1.name)}
+                onToggleSelect={() =>
+                  onToggleItem({ level: 1, l1: l1.name })
+                }
               />
               {isL1Open && (
                 <ul>
@@ -277,10 +323,9 @@ function TreeView({
                       l1Name={l1.name}
                       l2={l2}
                       isOpen={expandedL2.has(`${l1.name}|${l2.name}`)}
-                      selected={selected}
-                      onToggleL2={onToggleL2}
-                      onSelectL2={onSelectL2}
-                      onSelectL3={onSelectL3}
+                      selectedKeys={selectedKeys}
+                      onToggleL2Expand={onToggleL2Expand}
+                      onToggleItem={onToggleItem}
                     />
                   ))}
                 </ul>
@@ -293,17 +338,23 @@ function TreeView({
   );
 }
 
-// ─── L1 row (chevron 영역 = 펼침 / 텍스트 영역 = 선택) ──────────────────────
+// ─── L1 row (chevron = 펼침 / 텍스트 = 선택 토글) ────────────────────────────
 
 interface L1RowProps {
   name: string;
   isOpen: boolean;
   isSelected: boolean;
-  onToggle: () => void;
-  onSelect: () => void;
+  onToggleExpand: () => void;
+  onToggleSelect: () => void;
 }
 
-function L1Row({ name, isOpen, isSelected, onToggle, onSelect }: L1RowProps) {
+function L1Row({
+  name,
+  isOpen,
+  isSelected,
+  onToggleExpand,
+  onToggleSelect,
+}: L1RowProps) {
   return (
     <div
       className={cn(
@@ -313,7 +364,7 @@ function L1Row({ name, isOpen, isSelected, onToggle, onSelect }: L1RowProps) {
     >
       <button
         type="button"
-        onClick={onToggle}
+        onClick={onToggleExpand}
         aria-label={isOpen ? `${name} 접기` : `${name} 펼치기`}
         aria-expanded={isOpen}
         className={cn(
@@ -333,14 +384,15 @@ function L1Row({ name, isOpen, isSelected, onToggle, onSelect }: L1RowProps) {
       </button>
       <button
         type="button"
-        onClick={onSelect}
+        onClick={onToggleSelect}
         aria-pressed={isSelected}
         className={cn(
-          'flex-1 py-4 pr-4 text-left',
+          'flex flex-1 items-center gap-3 py-4 pr-4 text-left',
           'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
         )}
       >
+        <Checkbox checked={isSelected} />
         <span
           className={cn(
             'text-[15px] font-bold',
@@ -354,29 +406,26 @@ function L1Row({ name, isOpen, isSelected, onToggle, onSelect }: L1RowProps) {
   );
 }
 
-// ─── L2 block (header + L3 list when open) ──────────────────────────────────
+// ─── L2 block ────────────────────────────────────────────────────────────────
 
 interface L2BlockProps {
   l1Name: string;
   l2: CategoryLevel2;
   isOpen: boolean;
-  selected: Selection | null;
-  onToggleL2: (l1: string, l2: string) => void;
-  onSelectL2: (l1: string, l2: string) => void;
-  onSelectL3: (l1: string, l2: string, l3: string) => void;
+  selectedKeys: Set<string>;
+  onToggleL2Expand: (l1: string, l2: string) => void;
+  onToggleItem: (item: SelectedItem) => void;
 }
 
 function L2Block({
   l1Name,
   l2,
   isOpen,
-  selected,
-  onToggleL2,
-  onSelectL2,
-  onSelectL3,
+  selectedKeys,
+  onToggleL2Expand,
+  onToggleItem,
 }: L2BlockProps) {
-  const isL2Selected =
-    selected?.level === 2 && selected.l1 === l1Name && selected.l2 === l2.name;
+  const isL2Selected = selectedKeys.has(`l2|${l1Name}|${l2.name}`);
   return (
     <li>
       <div
@@ -387,12 +436,11 @@ function L2Block({
       >
         <button
           type="button"
-          onClick={() => onToggleL2(l1Name, l2.name)}
+          onClick={() => onToggleL2Expand(l1Name, l2.name)}
           aria-label={isOpen ? `${l2.name} 접기` : `${l2.name} 펼치기`}
           aria-expanded={isOpen}
           className={cn(
             'flex shrink-0 items-center justify-center py-3',
-            // L2 chevron 들여쓰기 (L1 chevron 영역 + 약간 안쪽)
             'pl-9 pr-2',
             'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
@@ -410,14 +458,17 @@ function L2Block({
         </button>
         <button
           type="button"
-          onClick={() => onSelectL2(l1Name, l2.name)}
+          onClick={() =>
+            onToggleItem({ level: 2, l1: l1Name, l2: l2.name })
+          }
           aria-pressed={isL2Selected}
           className={cn(
-            'flex-1 py-3 pr-4 text-left',
+            'flex flex-1 items-center gap-3 py-3 pr-4 text-left',
             'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
           )}
         >
+          <Checkbox checked={isL2Selected} small />
           <span
             className={cn(
               'text-sm',
@@ -438,13 +489,10 @@ function L2Block({
               l1Name={l1Name}
               l2Name={l2.name}
               leaf={leaf}
-              isSelected={
-                selected?.level === 3 &&
-                selected.l1 === l1Name &&
-                selected.l2 === l2.name &&
-                selected.l3 === leaf.name
-              }
-              onSelect={onSelectL3}
+              isSelected={selectedKeys.has(
+                `l3|${l1Name}|${l2.name}|${leaf.name}`,
+              )}
+              onToggleItem={onToggleItem}
             />
           ))}
         </ul>
@@ -453,59 +501,45 @@ function L2Block({
   );
 }
 
-// ─── L3 row (checkbox leaf — 전체 클릭 = 선택) ─────────────────────────────
+// ─── L3 row ──────────────────────────────────────────────────────────────────
 
 interface L3RowProps {
   l1Name: string;
   l2Name: string;
   leaf: CategoryLeaf;
   isSelected: boolean;
-  onSelect: (l1: string, l2: string, l3: string) => void;
+  onToggleItem: (item: SelectedItem) => void;
 }
 
-function L3Row({ l1Name, l2Name, leaf, isSelected, onSelect }: L3RowProps) {
+function L3Row({
+  l1Name,
+  l2Name,
+  leaf,
+  isSelected,
+  onToggleItem,
+}: L3RowProps) {
   return (
     <li>
       <button
         type="button"
-        onClick={() => onSelect(l1Name, l2Name, leaf.name)}
+        onClick={() =>
+          onToggleItem({
+            level: 3,
+            l1: l1Name,
+            l2: l2Name,
+            l3: leaf.name,
+          })
+        }
         aria-pressed={isSelected}
         className={cn(
           'flex w-full items-center gap-3 py-2.5 pr-4 text-left',
-          // L3 들여쓰기 (L2 chevron 폭 + 약간 더 안쪽)
           'pl-[60px]',
           'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand/40',
           isSelected && 'bg-brand/5',
         )}
       >
-        <span
-          className={cn(
-            'flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors',
-            isSelected
-              ? 'border-brand bg-brand'
-              : 'border-[#c5cad0] bg-white',
-          )}
-          aria-hidden="true"
-        >
-          {isSelected && (
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2.5 6.5L5 9L9.5 3.5"
-                stroke="white"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
-        </span>
+        <Checkbox checked={isSelected} small />
         <span
           className={cn(
             'text-sm',
@@ -519,15 +553,54 @@ function L3Row({ l1Name, l2Name, leaf, isSelected, onSelect }: L3RowProps) {
   );
 }
 
+// ─── shared checkbox ────────────────────────────────────────────────────────
+
+interface CheckboxProps {
+  checked: boolean;
+  small?: boolean;
+}
+
+function Checkbox({ checked, small = false }: CheckboxProps) {
+  const size = small ? 'h-[18px] w-[18px]' : 'h-5 w-5';
+  return (
+    <span
+      className={cn(
+        'flex shrink-0 items-center justify-center rounded-md border transition-colors',
+        size,
+        checked ? 'border-brand bg-brand' : 'border-[#c5cad0] bg-white',
+      )}
+      aria-hidden="true"
+    >
+      {checked && (
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M2.5 6.5L5 9L9.5 3.5"
+            stroke="white"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </span>
+  );
+}
+
 // ─── search results (flat list) ────────────────────────────────────────────
 
 interface SearchResultsProps {
   results: ReturnType<typeof searchCategories>;
-  selected: Selection | null;
+  selectedKeys: Set<string>;
   onPick: (l1: string, l2: string, l3: string) => void;
 }
 
-function SearchResults({ results, selected, onPick }: SearchResultsProps) {
+function SearchResults({ results, selectedKeys, onPick }: SearchResultsProps) {
   if (results.length === 0) {
     return (
       <div className="mt-8 rounded-2xl border border-[#e9ecef] bg-[#f9fafb] py-10 text-center">
@@ -541,34 +614,33 @@ function SearchResults({ results, selected, onPick }: SearchResultsProps) {
     <ul className="mt-4 overflow-hidden rounded-2xl border border-[#e9ecef] divide-y divide-[#e9ecef]">
       {results.map(({ leaf, path }) => {
         const [l1, l2, l3] = path;
-        const isSelected =
-          selected?.level === 3 &&
-          selected.l1 === l1 &&
-          selected.l2 === l2 &&
-          selected.l3 === l3;
+        const isSelected = selectedKeys.has(`l3|${l1}|${l2}|${l3}`);
         return (
           <li key={`${l1}|${l2}|${l3}`}>
             <button
               type="button"
               onClick={() => onPick(l1, l2, l3)}
               className={cn(
-                'flex w-full flex-col items-start gap-1 px-4 py-3 text-left',
+                'flex w-full items-center gap-3 px-4 py-3 text-left',
                 'transition-colors hover:bg-[#f9fafb] active:bg-[#f3f5f6]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
                 isSelected && 'bg-brand/5',
               )}
             >
-              <span
-                className={cn(
-                  'text-sm font-medium',
-                  isSelected ? 'text-brand' : 'text-[#161a1d]',
-                )}
-              >
-                {leaf.name}
-              </span>
-              <span className="text-xs text-[#9aa0a6]">
-                {l1} › {l2}
-              </span>
+              <Checkbox checked={isSelected} small />
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <span
+                  className={cn(
+                    'truncate text-sm font-medium',
+                    isSelected ? 'text-brand' : 'text-[#161a1d]',
+                  )}
+                >
+                  {leaf.name}
+                </span>
+                <span className="truncate text-xs text-[#9aa0a6]">
+                  {l1} › {l2}
+                </span>
+              </div>
             </button>
           </li>
         );
