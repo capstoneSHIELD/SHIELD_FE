@@ -19,7 +19,7 @@ function SectionHeader({
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{title}</p>
       <Link
         to={editHref}
-        className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:text-blue-700 transition-colors"
+        className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:brightness-90 transition-colors"
       >
         <Pencil size={11} aria-hidden="true" />
         수정
@@ -149,7 +149,7 @@ export function FinalReviewPage() {
                   {brief.keywords.map((kw, i) => (
                     <span
                       key={i}
-                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium"
+                      className="inline-flex items-center px-2.5 py-1 rounded-full bg-info-bg text-brand text-xs font-medium"
                     >
                       {kw}
                     </span>
@@ -174,8 +174,8 @@ export function FinalReviewPage() {
                 </span>
               </div>
             </div>
-            <div className="rounded-lg bg-blue-50 px-3 py-2.5">
-              <p className="text-xs text-blue-700 leading-relaxed">
+            <div className="rounded-lg bg-info-bg px-3 py-2.5">
+              <p className="text-xs text-brand leading-relaxed">
                 사건 상세 공유 · AI 모델 개선 동의 · 푸시 알림 허용
               </p>
             </div>

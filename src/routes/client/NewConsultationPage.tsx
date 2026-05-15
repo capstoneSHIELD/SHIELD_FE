@@ -67,7 +67,7 @@ export function NewConsultationPage() {
       <main className="flex flex-1 flex-col overflow-y-auto px-[25px] pt-4 pb-24">
         {/* Title — figma 04 */}
         <h1 className="text-[20px] font-bold leading-[25px] text-[#181b20]">
-          어떤 <span className="text-brand-primary">법률 분야</span>를
+          어떤 <span className="text-brand">법률 분야</span>를
           <br />
           선택 하시겠습니까?
         </h1>
@@ -89,7 +89,7 @@ export function NewConsultationPage() {
               'placeholder:text-[#adb5bd]',
               'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.04)]',
               'outline-none transition-colors',
-              'focus:border-brand-primary',
+              'focus:border-brand',
             )}
           />
         </div>
@@ -111,17 +111,17 @@ export function NewConsultationPage() {
                   className={cn(
                     'flex w-full items-center gap-3 px-4 py-3 text-left',
                     'transition-colors duration-150',
-                    'hover:bg-brand-primary/5',
-                    'focus-visible:outline-none focus-visible:bg-brand-primary/10',
+                    'hover:bg-brand/5',
+                    'focus-visible:outline-none focus-visible:bg-brand/10',
                     idx !== filtered.length - 1 && 'border-b border-[#e0e2e6]',
-                    isSelected && 'bg-brand-primary/5',
+                    isSelected && 'bg-brand/5',
                   )}
                 >
                   <span
                     className={cn(
                       'flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors',
                       isSelected
-                        ? 'border-brand-primary bg-brand-primary text-white'
+                        ? 'border-brand bg-brand text-white'
                         : 'border-[#adb5bd] bg-white',
                     )}
                   >
@@ -150,7 +150,7 @@ export function NewConsultationPage() {
               'text-sm font-medium transition-colors duration-150',
               'focus-visible:outline-none focus-visible:underline',
               isUnknown
-                ? 'text-brand-primary underline'
+                ? 'text-brand underline'
                 : 'text-gray-400 hover:text-gray-600',
             )}
           >
@@ -172,7 +172,7 @@ export function NewConsultationPage() {
               'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
               isDomainChosen && !isPending
-                ? 'bg-brand-primary hover:brightness-95 active:scale-[0.99]'
+                ? 'bg-brand hover:brightness-95 active:scale-[0.99]'
                 : 'cursor-not-allowed bg-gray-300',
             )}
           >

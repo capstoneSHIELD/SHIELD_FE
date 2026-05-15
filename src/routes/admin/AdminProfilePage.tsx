@@ -23,8 +23,8 @@ export function AdminProfilePage() {
       {/* 프로필 카드 */}
       <Card padding="lg">
         <div className="flex flex-col items-center gap-3">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-blue-50">
-            <User className="h-10 w-10 text-blue-400" />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-info-bg">
+            <User className="h-10 w-10 text-brand/60" />
           </div>
           <div className="text-center">
             <h2 className="text-xl font-bold text-gray-900">

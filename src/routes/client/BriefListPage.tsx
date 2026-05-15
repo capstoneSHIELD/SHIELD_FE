@@ -29,8 +29,8 @@ export function BriefListPage() {
         {/* Empty state */}
         {!isLoading && briefs.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-5 pt-20 pb-8 text-center">
-            <div className="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center">
-              <FileText size={40} className="text-blue-300" aria-hidden="true" />
+            <div className="w-24 h-24 rounded-full bg-info-bg flex items-center justify-center">
+              <FileText size={40} className="text-brand/40" aria-hidden="true" />
             </div>
             <div className="space-y-1.5">
               <p className="text-base font-semibold text-gray-800">아직 의뢰서가 없습니다</p>

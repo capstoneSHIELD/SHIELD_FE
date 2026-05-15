@@ -75,7 +75,7 @@ export function DomainSelectModal({ current, onConfirm, onClose }: DomainSelectM
                       'flex w-full items-center gap-3 px-3 py-3 rounded-xl text-left',
                       'border transition-colors',
                       isSelected
-                        ? 'border-brand bg-blue-50/60'
+                        ? 'border-brand bg-brand/5'
                         : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
                     )}
                   >

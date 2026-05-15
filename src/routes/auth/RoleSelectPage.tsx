@@ -28,8 +28,8 @@ function RoleCard({ selected, icon, iconBg, title, description, onClick }: RoleC
         'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
         selected
-          ? 'border-brand-primary shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]'
-          : 'border-[#e0e2e6] hover:border-brand-primary/50',
+          ? 'border-brand shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]'
+          : 'border-[#e0e2e6] hover:border-brand/50',
       )}
     >
       <div className="flex items-center gap-4">
@@ -66,7 +66,7 @@ export function RoleSelectPage() {
       <div className="relative flex flex-1 flex-col px-[25px]">
         {/* Title */}
         <h1 className="mt-[30px] text-[24px] font-bold leading-8 tracking-[-0.7px] text-[#16181d]">
-          어떤 <span className="text-brand-primary">역할</span>로
+          어떤 <span className="text-brand">역할</span>로
           <br />
           이용하시겠습니까?
         </h1>
@@ -75,8 +75,8 @@ export function RoleSelectPage() {
         <div className="mt-10 flex flex-col gap-4">
           <RoleCard
             selected={selected === 'client'}
-            icon={<User size={28} className="text-brand-primary" />}
-            iconBg="bg-blue-500/10"
+            icon={<User size={28} className="text-brand" />}
+            iconBg="bg-brand/10"
             title="의뢰인 (Client)"
             description="인공지능 법률 상담을 통해 고민을 해결하고 적합한 변호사를 찾고 싶습니다."
             onClick={() => setSelected('client')}
@@ -103,7 +103,7 @@ export function RoleSelectPage() {
               'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
               selected
-                ? 'bg-brand-primary hover:brightness-95 active:scale-[0.99]'
+                ? 'bg-brand hover:brightness-95 active:scale-[0.99]'
                 : 'cursor-not-allowed bg-gray-300',
             )}
           >

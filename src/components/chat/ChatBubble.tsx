@@ -79,7 +79,7 @@ export function ChatBubble({ sender, content, timestamp }: ChatBubbleProps) {
     return (
       <div className="flex flex-col items-start px-4 py-1">
         <div className="flex items-center gap-2 mb-1">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 text-[11px] font-medium leading-none">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-info-bg text-brand text-[11px] font-medium leading-none">
             분류 요청
           </span>
         </div>

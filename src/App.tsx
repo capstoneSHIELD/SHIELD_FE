@@ -161,7 +161,7 @@ function NotFoundPage() {
       <p className="text-gray-500">페이지를 찾을 수 없습니다</p>
       <a
         href="/"
-        className="inline-flex items-center rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+        className="inline-flex items-center rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white hover:brightness-95 transition-colors"
       >
         홈으로 돌아가기
       </a>

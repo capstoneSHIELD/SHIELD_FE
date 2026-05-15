@@ -105,7 +105,7 @@ export function AnalyzingPage() {
         <main className="flex flex-1 flex-col overflow-y-auto px-[20px] pt-[19px] pb-32">
           {/* Title — figma 06 */}
           <h2 className="text-[20px] font-bold leading-[30px] text-[#181b20]">
-            사건 분류가 <span className="text-brand-primary">완료</span>되었습니다
+            사건 분류가 <span className="text-brand">완료</span>되었습니다
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-text-soft">
             입력하신 내용을 바탕으로 AI가 가장 유사한 법률 분야를 선정했습니다. 결과를 확인해 주세요.
@@ -113,16 +113,16 @@ export function AnalyzingPage() {
 
           {/* Big result card */}
           <div className="mt-6 flex flex-col items-center rounded-[10px] bg-[#d8ebfd] px-6 pt-8 pb-7 shadow-[0px_8px_16px_0px_rgba(23,25,28,0.1)]">
-            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[12px] bg-brand-primary/10">
+            <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[12px] bg-brand/10">
               <meta.Icon
                 size={40}
                 strokeWidth={1.75}
-                className="text-brand-primary"
+                className="text-brand"
                 aria-hidden="true"
               />
             </div>
-            <p className="mt-5 text-sm font-medium text-brand-primary/70">AI가 분석한 주요 분야</p>
-            <p className="mt-1 text-[36px] font-bold leading-[40px] tracking-[-0.9px] text-brand-primary">
+            <p className="mt-5 text-sm font-medium text-brand/70">AI가 분석한 주요 분야</p>
+            <p className="mt-1 text-[36px] font-bold leading-[40px] tracking-[-0.9px] text-brand">
               {meta.label}
             </p>
             {tags.length > 0 && (
@@ -130,7 +130,7 @@ export function AnalyzingPage() {
                 {tags.slice(0, 4).map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-[12px] bg-white/80 px-3 py-1 text-xs font-medium text-brand-primary"
+                    className="rounded-[12px] bg-white/80 px-3 py-1 text-xs font-medium text-brand"
                   >
                     #{tag}
                   </span>
@@ -164,7 +164,7 @@ export function AnalyzingPage() {
               onClick={() => navigate('/briefs', { replace: true })}
               className={cn(
                 'flex h-[52px] w-full items-center justify-center rounded-[12px]',
-                'bg-brand-primary text-base font-bold text-white',
+                'bg-brand text-base font-bold text-white',
                 'shadow-[0px_4px_8px_0px_rgba(37,140,244,0.2)]',
                 'transition duration-150 hover:brightness-95 active:scale-[0.99]',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
@@ -226,7 +226,7 @@ export function AnalyzingPage() {
             {/* Loader circle composition — figma 07 */}
             <div className="relative flex h-24 w-24 items-center justify-center">
               {/* Outer light ring */}
-              <div className="absolute inset-0 rounded-full border-[4px] border-brand-primary/10" />
+              <div className="absolute inset-0 rounded-full border-[4px] border-brand/10" />
               {/* Spinning arc (76x76 SVG) */}
               <div className="absolute inset-[10px] flex items-center justify-center">
                 <img
@@ -253,7 +253,7 @@ export function AnalyzingPage() {
 
             {/* Time indicator */}
             <div className="mt-7 flex items-center gap-2">
-              <Clock size={16} className="text-brand-primary" />
+              <Clock size={16} className="text-brand" />
               <span className="text-xs font-medium text-[#1d2125]">약 10~30초 소요</span>
             </div>
 

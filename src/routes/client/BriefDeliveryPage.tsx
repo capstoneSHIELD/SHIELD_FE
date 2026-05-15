@@ -32,8 +32,8 @@ export function BriefDeliveryPage() {
         {/* Empty state */}
         {!isLoading && list.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-4 pt-20 pb-8 text-center">
-            <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center">
-              <Search size={32} className="text-blue-300" aria-hidden="true" />
+            <div className="w-20 h-20 rounded-full bg-info-bg flex items-center justify-center">
+              <Search size={32} className="text-brand/40" aria-hidden="true" />
             </div>
             <p className="text-sm text-gray-500">아직 전달 내역이 없습니다</p>
           </div>

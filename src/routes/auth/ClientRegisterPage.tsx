@@ -57,7 +57,7 @@ function UnderlineField({
           'w-full border-b bg-transparent py-2 text-base leading-6 text-[#171a1f]',
           'placeholder:text-text-soft',
           'outline-none transition-colors',
-          'focus:border-brand-primary',
+          'focus:border-brand',
           error ? 'border-warning-red' : 'border-[#e0e2e6]',
         )}
         {...register}
@@ -124,7 +124,7 @@ export function ClientRegisterPage() {
       >
         {/* Title */}
         <h2 className="text-[21px] font-bold leading-8 tracking-[-0.6px]">
-          <span className="text-brand-primary">SHIELD</span>
+          <span className="text-brand">SHIELD</span>
           <span className="text-[#171a1f]">와 함께</span>
           <br />
           <span className="text-[#171a1f]">법률 서비스를 사용해 볼까요?</span>
@@ -166,7 +166,7 @@ export function ClientRegisterPage() {
             type="checkbox"
             checked={agreed}
             onChange={(e) => setAgreed(e.target.checked)}
-            className="mt-0.5 h-5 w-5 rounded-sm border border-[#565d6d] text-brand-primary focus:ring-brand-primary/40"
+            className="mt-0.5 h-5 w-5 rounded-sm border border-[#565d6d] text-brand focus:ring-brand/40"
           />
           <span className="text-[14px] leading-5 text-[rgba(22,24,29,0.8)]">
             <span className="font-medium text-[#e52e2e]">* </span>
@@ -174,7 +174,7 @@ export function ClientRegisterPage() {
               href="/terms"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-brand-primary"
+              className="underline underline-offset-2 hover:text-brand"
               onClick={(e) => e.stopPropagation()}
             >
               서비스 이용약관
@@ -184,7 +184,7 @@ export function ClientRegisterPage() {
               href="/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-brand-primary"
+              className="underline underline-offset-2 hover:text-brand"
               onClick={(e) => e.stopPropagation()}
             >
               개인정보 처리방침
@@ -204,8 +204,8 @@ export function ClientRegisterPage() {
               'shadow-[0px_4px_8px_0px_rgba(35,37,41,0.08)]',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
               canSubmit
-                ? 'bg-brand-primary hover:brightness-95 active:scale-[0.99]'
-                : 'cursor-not-allowed bg-brand-primary opacity-50',
+                ? 'bg-brand hover:brightness-95 active:scale-[0.99]'
+                : 'cursor-not-allowed bg-brand opacity-50',
             )}
           >
             {isSubmitting ? '처리 중...' : '회원가입 완료'}

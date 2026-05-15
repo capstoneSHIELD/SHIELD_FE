@@ -83,7 +83,7 @@ export function ChatPage() {
 
       {/* ── AI notice bar — figma 05 style ───────────────────────────── */}
       <div className="flex items-center gap-2 border-b border-[#e0e2e6] bg-gray-50/50 px-4 py-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-brand-primary/50" />
+        <span className="h-1.5 w-1.5 rounded-full bg-brand/50" />
         <p className="text-[11px] font-medium text-text-soft">
           AI는 법률 상담이 아닌 정보 정리를 도와드립니다
         </p>
@@ -130,7 +130,7 @@ export function ChatPage() {
               isLoading={isAnalyzing}
               leftIcon={<FileText size={18} />}
               onClick={handleRequestAnalyze}
-              className="bg-brand-primary shadow-md"
+              className="bg-brand shadow-md"
             >
               의뢰서 생성
             </Button>

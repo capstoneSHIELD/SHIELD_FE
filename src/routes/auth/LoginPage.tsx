@@ -82,7 +82,7 @@ export function LoginPage() {
       {/* Background blur halo */}
       <div
         aria-hidden
-        className="absolute -top-20 -right-10 h-64 w-64 rounded-full bg-blue-500/5 blur-3xl"
+        className="absolute -top-20 -right-10 h-64 w-64 rounded-full bg-brand/5 blur-3xl"
       />
 
       <div className="relative z-10 flex flex-1 flex-col px-[25px]">

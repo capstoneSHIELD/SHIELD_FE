@@ -134,7 +134,7 @@ export function CategoryPicker({
           {value.map((sel) => (
             <Badge key={pathKey(sel.path)} variant="primary" size="sm" className="gap-1 pr-1">
               {sel.path.length > 1 && (
-                <span className="text-blue-300 font-normal">
+                <span className="text-brand/40 font-normal">
                   {sel.path.slice(0, -1).join(' > ')} &gt;{' '}
                 </span>
               )}
@@ -142,7 +142,7 @@ export function CategoryPicker({
               <button
                 type="button"
                 onClick={() => remove(sel)}
-                className="ml-0.5 rounded-full hover:bg-blue-200 p-0.5 transition-colors"
+                className="ml-0.5 rounded-full hover:bg-brand/20 p-0.5 transition-colors"
                 aria-label={`${sel.name} 제거`}
               >
                 <X size={12} />
@@ -195,7 +195,7 @@ export function CategoryPicker({
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-inset',
                       'flex items-center gap-2',
                       isActive
-                        ? 'text-brand bg-blue-50 border-b-2 border-brand md:border-b-0 md:border-r-2'
+                        ? 'text-brand bg-info-bg border-b-2 border-brand md:border-b-0 md:border-r-2'
                         : 'text-[#575e6b] hover:bg-gray-50 hover:text-[#16181d]',
                     )}
                   >
@@ -314,7 +314,7 @@ function SubcategoryGroup({
           l2Checked
             ? 'bg-brand/5'
             : childCount > 0
-              ? 'bg-blue-50/50'
+              ? 'bg-info-bg/50'
               : 'hover:bg-gray-50',
         )}
       >

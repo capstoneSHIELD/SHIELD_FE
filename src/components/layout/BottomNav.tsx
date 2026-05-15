@@ -41,7 +41,7 @@ export function BottomNav({ tabs, className }: BottomNavProps) {
             cn(
               'flex flex-col items-center justify-center gap-0.5',
               'min-w-[56px] px-2 py-1 text-xs font-medium transition-colors',
-              isActive ? 'text-blue-500' : 'text-gray-400',
+              isActive ? 'text-brand' : 'text-gray-400',
             )
           }
         >

@@ -13,13 +13,13 @@ export function ClassifyBadge({ primaryField, tags, onEdit }: ClassifyBadgeProps
   return (
     <div
       className={cn(
-        'bg-blue-50 border border-blue-200 rounded-card p-3',
+        'bg-info-bg border border-brand/20 rounded-card p-3',
         'flex flex-col gap-2',
       )}
     >
       {/* Header row */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-blue-700 tracking-wide uppercase">
+        <span className="text-xs font-semibold text-brand tracking-wide uppercase">
           분류 결과
         </span>
         {onEdit && (
@@ -29,7 +29,7 @@ export function ClassifyBadge({ primaryField, tags, onEdit }: ClassifyBadgeProps
             aria-label="분류 결과 수정"
             className={cn(
               'h-6 w-6 rounded-md flex items-center justify-center',
-              'text-blue-500 hover:text-blue-700 hover:bg-blue-100',
+              'text-brand hover:brightness-90 hover:bg-info-bg',
               'transition-colors duration-150',
             )}
           >

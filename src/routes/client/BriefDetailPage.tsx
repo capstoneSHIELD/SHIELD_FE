@@ -171,7 +171,7 @@ export function BriefDetailPage() {
       {/* Page title — figma 08 */}
       <div className="px-5 pt-4">
         <h1 className="text-[20px] font-bold leading-7 text-[#161a1d]">
-          <span className="text-brand-primary">분석리포트</span>를 확인하세요
+          <span className="text-brand">분석리포트</span>를 확인하세요
         </h1>
       </div>
 
@@ -309,7 +309,7 @@ export function BriefDetailPage() {
                     {brief.keywords.map((kw, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium"
+                        className="inline-flex items-center px-2.5 py-1 rounded-full bg-info-bg text-brand text-xs font-medium"
                       >
                         {kw}
                       </span>
@@ -363,7 +363,7 @@ export function BriefDetailPage() {
               <h2 className="text-sm font-semibold text-gray-700">담당 변호사</h2>
               <Link
                 to={`/briefs/${id}/delivery`}
-                className="flex items-center gap-0.5 text-xs text-brand hover:text-blue-700 font-medium"
+                className="flex items-center gap-0.5 text-xs text-brand hover:brightness-90 font-medium"
               >
                 전달 현황 보기
                 <ChevronRight size={14} aria-hidden="true" />
@@ -412,7 +412,7 @@ export function BriefDetailPage() {
               {hasAnyDelivery && (
                 <Link
                   to={`/briefs/${id}/delivery`}
-                  className="flex items-center gap-0.5 text-xs text-brand hover:text-blue-700 font-medium"
+                  className="flex items-center gap-0.5 text-xs text-brand hover:brightness-90 font-medium"
                 >
                   전달 현황 보기
                   <ChevronRight size={14} aria-hidden="true" />
@@ -438,7 +438,7 @@ export function BriefDetailPage() {
                   <Card key={lawyer.lawyerId} padding="md">
                     <div className="flex items-start gap-3">
                       {/* Avatar */}
-                      <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <div className="w-10 h-10 rounded-full bg-info-bg flex items-center justify-center flex-shrink-0 overflow-hidden">
                         {lawyer.profileImageUrl ? (
                           <img
                             src={lawyer.profileImageUrl}
@@ -446,7 +446,7 @@ export function BriefDetailPage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <User size={20} className="text-blue-300" aria-hidden="true" />
+                          <User size={20} className="text-brand/40" aria-hidden="true" />
                         )}
                       </div>
 

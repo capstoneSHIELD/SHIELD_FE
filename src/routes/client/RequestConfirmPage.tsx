@@ -26,7 +26,7 @@ export function RequestConfirmPage() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-6 pb-10">
         {/* Success icon */}
         <div
-          className="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center
+          className="w-24 h-24 rounded-full bg-info-bg flex items-center justify-center
                      animate-[scale-in_0.4s_cubic-bezier(0.34,1.56,0.64,1)_both]"
           style={{
             animation: 'scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both',
@@ -52,9 +52,9 @@ export function RequestConfirmPage() {
         </div>
 
         {/* Timeline expectation card */}
-        <div className="w-full rounded-xl bg-blue-50 px-5 py-4 text-left space-y-1.5">
-          <p className="text-xs font-semibold text-blue-800">응답 예상 시간</p>
-          <p className="text-sm text-blue-700 leading-relaxed">
+        <div className="w-full rounded-xl bg-info-bg px-5 py-4 text-left space-y-1.5">
+          <p className="text-xs font-semibold text-brand">응답 예상 시간</p>
+          <p className="text-sm text-brand leading-relaxed">
             변호사가 <span className="font-semibold">24시간 내</span>에 응답할 예정입니다.
             알림이 도착하면 확인해 주세요.
           </p>

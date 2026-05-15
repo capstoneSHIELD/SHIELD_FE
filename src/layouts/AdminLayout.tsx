@@ -16,7 +16,7 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
       {/* Logo */}
       <div className="flex items-center justify-between px-5 py-5 border-b border-gray-100">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-lg">
+          <div className="flex items-center justify-center w-8 h-8 bg-brand rounded-lg">
             <Shield size={18} className="text-white" aria-hidden="true" />
           </div>
           <span className="text-lg font-bold tracking-tight text-gray-900">SHIELD</span>
@@ -48,7 +48,7 @@ function AdminSidebar({ onClose }: { onClose?: () => void }) {
                     'flex items-center gap-3 px-3 py-2.5 rounded-lg',
                     'text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-blue-50 text-brand'
+                      ? 'bg-info-bg text-brand'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                   )
                 }
@@ -112,7 +112,7 @@ export function AdminLayout() {
             <Menu size={20} aria-hidden="true" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-6 h-6 bg-blue-500 rounded">
+            <div className="flex items-center justify-center w-6 h-6 bg-brand rounded">
               <Shield size={14} className="text-white" aria-hidden="true" />
             </div>
             <span className="text-base font-bold text-gray-900">SHIELD 관리자</span>
