@@ -106,6 +106,49 @@ export function NewConsultationPage() {
     });
   }
 
+  function toggleL2(l1Name: string, l2Name: string) {
+    const key = `${l1Name}|${l2Name}`;
+    setExpandedL2((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
+
+  function selectLeaf(leaf: LeafSelection) {
+    setSelected(leaf);
+  }
+
+  function clearSelection() {
+    setSelected(null);
+  }
+
+  function pickFromSearch(l1: string, l2: string, l3: string) {
+    // 검색 결과 항목 탭 시 해당 경로를 펼치고 leaf 선택
+    setExpandedL1((prev) => new Set(prev).add(l1));
+    setExpandedL2((prev) => new Set(prev).add(`${l1}|${l2}`));
+    setSelected({ l1, l2, l3 });
+    setQuery('');
+  }
+
+  function handleNext() {
+    if (!selected || isPending) return;
+    createConsultation(
+      {
+        domains: [selected.l1],
+        subDomains: [selected.l2],
+        tags: [selected.l3],
+      },
+      {
+        onSuccess: (res) => {
+          const newId = res.data.data.consultationId;
+          navigate(`/consultations/${newId}`);
+        },
+      },
+    );
+  }
+
   return (
     <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
       <PageHeader
