@@ -5,7 +5,7 @@ import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/dateUtils';
 import { useDeliveries } from '@/hooks/useBrief';
 import { useLawyerDetail } from '@/hooks/useLawyer';
-import { DELIVERY_STATUS_LABEL, DOMAIN_LABELS } from '@/lib/constants';
+import { DELIVERY_STATUS_LABEL, DOMAIN_LABELS, SUPPORT_MAILTO } from '@/lib/constants';
 import { Button, Card, Badge, Spinner, Modal } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import type { DeliveryResponse } from '@/types/brief';
@@ -319,7 +319,7 @@ export function RequestTrackingPage() {
           <div className="text-center text-xs text-[#62686f]">
             <span>문제가 발생했나요? </span>
             <a
-              href="mailto:support@shield.kr"
+              href={SUPPORT_MAILTO}
               className="inline-flex items-center gap-0.5 text-brand font-medium hover:brightness-90"
             >
               <HelpCircle size={12} aria-hidden="true" />

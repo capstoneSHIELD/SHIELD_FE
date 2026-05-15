@@ -10,6 +10,10 @@ export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 export const TOKEN_KEY = 'shield_access_token';
 export const REFRESH_TOKEN_KEY = 'shield_refresh_token';
 
+// 고객센터 / 서포트 연락처
+export const SUPPORT_EMAIL = 'support@shield.kr';
+export const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}`;
+
 /**
  * @deprecated Use `getDomainMeta` from `@/lib/domainIcons` instead.
  * 옛 4개 분야 enum 호환용. 새 8개 분류 + 아이콘 매핑은 `domainIcons.tsx` 에 중앙화됨.

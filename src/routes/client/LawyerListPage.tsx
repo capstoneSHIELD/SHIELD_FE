@@ -17,6 +17,7 @@ import { Spinner } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { DOMAIN_LABELS } from '@/lib/constants';
 import type { LawyerResponse } from '@/types';
+import type { PageResponse } from '@/types/api';
 
 // ─── types ───────────────────────────────────────────────────────────────────
 
@@ -128,7 +129,7 @@ function LawyerCard({ lawyer, matchedKeywords, onClick }: LawyerCardProps) {
             </span>
           </div>
           <div className="mt-1.5 flex flex-wrap gap-1">
-            {matchedKeywords!.map((kw) => (
+            {matchedKeywords?.map((kw) => (
               <span
                 key={kw}
                 className="text-[11px] font-medium text-brand bg-white/70 px-1.5 py-0.5 rounded"
@@ -302,26 +303,35 @@ export function LawyerListPage() {
   const [sort, setSort] = useState<SortKey>('relevance');
   const pageSize = 20;
 
-  const { data, isLoading } = useLawyerList(page, pageSize, undefined);
+  // 정렬 활성 시(관련도 외): 페이지 단위 정렬은 의미 없으므로 전체 페이지를 한 번에 받아온다.
+  // 데이터가 많아질 경우 백엔드 sort 파라미터로 이전 예정 (아래 TODO 참고).
+  const isSortingClientSide = sort !== 'relevance';
+  const effectivePage = isSortingClientSide ? 0 : page;
+  const effectiveSize = isSortingClientSide ? 200 : pageSize;
+
+  const { data, isLoading } = useLawyerList(effectivePage, effectiveSize, undefined);
 
   // 백엔드 응답이 PageResponse<LawyerResponse> 또는 LawyerResponse[] 두 가지 형태로
-  // 올 수 있어 모두 안전하게 처리한다.
-  const pageData = data as
-    | { content?: LawyerResponse[]; totalElements?: number; totalPages?: number }
-    | LawyerResponse[]
-    | undefined;
+  // 올 수 있어 type guard로 분기한다.
+  const isPageResponse = (
+    v: unknown,
+  ): v is PageResponse<LawyerResponse> =>
+    typeof v === 'object' &&
+    v !== null &&
+    Array.isArray((v as { content?: unknown }).content);
 
-  const rawLawyers: LawyerResponse[] = useMemo(
-    () =>
-      Array.isArray(pageData) ? pageData : (pageData?.content ?? []),
-    [pageData],
-  );
-  const totalElements: number = Array.isArray(pageData)
-    ? pageData.length
-    : (pageData?.totalElements ?? rawLawyers.length);
-  const totalPages: number = Array.isArray(pageData)
-    ? Math.max(1, Math.ceil(totalElements / pageSize))
-    : (pageData?.totalPages ?? Math.max(1, Math.ceil(totalElements / pageSize)));
+  const rawLawyers: LawyerResponse[] = useMemo(() => {
+    if (isPageResponse(data)) return data.content;
+    if (Array.isArray(data)) return data as LawyerResponse[];
+    return [];
+  }, [data]);
+
+  const totalElements: number = isPageResponse(data)
+    ? data.totalElements
+    : rawLawyers.length;
+  const totalPages: number = isPageResponse(data)
+    ? data.totalPages
+    : Math.max(1, Math.ceil(totalElements / pageSize));
 
   // brief 진입 시: 추천 데이터에서 matched keywords 확보
   const { data: recommendations } = useLawyerRecommendations(briefId ?? '', !!briefId);
@@ -353,9 +363,11 @@ export function LawyerListPage() {
     return Array.from(set).slice(0, 8);
   }, [briefId, recommendations]);
 
-  // 정렬 (백엔드 미지원이므로 클라이언트 사이드)
+  // 정렬 (백엔드 미지원이므로 클라이언트 사이드).
+  // 관련도순(relevance)은 기본 페이지 단위로 동작해도 의미가 있어 페이지네이션 유지.
+  // 경력/평점순은 isSortingClientSide=true → 위에서 전체 200건을 한 번에 받아 와서 정렬.
   // TODO: 백엔드에 sort 파라미터가 추가되면 useLawyerList(page, size, spec, sort)로 이관
-  const lawyers = useMemo(() => {
+  const sortedLawyers = useMemo(() => {
     const arr = [...rawLawyers];
     if (sort === 'experience') {
       arr.sort((a, b) => (b.experienceYears ?? 0) - (a.experienceYears ?? 0));
@@ -371,6 +383,21 @@ export function LawyerListPage() {
     }
     return arr;
   }, [rawLawyers, sort, briefId, matchedMap]);
+
+  // 클라이언트 사이드 정렬 시: 전체 결과를 받아왔으므로 화면 단위 페이징을 수동으로 적용
+  const lawyers = useMemo(() => {
+    if (!isSortingClientSide) return sortedLawyers;
+    const start = page * pageSize;
+    return sortedLawyers.slice(start, start + pageSize);
+  }, [sortedLawyers, isSortingClientSide, page, pageSize]);
+
+  // 클라이언트 정렬 시 총 페이지 수는 sortedLawyers 기준
+  const effectiveTotalPages = isSortingClientSide
+    ? Math.max(1, Math.ceil(sortedLawyers.length / pageSize))
+    : totalPages;
+  const effectiveTotalElements = isSortingClientSide
+    ? sortedLawyers.length
+    : totalElements;
 
   const rightActions = (
     <>
@@ -400,9 +427,15 @@ export function LawyerListPage() {
       <div className="sticky top-[68px] z-10 bg-surface border-b border-gray-100">
         <div className="flex items-center justify-between px-4 py-3">
           <p className="text-sm text-gray-600">
-            총 <span className="font-semibold text-gray-900">{totalElements}</span>명의 변호사가 검색되었습니다
+            총 <span className="font-semibold text-gray-900">{effectiveTotalElements}</span>명의 변호사가 검색되었습니다
           </p>
-          <SortDropdown value={sort} onChange={setSort} />
+          <SortDropdown
+            value={sort}
+            onChange={(v) => {
+              setSort(v);
+              setPage(0); // 정렬 변경 시 첫 페이지로 리셋
+            }}
+          />
         </div>
       </div>
 
@@ -464,7 +497,11 @@ export function LawyerListPage() {
             </div>
 
             {/* P-8: 페이지네이션 */}
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            <Pagination
+              page={page}
+              totalPages={effectiveTotalPages}
+              onChange={setPage}
+            />
           </>
         )}
       </main>
