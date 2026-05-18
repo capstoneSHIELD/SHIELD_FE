@@ -109,9 +109,14 @@ export function useChat(consultationId: string) {
           createdAt: res.createdAt,
         });
 
-        // 4. 분류 업데이트
-        if (res.classification) {
-          setClassification(res.classification);
+        // 4. 분류 업데이트 — BE `ClassificationResolution.effectiveCandidate` 를
+        // chatStore 의 `{ primaryField, tags }` 형태로 어댑팅 (Issue #28)
+        const effective = res.classification?.effectiveCandidate;
+        if (effective) {
+          setClassification({
+            primaryField: effective.domains ?? [],
+            tags: effective.tags ?? [],
+          });
         }
 
         // 5. 완료 여부

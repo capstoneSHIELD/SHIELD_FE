@@ -65,6 +65,24 @@ export interface ConsultationProgress {
   progressPercent: number;
 }
 
+/** BE `ClassificationCandidate` 와 1:1 대응 */
+export interface ClassificationCandidate {
+  domains: string[];
+  subDomains: string[];
+  tags: string[];
+}
+
+/**
+ * BE `ClassificationResolution` 과 1:1 대응. user / ai / effective 후보를 동시에 제공한다.
+ * 화면 표시에는 `effectiveCandidate` 를 사용한다.
+ */
+export interface ClassificationResolution {
+  conflict: boolean;
+  userCandidate: ClassificationCandidate | null;
+  aiCandidate: ClassificationCandidate | null;
+  effectiveCandidate: ClassificationCandidate | null;
+}
+
 /** 명세: POST /api/consultations/{id}/messages 전송 응답 (202) */
 export interface SendMessageResponse {
   messageId: string;
@@ -72,10 +90,7 @@ export interface SendMessageResponse {
   content: string;
   createdAt: string;
   allCompleted: boolean;
-  classification?: {
-    primaryField: string[];
-    tags: string[];
-  };
+  classification?: ClassificationResolution | null;
   /** BE PR #89 추가. 일부 레거시 분기에서 null 일 수 있어 nullable */
   progress?: ConsultationProgress | null;
 }
