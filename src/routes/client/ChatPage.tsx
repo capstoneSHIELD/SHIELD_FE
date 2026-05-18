@@ -9,7 +9,6 @@ import { PageHeader } from '@/components/mobile/PageHeader';
 import { ChatBubble } from '@/components/chat/ChatBubble';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
-import { ClassifyBadge } from '@/components/chat/ClassifyBadge';
 import { ConsultationProgressBar } from '@/components/consultation/ConsultationProgressBar';
 
 // ─── page ────────────────────────────────────────────────────────────────────
@@ -27,7 +26,6 @@ export function ChatPage() {
     isLoading,
     isSending,
     allCompleted,
-    classification,
     progress,
     scrollRef,
     sendMessage,
@@ -107,15 +105,6 @@ export function ChatPage() {
         {/* Typing indicator */}
         {isSending && <TypingIndicator />}
 
-        {/* Classification badge — shown after last message when present */}
-        {classification && !isSending && (
-          <div className="px-4 pt-2 pb-1">
-            <ClassifyBadge
-              primaryField={classification.primaryField}
-              tags={classification.tags}
-            />
-          </div>
-        )}
       </div>
 
       {/* ── bottom area ─────────────────────────────────────────────────── */}
