@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { formatDateTime } from '@/lib/dateUtils';
 import { useDeliveries } from '@/hooks/useBrief';
-import { Button, Card, Badge, Spinner } from '@/components/ui';
+import { Avatar, Button, Card, Badge, Spinner } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { DELIVERY_STATUS_BADGE, DELIVERY_STATUS_LABEL } from '@/lib/constants';
 import type { DeliveryStatus } from '@/types/enums';
@@ -61,7 +61,8 @@ export function BriefDeliveryPage() {
                     aria-label={`${d.lawyerName} 프로필 보기`}
                     className="cursor-pointer transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                   >
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <Avatar url={null} name={d.lawyerName} size={40} />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900">{d.lawyerName}</p>
                         <p className="text-xs text-gray-400 mt-0.5">{formatDateTime(d.sentAt)}</p>

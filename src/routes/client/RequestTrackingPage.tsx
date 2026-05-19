@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Check, Clock, MessageSquare, Calendar, User, HelpCircle } from 'lucide-react';
+import { Check, Clock, MessageSquare, Calendar, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/dateUtils';
 import { useDeliveries } from '@/hooks/useBrief';
 import { useLawyerDetail } from '@/hooks/useLawyer';
 import { DELIVERY_STATUS_LABEL, DOMAIN_LABELS, SUPPORT_MAILTO } from '@/lib/constants';
-import { Button, Card, Badge, Spinner, Modal } from '@/components/ui';
+import { Avatar, Button, Card, Badge, Spinner, Modal } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import type { DeliveryResponse } from '@/types/brief';
 
@@ -238,17 +238,11 @@ function LawyerHeaderCard({ delivery }: { delivery: DeliveryResponse }) {
       className="cursor-pointer transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
     >
       <div className="flex items-start gap-3">
-        <div className="w-14 h-14 rounded-full bg-info-bg flex items-center justify-center shrink-0 overflow-hidden">
-          {lawyer?.profileImageUrl ? (
-            <img
-              src={lawyer.profileImageUrl}
-              alt={delivery.lawyerName}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <User size={24} className="text-brand/50" aria-hidden="true" />
-          )}
-        </div>
+        <Avatar
+          url={lawyer?.profileImageUrl ?? null}
+          name={delivery.lawyerName}
+          size={56}
+        />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2 mb-1">
             <p className="text-base font-bold text-[#161a1d] truncate">{delivery.lawyerName}</p>

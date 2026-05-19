@@ -13,7 +13,7 @@ import {
 import { cn } from '@/lib/cn';
 import { useLawyerList } from '@/hooks/useLawyer';
 import { useLawyerRecommendations } from '@/hooks/useBrief';
-import { Spinner } from '@/components/ui';
+import { Avatar, Spinner } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { DOMAIN_LABELS } from '@/lib/constants';
 import type { LawyerResponse } from '@/types';
@@ -60,18 +60,7 @@ function LawyerCard({ lawyer, matchedKeywords, onClick }: LawyerCardProps) {
 
       {/* Profile image + info */}
       <div className="flex items-start gap-3 pr-6">
-        {/* Avatar */}
-        <div className="flex-shrink-0 w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center">
-          {lawyer.profileImageUrl ? (
-            <img
-              src={lawyer.profileImageUrl}
-              alt={lawyer.name}
-              className="w-14 h-14 rounded-full object-cover"
-            />
-          ) : (
-            <User size={26} className="text-gray-400" aria-hidden="true" />
-          )}
-        </div>
+        <Avatar url={lawyer.profileImageUrl} name={lawyer.name} size={56} />
 
         {/* Name + verification */}
         <div className="flex-1 min-w-0">
