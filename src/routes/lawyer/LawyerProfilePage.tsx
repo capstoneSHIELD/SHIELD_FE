@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { LogOut, FileText, Shield, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useAuthStore } from '@/stores/authStore';
 import { useMyLawyerProfile } from '@/hooks/useLawyer';
 import { lawyerApi } from '@/lib/lawyerApi';
 import { Button, Spinner, SpecializationPicker } from '@/components/ui';
+import { ProfileImageUploader } from '@/components/profile/ProfileImageUploader';
 import { Header } from '@/components/layout/Header';
 import type { VerificationStatus } from '@/types/enums';
 
@@ -35,9 +37,17 @@ const VERIFICATION_LABEL: Record<VerificationStatus, { text: string; bg: string;
 
 export function LawyerProfilePage() {
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
+  const { user, setUser, logout } = useAuthStore();
+  const queryClient = useQueryClient();
   const { data: profile, isLoading } = useMyLawyerProfile();
   const [isSaving, setIsSaving] = useState(false);
+
+  function syncProfileImageUrl(newUrl: string | null) {
+    queryClient.invalidateQueries({ queryKey: ['lawyers', 'me'] });
+    if (user) {
+      setUser({ ...user, profileImageUrl: newUrl ?? undefined });
+    }
+  }
 
   const {
     register,
@@ -104,21 +114,25 @@ export function LawyerProfilePage() {
     ? VERIFICATION_LABEL[profile.verificationStatus]
     : null;
 
-  const nameInitial = (profile?.name ?? '?')[0];
+  const displayName = profile?.name ?? user?.name ?? '변호사';
 
   return (
     <div className="flex flex-col flex-1">
       <Header title="내 프로필" />
 
       <main className="flex-1 px-[37px] py-6 pb-10 space-y-[50px]">
-        {/* ── Profile header (left-aligned, figma style) ── */}
-        <div className="flex items-center gap-4">
-          <div className="bg-[#e8f0fc] w-[56px] h-[56px] rounded-[28px] flex items-center justify-center flex-shrink-0">
-            <span className="text-[20px] font-medium text-[#1a6de0]">{nameInitial}</span>
-          </div>
-          <div className="flex flex-col gap-[3px]">
+        {/* ── Profile header — 이미지 업로더 + 이름·전문분야·인증 ── */}
+        <div className="flex items-start gap-4">
+          <ProfileImageUploader
+            currentUrl={profile?.profileImageUrl ?? null}
+            name={displayName}
+            size={72}
+            onUploaded={(url) => syncProfileImageUrl(url)}
+            onDeleted={() => syncProfileImageUrl(null)}
+          />
+          <div className="flex flex-col gap-[3px] pt-1">
             <span className="text-[17px] font-medium text-[#1a1a1a]">
-              {profile?.name ?? user?.name ?? '변호사'} 변호사
+              {displayName} 변호사
             </span>
             <span className="text-[12px] text-[#adb5bd]">
               {profile?.domains && profile.domains.length > 0

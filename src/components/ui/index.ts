@@ -6,3 +6,4 @@ export { Spinner } from './Spinner';
 export { Modal } from './Modal';
 export { SpecializationPicker } from './SpecializationPicker';
 export { CategoryPicker } from './CategoryPicker';
+export { Avatar } from './Avatar';

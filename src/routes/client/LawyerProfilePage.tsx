@@ -4,7 +4,7 @@ import { User, MapPin, Award, CheckCircle2, Search, Landmark } from 'lucide-reac
 import { cn } from '@/lib/cn';
 import { useLawyerDetail } from '@/hooks/useLawyer';
 import { useDeliverBrief, useDeliveries, useLawyerRecommendations } from '@/hooks/useBrief';
-import { Button, Card, Spinner, Modal } from '@/components/ui';
+import { Avatar, Button, Card, Spinner, Modal } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { DOMAIN_LABELS } from '@/lib/constants';
 
@@ -72,22 +72,7 @@ export function LawyerProfilePage() {
             <Card padding="md">
               <div className="flex items-start gap-4">
                 {/* Avatar (left) */}
-                <div
-                  className={cn(
-                    'w-20 h-20 rounded-full bg-gray-100 flex-shrink-0',
-                    'flex items-center justify-center overflow-hidden',
-                  )}
-                >
-                  {lawyer.profileImageUrl ? (
-                    <img
-                      src={lawyer.profileImageUrl}
-                      alt={lawyer.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User size={36} className="text-gray-400" aria-hidden="true" />
-                  )}
-                </div>
+                <Avatar url={lawyer.profileImageUrl} name={lawyer.name} size={80} />
 
                 {/* Right column */}
                 <div className="flex-1 min-w-0 flex flex-col gap-2">
