@@ -44,9 +44,23 @@ export function BriefDeliveryPage() {
           <ul className="flex flex-col gap-3">
             {list.map((d) => {
               const status = d.status as DeliveryStatus;
+              const goToProfile = () => navigate(`/lawyers/${d.lawyerId}`);
               return (
                 <li key={d.deliveryId}>
-                  <Card padding="md">
+                  <Card
+                    padding="md"
+                    role="button"
+                    tabIndex={0}
+                    onClick={goToProfile}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        goToProfile();
+                      }
+                    }}
+                    aria-label={`${d.lawyerName} 프로필 보기`}
+                    className="cursor-pointer transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                  >
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900">{d.lawyerName}</p>
