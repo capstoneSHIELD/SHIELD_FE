@@ -150,10 +150,26 @@ const DELIVERY_BADGE: Record<string, { variant: 'warning' | 'primary' | 'success
 };
 
 function DeliveryCard({ delivery }: { delivery: DeliveryResponse }) {
+  const navigate = useNavigate();
   const badge = DELIVERY_BADGE[delivery.status] ?? { variant: 'warning' as const, label: delivery.status };
 
+  const goToProfile = () => navigate(`/lawyers/${delivery.lawyerId}`);
+
   return (
-    <Card padding="md">
+    <Card
+      padding="md"
+      role="button"
+      tabIndex={0}
+      onClick={goToProfile}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          goToProfile();
+        }
+      }}
+      aria-label={`${delivery.lawyerName} 프로필 보기`}
+      className="cursor-pointer transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+    >
       <div className="space-y-3">
         {/* Header row */}
         <div className="flex items-start justify-between gap-2">
@@ -201,10 +217,26 @@ function DeliveryCard({ delivery }: { delivery: DeliveryResponse }) {
 
 // LawyerHeaderCard for B-15 — 상단 변호사 프로필 카드
 function LawyerHeaderCard({ delivery }: { delivery: DeliveryResponse }) {
+  const navigate = useNavigate();
   const { data: lawyer } = useLawyerDetail(delivery.lawyerId);
 
+  const goToProfile = () => navigate(`/lawyers/${delivery.lawyerId}`);
+
   return (
-    <Card padding="md">
+    <Card
+      padding="md"
+      role="button"
+      tabIndex={0}
+      onClick={goToProfile}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          goToProfile();
+        }
+      }}
+      aria-label={`${delivery.lawyerName} 프로필 보기`}
+      className="cursor-pointer transition-shadow hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+    >
       <div className="flex items-start gap-3">
         <div className="w-14 h-14 rounded-full bg-info-bg flex items-center justify-center shrink-0 overflow-hidden">
           {lawyer?.profileImageUrl ? (
