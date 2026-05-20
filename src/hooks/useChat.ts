@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { consultationApi } from '@/lib/consultationApi';
+import { normalizeClassificationResolution } from '@/lib/classification';
 import { useConsultationDetail } from '@/hooks/useConsultation';
 import { useChatStore } from '@/stores/chatStore';
 import type { MessageResponse, ConsultationProgress } from '@/types/consultation';
@@ -35,12 +36,15 @@ export function useChat(consultationId: string) {
     isSending,
     allCompleted,
     classification,
+    classificationConflict,
     progress,
     setMessages,
     addMessage,
     setIsSending,
     setAllCompleted,
     setClassification,
+    setClassificationConflict,
+    clearClassificationConflict,
     setProgress,
     reset,
   } = useChatStore();
@@ -76,7 +80,18 @@ export function useChat(consultationId: string) {
     if (consultation?.allCompleted) {
       setAllCompleted(true);
     }
-  }, [consultation?.allCompleted, setAllCompleted]);
+    const detailConflict = normalizeClassificationResolution(
+      consultation?.classification,
+    );
+    if (detailConflict?.conflict) {
+      setClassificationConflict(detailConflict);
+    }
+  }, [
+    consultation?.allCompleted,
+    consultation?.classification,
+    setAllCompleted,
+    setClassificationConflict,
+  ]);
 
   // 스크롤 하단 고정
   const scrollToBottom = useCallback(() => {
@@ -122,7 +137,14 @@ export function useChat(consultationId: string) {
 
         // 4. 분류 업데이트 — BE `ClassificationResolution.effectiveCandidate` 를
         // chatStore 의 `{ primaryField, tags }` 형태로 어댑팅 (Issue #28)
-        const effective = res.classification?.effectiveCandidate;
+        const resolution = normalizeClassificationResolution(res.classification);
+        if (resolution?.conflict) {
+          setClassificationConflict(resolution);
+        } else if (resolution) {
+          clearClassificationConflict();
+        }
+
+        const effective = resolution?.effectiveCandidate;
         if (effective) {
           setClassification({
             primaryField: effective.domains ?? [],
@@ -165,6 +187,8 @@ export function useChat(consultationId: string) {
       addMessage,
       setIsSending,
       setClassification,
+      setClassificationConflict,
+      clearClassificationConflict,
       setAllCompleted,
       setProgress,
       queryClient,
@@ -182,8 +206,11 @@ export function useChat(consultationId: string) {
     isSending,
     allCompleted,
     classification,
+    classificationConflict,
     progress,
     scrollRef,
     sendMessage,
+    setClassificationConflict,
+    clearClassificationConflict,
   };
 }

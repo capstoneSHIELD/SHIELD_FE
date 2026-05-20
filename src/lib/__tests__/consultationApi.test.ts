@@ -71,8 +71,11 @@ describe('consultationApi – BE contract tests', () => {
       expect(msg).toHaveProperty('allCompleted');
       expect(typeof msg.allCompleted).toBe('boolean');
       expect(msg).toHaveProperty('classification');
-      expect(msg.classification).toHaveProperty('primaryField');
-      expect(msg.classification).toHaveProperty('tags');
+      expect(msg.classification).toHaveProperty('conflict');
+      expect(msg.classification).toHaveProperty('userCandidate');
+      expect(msg.classification).toHaveProperty('aiCandidate');
+      expect(msg.classification?.userCandidate).toHaveProperty('domains');
+      expect(msg.classification?.aiCandidate).toHaveProperty('tags');
     });
   });
 

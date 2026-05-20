@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-const BASE = 'https://api.shieldai.kr/api';
+const BASE = '/api';
 
 // ── Mock Data ──
 
@@ -182,8 +182,18 @@ export const handlers = [
           createdAt: '2025-01-15T10:06:00',
           allCompleted: false,
           classification: {
-            primaryField: ['CIVIL'],
-            tags: ['임대차'],
+            conflict: true,
+            userCandidate: {
+              domains: ['부동산 거래'],
+              subDomains: [],
+              tags: [],
+            },
+            aiCandidate: {
+              domains: ['근로계약·해고·임금'],
+              subDomains: ['임금 및 수당'],
+              tags: ['임금체불 및 지급청구'],
+            },
+            effectiveCandidate: null,
           },
         },
       },

@@ -35,6 +35,8 @@ export interface ConsultationResponse {
   brief: BriefSummary | null;
   /** AI 사실관계 수집 완료 여부 (BE Issue #100). 페이지 재진입 시 의뢰서 생성 버튼 복원에 사용. */
   allCompleted?: boolean;
+  /** 분류 충돌 확인이 필요한 경우 후보 정보를 함께 내려준다. */
+  classification?: ClassificationResolution | null;
 }
 
 /** 명세: 상담에 연결된 의뢰서 요약 (nullable) */

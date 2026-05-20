@@ -1,21 +1,39 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import {
+  buildConflictFromConsultation,
+  getConflictResolutionFromUnknown,
+} from '@/lib/classification';
+import { consultationApi } from '@/lib/consultationApi';
 import { useChat } from '@/hooks/useChat';
 import { useConsultationDetail, useRequestAnalyze } from '@/hooks/useConsultation';
 import { Button, Spinner } from '@/components/ui';
 import { PageHeader } from '@/components/mobile/PageHeader';
 import { ChatBubble } from '@/components/chat/ChatBubble';
 import { ChatInput } from '@/components/chat/ChatInput';
+import { ClassificationConflictModal } from '@/components/chat/ClassificationConflictModal';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { ConsultationProgressBar } from '@/components/consultation/ConsultationProgressBar';
+import type {
+  ClassificationCandidate,
+  ConsultationResponse,
+} from '@/types/consultation';
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
 export function ChatPage() {
   const { id = '' } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false);
+  const [conflictError, setConflictError] = useState<string | null>(null);
+  const [isSavingClassification, setIsSavingClassification] = useState(false);
+  const [analyzeAfterResolve, setAnalyzeAfterResolve] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Consultation detail for status/domain info
   const { data: consultation } = useConsultationDetail(id);
@@ -26,13 +44,29 @@ export function ChatPage() {
     isLoading,
     isSending,
     allCompleted,
+    classificationConflict,
     progress,
     scrollRef,
     sendMessage,
+    setClassificationConflict,
+    clearClassificationConflict,
   } = useChat(id);
 
   // Analyze mutation
-  const { mutate: requestAnalyze, isPending: isAnalyzing } = useRequestAnalyze(id);
+  const { mutateAsync: requestAnalyze, isPending: isAnalyzing } =
+    useRequestAnalyze(id);
+
+  useEffect(() => {
+    if (!classificationConflict?.conflict) return;
+    setConflictError(null);
+    setIsConflictModalOpen(true);
+  }, [classificationConflict]);
+
+  useEffect(() => {
+    if (!toastMessage) return;
+    const timer = window.setTimeout(() => setToastMessage(null), 2600);
+    return () => window.clearTimeout(timer);
+  }, [toastMessage]);
 
   // ── status-based redirects ──────────────────────────────────────────────
   useEffect(() => {
@@ -51,12 +85,118 @@ export function ChatPage() {
   }, [consultation, id, navigate]);
 
   // ── handle "의뢰서 생성" click ──────────────────────────────────────────
-  function handleRequestAnalyze() {
-    requestAnalyze(undefined, {
-      onSuccess: () => {
-        navigate(`/consultations/${id}/analyzing`);
+  async function handleRequestAnalyze() {
+    await runAnalyze();
+  }
+
+  async function runAnalyze(skipLocalConflictCheck = false) {
+    if (!skipLocalConflictCheck && classificationConflict?.conflict) {
+      setAnalyzeAfterResolve(true);
+      setConflictError(null);
+      setIsConflictModalOpen(true);
+      return;
+    }
+
+    try {
+      await requestAnalyze();
+      navigate(`/consultations/${id}/analyzing`);
+    } catch (error) {
+      if (isClassificationConflictError(error)) {
+        setAnalyzeAfterResolve(true);
+        const fromError = getAnalyzeConflict(error);
+        if (fromError) {
+          setClassificationConflict(fromError);
+          setConflictError(null);
+          setIsConflictModalOpen(true);
+          return;
+        }
+
+        const restored = await restoreConflictFromDetail();
+        if (!restored) {
+          setToastMessage(
+            '분류 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+          );
+        }
+        return;
+      }
+
+      setToastMessage('의뢰서 생성을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  }
+
+  async function restoreConflictFromDetail() {
+    try {
+      const { data } = await consultationApi.getById(id);
+      const conflict = buildConflictFromConsultation(data.data);
+      if (!conflict) return false;
+
+      setClassificationConflict(conflict);
+      setConflictError(null);
+      setIsConflictModalOpen(true);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function handleConfirmClassification(candidate: ClassificationCandidate) {
+    setIsSavingClassification(true);
+    setConflictError(null);
+
+    try {
+      await consultationApi.updateClassify(id, candidate);
+      clearClassificationConflict();
+      markConflictResolved(candidate);
+      setIsConflictModalOpen(false);
+      setToastMessage('법률 분야가 업데이트되었습니다.');
+
+      const shouldAnalyze = analyzeAfterResolve;
+      setAnalyzeAfterResolve(false);
+      if (shouldAnalyze) {
+        await runAnalyze(true);
+      }
+    } catch {
+      setConflictError(
+        '분류를 저장하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      );
+    } finally {
+      setIsSavingClassification(false);
+    }
+  }
+
+  function handleCancelClassification() {
+    if (isSavingClassification) return;
+    setIsConflictModalOpen(false);
+    setAnalyzeAfterResolve(false);
+    setConflictError(null);
+  }
+
+  function markConflictResolved(candidate: ClassificationCandidate) {
+    queryClient.setQueryData<ConsultationResponse>(
+      ['consultations', 'detail', id],
+      (prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          userDomains: candidate.domains,
+          userSubDomains: candidate.subDomains,
+          userTags: candidate.tags,
+          classification: prev.classification
+            ? {
+                ...prev.classification,
+                conflict: false,
+                effectiveCandidate: candidate,
+              }
+            : {
+                conflict: false,
+                userCandidate: candidate,
+                aiCandidate: null,
+                effectiveCandidate: candidate,
+              },
+        };
       },
-    });
+    );
+    queryClient.invalidateQueries({ queryKey: ['consultations', 'list'] });
   }
 
   // ── loading ─────────────────────────────────────────────────────────────
@@ -138,6 +278,41 @@ export function ChatPage() {
           }
         />
       </div>
+
+      <ClassificationConflictModal
+        isOpen={isConflictModalOpen}
+        conflict={classificationConflict}
+        isSubmitting={isSavingClassification}
+        error={conflictError}
+        onCancel={handleCancelClassification}
+        onConfirm={handleConfirmClassification}
+      />
+
+      {toastMessage && (
+        <div className="fixed left-1/2 bottom-24 z-[60] w-[calc(100%-32px)] max-w-[358px] -translate-x-1/2 rounded-lg bg-[#1E293B] px-4 py-3 text-center text-sm font-medium leading-5 text-white shadow-lg">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
+}
+
+function isClassificationConflictError(error: unknown) {
+  if (!isAxiosError(error)) return false;
+  const message = getServerMessage(error.response?.data);
+  return (
+    error.response?.status === 409 &&
+    (!message || message.includes('분류 확인'))
+  );
+}
+
+function getAnalyzeConflict(error: unknown) {
+  if (!isAxiosError(error)) return null;
+  return getConflictResolutionFromUnknown(error.response?.data);
+}
+
+function getServerMessage(data: unknown) {
+  if (!data || typeof data !== 'object') return null;
+  const message = (data as { message?: unknown }).message;
+  return typeof message === 'string' ? message : null;
 }
