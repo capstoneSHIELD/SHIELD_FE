@@ -33,6 +33,8 @@ export interface ConsultationResponse {
   lastMessageAt: string | null;
   createdAt: string;
   brief: BriefSummary | null;
+  /** AI 사실관계 수집 완료 여부 (BE Issue #100). 페이지 재진입 시 의뢰서 생성 버튼 복원에 사용. */
+  allCompleted?: boolean;
 }
 
 /** 명세: 상담에 연결된 의뢰서 요약 (nullable) */
