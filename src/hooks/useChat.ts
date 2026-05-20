@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { consultationApi } from '@/lib/consultationApi';
+import { useConsultationDetail } from '@/hooks/useConsultation';
 import { useChatStore } from '@/stores/chatStore';
 import type { MessageResponse, ConsultationProgress } from '@/types/consultation';
 import type { MessageRole } from '@/types/enums';
@@ -66,6 +67,16 @@ export function useChat(consultationId: string) {
       }
     }
   }, [queryData, setMessages, setProgress]);
+
+  // allCompleted 복원 — BE Issue #100. 페이지 재진입 시 의뢰서 생성 버튼 상태 회복.
+  // ConsultationResponse.allCompleted 가 true 면 chatStore 의 allCompleted 를 true 로 set.
+  // (BE 가 아직 머지 전이면 필드가 undefined → 기존 동작 유지)
+  const { data: consultation } = useConsultationDetail(consultationId);
+  useEffect(() => {
+    if (consultation?.allCompleted) {
+      setAllCompleted(true);
+    }
+  }, [consultation?.allCompleted, setAllCompleted]);
 
   // 스크롤 하단 고정
   const scrollToBottom = useCallback(() => {
