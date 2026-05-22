@@ -129,7 +129,8 @@ export function DashboardPage() {
   const lawyerName = profile?.name ?? '변호사';
 
   // Urgent request (첫 번째 DELIVERED 건) — 수락/거절 대상
-  const urgentItem = recentItems.find((item) => item.status === 'DELIVERED');
+  // Issue #106: 24시간 경과한 만료 건은 urgent 에서 제외 (BE 가 isExpired=true 로 표시)
+  const urgentItem = recentItems.find((item) => item.status === 'DELIVERED' && !item.isExpired);
   const updateStatus = useUpdateInboxStatus(urgentItem?.deliveryId ?? '');
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -210,7 +211,8 @@ export function DashboardPage() {
             </div>
 
             {/* ── Urgent requests (shown when there are pending items) ── */}
-            {recentItems.some((item) => item.status === 'DELIVERED') && (
+            {/* Issue #106: 만료된 의뢰는 urgent 에서 제외 (BE 의 isExpired 활용) */}
+            {recentItems.some((item) => item.status === 'DELIVERED' && !item.isExpired) && (
               <section>
                 <div className="flex items-center gap-[7px] mb-2">
                   <div className="w-2 h-2 rounded-[4px] bg-[#a32d2d]" />
@@ -219,7 +221,7 @@ export function DashboardPage() {
                   </span>
                 </div>
                 {recentItems
-                  .filter((item) => item.status === 'DELIVERED')
+                  .filter((item) => item.status === 'DELIVERED' && !item.isExpired)
                   .slice(0, 1)
                   .map((item) => (
                     <div
