@@ -57,6 +57,8 @@ export interface InboxItemResponse {
   legalField: string;
   status: string;
   sentAt: string;
+  /** 24시간 응답 기한 경과 여부 (BE Issue #106). 만료 시 수락 버튼 비활성화. */
+  isExpired?: boolean;
 }
 
 export interface InboxStatsResponse {
@@ -78,6 +80,8 @@ export interface InboxDetailResponse {
   clientName: string;
   clientEmail: string;
   sentAt: string;
+  /** 24시간 응답 기한 경과 여부 (BE Issue #106). */
+  isExpired?: boolean;
 }
 
 /** GET /api/lawyers/me/verification-status 응답 */

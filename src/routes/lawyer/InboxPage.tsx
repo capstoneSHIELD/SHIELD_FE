@@ -42,7 +42,9 @@ function getStatusBadgeStyle(status: string) {
 function InboxItem({ item }: { item: InboxItemResponse }) {
   const navigate = useNavigate();
   const statusStyle = getStatusBadgeStyle(item.status);
-  const isPending = item.status === 'DELIVERED';
+  // Issue #106: BE 의 isExpired (24시간 경과) 받아 만료 처리. 만료된 건은 수락 불가.
+  const isExpired = item.isExpired === true;
+  const isPending = item.status === 'DELIVERED' && !isExpired;
   const domainMeta = getDomainMeta(item.legalField);
   const remaining = isPending ? deliveryTimeRemaining(item.sentAt) : '';
 
@@ -57,6 +59,11 @@ function InboxItem({ item }: { item: InboxItemResponse }) {
         <span className={cn('text-[11px] font-medium px-[10px] py-[3px] rounded-full', statusStyle.bg, statusStyle.text)}>
           {DELIVERY_STATUS_LABEL[item.status] ?? item.status}
         </span>
+        {isExpired && (
+          <span className="bg-[#f1efe8] text-[#5f5e5a] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
+            만료
+          </span>
+        )}
       </div>
 
       {/* Description */}
