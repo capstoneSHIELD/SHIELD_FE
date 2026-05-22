@@ -185,13 +185,13 @@ export function DashboardPage() {
             <div className="grid grid-cols-2 gap-[10px] pt-1">
               <StatCard
                 label="신규 의뢰"
-                value={stats?.pending}
+                value={stats?.newCount}
                 color="accent"
                 onClick={() => navigate('/lawyer/inbox?filter=NEW')}
               />
               <StatCard
                 label="검토 중"
-                value={stats?.total}
+                value={stats?.reviewing}
                 color="blue"
                 onClick={() => navigate('/lawyer/inbox?filter=REVIEWING')}
               />
