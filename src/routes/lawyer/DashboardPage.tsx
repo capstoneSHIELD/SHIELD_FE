@@ -42,9 +42,10 @@ interface StatCardProps {
   label: string;
   value: number | undefined;
   color: 'accent' | 'blue' | 'brown' | 'green';
+  onClick?: () => void;
 }
 
-function StatCard({ label, value, color }: StatCardProps) {
+function StatCard({ label, value, color, onClick }: StatCardProps) {
   const isAccent = color === 'accent';
   const numColor = {
     accent: 'text-white',
@@ -54,12 +55,13 @@ function StatCard({ label, value, color }: StatCardProps) {
   }[color];
 
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
       className={cn(
-        'rounded-[14px] p-[15px] flex flex-col gap-[5px]',
-        isAccent
-          ? 'bg-[#1a6de0]'
-          : 'bg-white border border-[#e9ecef]',
+        'rounded-[14px] p-[15px] flex flex-col gap-[5px] text-left transition-transform',
+        'active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+        isAccent ? 'bg-[#1a6de0]' : 'bg-white border border-[#e9ecef]',
       )}
     >
       <p className={cn('text-[28px] font-bold leading-[28px]', numColor)}>
@@ -68,7 +70,7 @@ function StatCard({ label, value, color }: StatCardProps) {
       <p className={cn('text-[11px]', isAccent ? 'text-white/75' : 'text-[#6b7280]')}>
         {label}
       </p>
-    </div>
+    </button>
   );
 }
 
@@ -117,6 +119,7 @@ function RecentItem({ item }: { item: InboxItemResponse }) {
 // ─── page ────────────────────────────────────────────────────────────────────
 
 export function DashboardPage() {
+  const navigate = useNavigate();
   const { data: stats, isLoading: statsLoading } = useInboxStats();
   const { data: inboxPage, isLoading: inboxLoading } = useInboxList(0, 5);
   const { data: profile } = useMyLawyerProfile();
@@ -178,12 +181,32 @@ export function DashboardPage() {
               </p>
             </div>
 
-            {/* ── Stats 2×2 grid ─────────────────────────────────────── */}
+            {/* ── Stats 2×2 grid (Issue #42: 클릭 시 의뢰함의 해당 탭으로 라우팅) ── */}
             <div className="grid grid-cols-2 gap-[10px] pt-1">
-              <StatCard label="신규 의뢰" value={stats?.pending} color="accent" />
-              <StatCard label="검토 중" value={stats?.total} color="blue" />
-              <StatCard label="진행 중 사건" value={stats?.confirmed} color="brown" />
-              <StatCard label="이번 주 완료" value={stats?.rejected} color="green" />
+              <StatCard
+                label="신규 의뢰"
+                value={stats?.pending}
+                color="accent"
+                onClick={() => navigate('/lawyer/inbox?status=DELIVERED')}
+              />
+              <StatCard
+                label="검토 중"
+                value={stats?.total}
+                color="blue"
+                onClick={() => navigate('/lawyer/inbox')}
+              />
+              <StatCard
+                label="진행 중 사건"
+                value={stats?.confirmed}
+                color="brown"
+                onClick={() => navigate('/lawyer/inbox?status=CONFIRMED')}
+              />
+              <StatCard
+                label="이번 주 완료"
+                value={stats?.rejected}
+                color="green"
+                onClick={() => navigate('/lawyer/inbox?status=REJECTED')}
+              />
             </div>
 
             {/* ── Urgent requests (shown when there are pending items) ── */}
