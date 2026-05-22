@@ -6,9 +6,9 @@ const BASE = '/lawyer/inbox';
 
 export const inboxApi = {
   /** 수신 의뢰서 목록 */
-  getList: (page = 0, size = 20, status?: string) =>
+  getList: (page = 0, size = 20, filter?: string) =>
     api.get<ApiResponse<PageResponse<InboxItemResponse>>>(BASE, {
-      params: { page, size, status },
+      params: { page, size, filter },
     }),
 
   /** 수신함 통계 */

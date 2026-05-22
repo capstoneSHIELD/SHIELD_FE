@@ -12,13 +12,13 @@ import type { InboxItemResponse } from '@/types';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-type FilterTab = 'ALL' | 'DELIVERED' | 'CONFIRMED' | 'REJECTED';
+type FilterTab = 'ALL' | 'NEW' | 'REVIEWING' | 'RESPONDED';
 
 const TABS: { key: FilterTab; label: string }[] = [
   { key: 'ALL', label: '전체' },
-  { key: 'DELIVERED', label: '신규 의뢰' },
-  { key: 'CONFIRMED', label: '검토 중' },
-  { key: 'REJECTED', label: '응답 완료' },
+  { key: 'NEW', label: '신규 의뢰' },
+  { key: 'REVIEWING', label: '검토 중' },
+  { key: 'RESPONDED', label: '응답 완료' },
 ];
 
 function formatShortDate(iso: string): string {
@@ -119,20 +119,18 @@ function InboxItem({ item }: { item: InboxItemResponse }) {
 // ─── page ────────────────────────────────────────────────────────────────────
 
 function isValidFilterTab(value: string | null): value is FilterTab {
-  return value === 'ALL' || value === 'DELIVERED' || value === 'CONFIRMED' || value === 'REJECTED';
+  return value === 'ALL' || value === 'NEW' || value === 'REVIEWING' || value === 'RESPONDED';
 }
 
 export function InboxPage() {
   const navigate = useNavigate();
-  // Issue #42: 대시보드 카운트 카드 클릭 시 ?status=DELIVERED 같은 query param 으로 초기 탭 설정
   const [searchParams] = useSearchParams();
-  const initialStatus = searchParams.get('status');
+  const initialFilter = searchParams.get('filter');
   const [activeTab, setActiveTab] = useState<FilterTab>(
-    isValidFilterTab(initialStatus) ? initialStatus : 'ALL',
+    isValidFilterTab(initialFilter) ? initialFilter : 'ALL',
   );
 
-  const statusFilter = activeTab === 'ALL' ? undefined : activeTab;
-  const { data: inboxPage, isLoading } = useInboxList(0, 50, statusFilter);
+  const { data: inboxPage, isLoading } = useInboxList(0, 50, activeTab);
   const items = inboxPage?.content ?? [];
 
   return (

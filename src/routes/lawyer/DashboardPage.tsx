@@ -182,31 +182,30 @@ export function DashboardPage() {
               </p>
             </div>
 
-            {/* ── Stats 2×2 grid (Issue #42: 클릭 시 의뢰함의 해당 탭으로 라우팅) ── */}
             <div className="grid grid-cols-2 gap-[10px] pt-1">
               <StatCard
                 label="신규 의뢰"
-                value={stats?.pending}
+                value={stats?.newCount}
                 color="accent"
-                onClick={() => navigate('/lawyer/inbox?status=DELIVERED')}
+                onClick={() => navigate('/lawyer/inbox?filter=NEW')}
               />
               <StatCard
                 label="검토 중"
-                value={stats?.total}
+                value={stats?.reviewing}
                 color="blue"
-                onClick={() => navigate('/lawyer/inbox')}
+                onClick={() => navigate('/lawyer/inbox?filter=REVIEWING')}
               />
               <StatCard
                 label="진행 중 사건"
                 value={stats?.confirmed}
                 color="brown"
-                onClick={() => navigate('/lawyer/inbox?status=CONFIRMED')}
+                onClick={() => navigate('/lawyer/inbox?filter=RESPONDED')}
               />
               <StatCard
                 label="이번 주 완료"
                 value={stats?.rejected}
                 color="green"
-                onClick={() => navigate('/lawyer/inbox?status=REJECTED')}
+                onClick={() => navigate('/lawyer/inbox?filter=RESPONDED')}
               />
             </div>
 
