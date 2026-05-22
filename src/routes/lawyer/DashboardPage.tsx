@@ -199,7 +199,7 @@ export function DashboardPage() {
                 label="진행 중 사건"
                 value={stats?.confirmed}
                 color="brown"
-                onClick={() => navigate('/lawyer/inbox?filter=RESPONDED')}
+                onClick={() => navigate('/lawyer/cases')}
               />
               <StatCard
                 label="이번 주 완료"
