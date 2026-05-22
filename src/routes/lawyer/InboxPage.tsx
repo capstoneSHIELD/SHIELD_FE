@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Clock } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useInboxList } from '@/hooks/useInbox';
@@ -111,9 +111,18 @@ function InboxItem({ item }: { item: InboxItemResponse }) {
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
+function isValidFilterTab(value: string | null): value is FilterTab {
+  return value === 'ALL' || value === 'DELIVERED' || value === 'CONFIRMED' || value === 'REJECTED';
+}
+
 export function InboxPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<FilterTab>('ALL');
+  // Issue #42: 대시보드 카운트 카드 클릭 시 ?status=DELIVERED 같은 query param 으로 초기 탭 설정
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get('status');
+  const [activeTab, setActiveTab] = useState<FilterTab>(
+    isValidFilterTab(initialStatus) ? initialStatus : 'ALL',
+  );
 
   const statusFilter = activeTab === 'ALL' ? undefined : activeTab;
   const { data: inboxPage, isLoading } = useInboxList(0, 50, statusFilter);
