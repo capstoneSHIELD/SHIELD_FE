@@ -8,11 +8,11 @@ const KEYS = {
   detail: (id: string) => [...KEYS.all, 'detail', id] as const,
 };
 
-export function useInboxList(page = 0, size = 20, status?: string) {
+export function useInboxList(page = 0, size = 20, filter?: string) {
   return useQuery({
-    queryKey: [...KEYS.list(), page, size, status],
+    queryKey: [...KEYS.list(), page, size, filter],
     queryFn: async () => {
-      const { data } = await inboxApi.getList(page, size, status);
+      const { data } = await inboxApi.getList(page, size, filter);
       return data.data;
     },
   });
