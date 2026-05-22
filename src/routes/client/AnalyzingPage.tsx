@@ -26,7 +26,10 @@ export function AnalyzingPage() {
   const [isUpdatingDomain, setIsUpdatingDomain] = useState(false);
   const [domainUpdateError, setDomainUpdateError] = useState<string | null>(null);
 
-  // ── 사용자가 분야를 직접 재선택했을 때 처리 ───────────────────────────────
+  // ── 사용자가 분야를 직접 재선택했을 때 처리 (Issue #41) ──────────────────
+  //   - PATCH /classify 호출 후 화면이 바로 갱신되어야 함
+  //   - 기존엔 modal 만 닫고 /briefs 로 이동해 "수정이 안 됨" 으로 인식됨
+  //   - BE 의 updateUserClassification() 이 ai_* 를 clear 하므로 user_* 만 갱신
   const handleDomainOverride = useCallback(
     async (domainId: string) => {
       if (!id || !classificationResult) return;
@@ -35,20 +38,29 @@ export function AnalyzingPage() {
       try {
         const subDomains = classificationResult.aiSubDomains ?? classificationResult.userSubDomains ?? [];
         const tags = classificationResult.aiTags ?? classificationResult.userTags ?? [];
-        await consultationApi.updateClassify(id, {
+        const { data } = await consultationApi.updateClassify(id, {
           domains: [domainId],
           subDomains,
           tags,
         });
+        const updated = data.data;
+        setClassificationResult({
+          ...classificationResult,
+          userDomains: updated?.domains ?? [domainId],
+          userSubDomains: updated?.subDomains ?? subDomains,
+          userTags: updated?.tags ?? tags,
+          aiDomains: null,
+          aiSubDomains: null,
+          aiTags: null,
+        });
         setPickerOpen(false);
-        navigate('/briefs', { replace: true });
       } catch {
         setDomainUpdateError('분야 변경에 실패했습니다. 다시 시도해 주세요.');
       } finally {
         setIsUpdatingDomain(false);
       }
     },
-    [id, classificationResult, navigate],
+    [id, classificationResult],
   );
 
   // ── elapsed timer ───────────────────────────────────────────────────────
@@ -97,6 +109,8 @@ export function AnalyzingPage() {
     const primaryDomain = domains[0] ?? '';
     const meta = getDomainMeta(primaryDomain);
     const tags: string[] = classificationResult.aiTags ?? classificationResult.userTags ?? [];
+    // Issue #41: 사용자가 분야를 수정하면 ai_* 가 null 되고 user_* 만 남음 → 라벨도 그에 맞춰 변경
+    const isUserOverridden = !classificationResult.aiDomains && !!classificationResult.userDomains?.length;
 
     return (
       <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
@@ -121,7 +135,9 @@ export function AnalyzingPage() {
                 aria-hidden="true"
               />
             </div>
-            <p className="mt-5 text-sm font-medium text-brand/70">AI가 분석한 주요 분야</p>
+            <p className="mt-5 text-sm font-medium text-brand/70">
+              {isUserOverridden ? '내가 선택한 주요 분야' : 'AI가 분석한 주요 분야'}
+            </p>
             <p className="mt-1 text-[36px] font-bold leading-[40px] tracking-[-0.9px] text-[#0680f9]">
               {meta.label}
             </p>
