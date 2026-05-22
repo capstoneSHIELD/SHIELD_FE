@@ -5,6 +5,7 @@ import { Spinner } from '@/components/ui';
 import { useInboxList } from '@/hooks/useInbox';
 import { getDomainMeta } from '@/lib/domainIcons';
 import { formatDate } from '@/lib/dateUtils';
+import { cn } from '@/lib/cn';
 import type { InboxItemResponse } from '@/types';
 
 /**
@@ -65,7 +66,11 @@ function CaseItem({ item, onClick }: CaseItemProps) {
         className="w-full py-3 text-left"
       >
         <div className="flex flex-wrap gap-[7px] items-center">
-          <span className="bg-emerald-50 text-emerald-700 text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
+          <span className={cn(
+            'text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1',
+            meta.bgColor,
+            meta.color,
+          )}>
             <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
             {meta.label}
           </span>
