@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Spinner } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
-import { validateNaverState } from '@/lib/naver';
+import { validateNaverState, getNaverRedirectUri } from '@/lib/naver';
 import { authApi } from '@/lib/authApi';
 import { getRoleHome, routeAfterSocialLogin } from '@/lib/authFlow';
 
@@ -41,9 +41,9 @@ export function NaverCallbackPage() {
 
     (async () => {
       try {
-        // 백엔드 계약상 최초 OAuth 로그인은 기본 USER로 시작하고, 신규 사용자는 온보딩에서 역할을 선택한다.
         const { data } = await authApi.naverLogin({
           authorizationCode: code,
+          redirectUri: getNaverRedirectUri(),
           role: 'USER',
         });
 
