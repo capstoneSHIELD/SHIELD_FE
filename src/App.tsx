@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useFcm } from '@/hooks/useFcm';
+import { useDeepLink } from '@/hooks/useDeepLink';
 
 // Guards
 import { ProtectedRoute } from '@/guards/ProtectedRoute';
@@ -25,8 +26,14 @@ const LoginPage = lazy(() =>
 const KakaoCallbackPage = lazy(() =>
   import('@/routes/auth/KakaoCallbackPage').then((m) => ({ default: m.KakaoCallbackPage })),
 );
+const KakaoCallbackMobilePage = lazy(() =>
+  import('@/routes/auth/KakaoCallbackMobilePage').then((m) => ({ default: m.KakaoCallbackMobilePage })),
+);
 const NaverCallbackPage = lazy(() =>
   import('@/routes/auth/NaverCallbackPage').then((m) => ({ default: m.NaverCallbackPage })),
+);
+const NaverCallbackMobilePage = lazy(() =>
+  import('@/routes/auth/NaverCallbackMobilePage').then((m) => ({ default: m.NaverCallbackMobilePage })),
 );
 const GoogleCallbackPage = lazy(() =>
   import('@/routes/auth/GoogleCallbackPage').then((m) => ({ default: m.GoogleCallbackPage })),
@@ -169,6 +176,12 @@ function NotFoundPage() {
   );
 }
 
+// BrowserRouter 안에서 navigation 관련 hook (useNavigate 의존) 호출하기 위한 효과 컴포넌트
+function NavigationEffects() {
+  useDeepLink();
+  return null;
+}
+
 export default function App() {
   const initialize = useAuthStore((s) => s.initialize);
 
@@ -181,6 +194,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <NavigationEffects />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             {/* ══════ 스플래시 (AuthLayout 외부) ══════ */}
@@ -194,7 +208,9 @@ export default function App() {
             <Route element={<AuthLayout />}>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/auth/kakao/callback" element={<KakaoCallbackPage />} />
+              <Route path="/auth/kakao/callback-mobile" element={<KakaoCallbackMobilePage />} />
               <Route path="/auth/naver/callback" element={<NaverCallbackPage />} />
+              <Route path="/auth/naver/callback-mobile" element={<NaverCallbackMobilePage />} />
               <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
 
               {/* 온보딩 전용: 소셜 로그인 직후 중간 단계. 인증되었거나 state.accessToken 이 있을 때만 접근 허용 */}

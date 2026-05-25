@@ -88,18 +88,22 @@ export interface DevLoginRequest {
 /** POST /api/auth/google 요청 */
 export interface GoogleLoginRequest {
   authorizationCode: string;
+  /** 모바일 native 앱은 web 과 다른 redirect URI 를 사용 (Issue #114). 미지정 시 BE 기본값. */
+  redirectUri?: string;
   role?: UserRole;
 }
 
 /** POST /api/auth/naver 요청 */
 export interface NaverLoginRequest {
   authorizationCode: string;
+  redirectUri?: string;
   role: UserRole;
 }
 
 /** POST /api/auth/kakao 요청 */
 export interface KakaoLoginRequest {
   authorizationCode: string;
+  redirectUri?: string;
   role: UserRole;
 }
 /** POST /api/auth/token/refresh 응답 data */
