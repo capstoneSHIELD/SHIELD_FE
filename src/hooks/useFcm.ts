@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useAuthStore } from '@/stores/authStore';
 import { requestFcmToken, subscribeForegroundMessages } from '@/lib/firebase';
 import { registerFcmToken } from '@/lib/fcmApi';
@@ -6,6 +8,7 @@ import { isNativePlatform, getPlatform } from '@/lib/platform';
 
 export function useFcm(): void {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -17,7 +20,6 @@ export function useFcm(): void {
         const token = await requestFcmToken();
         if (cancelled || !token) return;
 
-        // device_type: ANDROID/IOS/WEB — BE 의 fcm_tokens.device_type enum 과 매칭
         const deviceType =
           getPlatform() === 'android' ? 'ANDROID' :
           getPlatform() === 'ios' ? 'IOS' :
@@ -26,11 +28,29 @@ export function useFcm(): void {
         await registerFcmToken(token, deviceType);
 
         await subscribeForegroundMessages(async (payload) => {
-          // 네이티브: OS 가 자동으로 시스템 알림 표시 (Capacitor 플러그인 기본 동작)
-          // 웹: Service Worker 로 직접 알림 띄움
-          if (isNativePlatform()) return;
+          // 옛 useEffect 의 cleanup 후 (로그아웃/재로그인 시) 살아남은 listener 가
+          // 중복 toast 띄우거나 다른 사용자 알림 처리하는 것을 방지.
+          // subscribeForegroundMessages 자체는 unsubscribe handle 을 반환하지 않으므로
+          // closure 의 cancelled flag 로 listener 무효화.
+          if (cancelled) return;
 
-          // Notification API 미지원 환경(구형 브라우저, 일부 WebView) 방어
+          // 1. In-app toast — foreground 일 때 사용자에게 보임 (web/native 공통)
+          toast(payload.title || 'SHIELD', {
+            description: payload.body,
+            duration: 4000,
+          });
+
+          // 2. 메시지 type 별 React Query invalidation — 의뢰서 상태 즉시 갱신
+          const type = payload.data?.type;
+          if (type === 'DELIVERY_STATUS') {
+            queryClient.invalidateQueries({ queryKey: ['briefs'] });
+            queryClient.invalidateQueries({ queryKey: ['briefDetail'] });
+            queryClient.invalidateQueries({ queryKey: ['inbox'] });
+            queryClient.invalidateQueries({ queryKey: ['deliveries'] });
+          }
+
+          // 3. web 환경에서만 시스템 데스크톱 알림도 띄움 (선택)
+          if (isNativePlatform()) return;
           if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
           const reg = await navigator.serviceWorker.ready;
           await reg.showNotification(payload.title || 'SHIELD', {
@@ -48,5 +68,5 @@ export function useFcm(): void {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, queryClient]);
 }

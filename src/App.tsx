@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { useAuthStore } from '@/stores/authStore';
 import { useFcm } from '@/hooks/useFcm';
 import { useDeepLink } from '@/hooks/useDeepLink';
@@ -196,6 +197,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <Toaster position="top-center" richColors closeButton />
       <BrowserRouter>
         <NavigationEffects />
         <Suspense fallback={<PageLoader />}>
