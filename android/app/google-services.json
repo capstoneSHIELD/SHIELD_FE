@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999340953047",
+    "project_id": "capstone-shield",
+    "storage_bucket": "capstone-shield.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999340953047:android:2b9b04e62688b1a2f84f92",
+        "android_client_info": {
+          "package_name": "com.shield.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC77xbTZnuoLbCasDI7Fbzz2_Ksc_tHm0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
