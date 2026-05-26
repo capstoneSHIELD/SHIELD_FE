@@ -38,6 +38,9 @@ const NaverCallbackMobilePage = lazy(() =>
 const GoogleCallbackPage = lazy(() =>
   import('@/routes/auth/GoogleCallbackPage').then((m) => ({ default: m.GoogleCallbackPage })),
 );
+const GoogleCallbackMobilePage = lazy(() =>
+  import('@/routes/auth/GoogleCallbackMobilePage').then((m) => ({ default: m.GoogleCallbackMobilePage })),
+);
 const RoleSelectPage = lazy(() =>
   import('@/routes/auth/RoleSelectPage').then((m) => ({ default: m.RoleSelectPage })),
 );
@@ -212,6 +215,7 @@ export default function App() {
               <Route path="/auth/naver/callback" element={<NaverCallbackPage />} />
               <Route path="/auth/naver/callback-mobile" element={<NaverCallbackMobilePage />} />
               <Route path="/auth/google/callback" element={<GoogleCallbackPage />} />
+              <Route path="/auth/google/callback-mobile" element={<GoogleCallbackMobilePage />} />
 
               {/* 온보딩 전용: 소셜 로그인 직후 중간 단계. 인증되었거나 state.accessToken 이 있을 때만 접근 허용 */}
               <Route element={<OnboardingRoute />}>

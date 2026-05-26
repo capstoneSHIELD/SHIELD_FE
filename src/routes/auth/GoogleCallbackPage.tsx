@@ -4,6 +4,7 @@ import { Spinner } from '@/components/ui';
 import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/lib/authApi';
 import { getRoleHome, routeAfterSocialLogin } from '@/lib/authFlow';
+import { getGoogleRedirectUri } from '@/lib/google';
 
 export function GoogleCallbackPage() {
   const navigate = useNavigate();
@@ -26,10 +27,14 @@ export function GoogleCallbackPage() {
 
     (async () => {
       try {
-        // 명세: POST /api/auth/google { authorizationCode }
+        // 명세: POST /api/auth/google { authorizationCode, redirectUri }
         // 최초 로그인 시 서버가 기본 USER로 가입시킴. role 지정이 필요한 경우는
         // 역할 선택 화면(/role-select)을 거쳐 해당 역할로 재요청하는 플로우.
-        const { data } = await authApi.googleLogin({ authorizationCode: code });
+        // redirectUri 는 authorization 요청 때 사용한 URI 와 정확히 일치해야 BE 의 토큰 교환이 성공한다.
+        const { data } = await authApi.googleLogin({
+          authorizationCode: code,
+          redirectUri: getGoogleRedirectUri(),
+        });
 
         const payload = data.data;
         const { accessToken, isNewUser, role, name, email } = payload;
