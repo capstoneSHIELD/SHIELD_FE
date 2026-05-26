@@ -30,7 +30,8 @@ export function useFcm(): void {
           // 웹: Service Worker 로 직접 알림 띄움
           if (isNativePlatform()) return;
 
-          if (Notification.permission !== 'granted') return;
+          // Notification API 미지원 환경(구형 브라우저, 일부 WebView) 방어
+          if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
           const reg = await navigator.serviceWorker.ready;
           await reg.showNotification(payload.title || 'SHIELD', {
             body: payload.body,
