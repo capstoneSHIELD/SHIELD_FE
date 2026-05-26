@@ -69,7 +69,7 @@ function CaseItem({ item, onClick }: CaseItemProps) {
           <span className={cn(
             'text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1',
             meta.bgColor,
-            meta.color,
+            meta.color
           )}>
             <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
             {meta.label}
