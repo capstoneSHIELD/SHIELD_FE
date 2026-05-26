@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Clock } from 'lucide-react';
+import { Calendar, Clock } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useInboxList } from '@/hooks/useInbox';
 import { Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
-import { DELIVERY_STATUS_LABEL } from '@/lib/constants';
 import { deliveryTimeRemaining } from '@/lib/dateUtils';
-import { getDomainMeta } from '@/lib/domainIcons';
+import {
+  LawyerCard,
+  LawyerDomainPill,
+  LawyerEmptyState,
+  LawyerHeader,
+  LawyerPage,
+  LawyerStatusPill,
+} from '@/components/lawyer/LawyerChrome';
 import type { InboxItemResponse } from '@/types';
-
-// ─── helpers ────────────────────────────────────────────────────────────────
 
 type FilterTab = 'ALL' | 'NEW' | 'REVIEWING' | 'RESPONDED';
 
@@ -22,104 +25,66 @@ const TABS: { key: FilterTab; label: string }[] = [
 ];
 
 function formatShortDate(iso: string): string {
-  const d = new Date(iso);
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const h = String(d.getHours()).padStart(2, '0');
-  const min = String(d.getMinutes()).padStart(2, '0');
-  return `${m}.${day} ${h}:${min}`;
+  const date = new Date(iso);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  return `${month}.${day} ${hour}:${minute}`;
 }
-
-function getStatusBadgeStyle(status: string) {
-  if (status === 'DELIVERED') return { bg: 'bg-[#e8f0fc]', text: 'text-[#0c447c]' };
-  if (status === 'CONFIRMED') return { bg: 'bg-[#eaf3de]', text: 'text-[#3b6d11]' };
-  if (status === 'REJECTED') return { bg: 'bg-[#fcebeb]', text: 'text-[#a32d2d]' };
-  return { bg: 'bg-[#f1efe8]', text: 'text-[#5f5e5a]' };
-}
-
-// ─── inbox item (figma flat style) ──────────────────────────────────────────
-
-function InboxItem({ item }: { item: InboxItemResponse }) {
-  const navigate = useNavigate();
-  const statusStyle = getStatusBadgeStyle(item.status);
-  // Issue #106: BE 의 isExpired (24시간 경과) 받아 만료 처리. 만료된 건은 수락 불가.
-  const isExpired = item.isExpired === true;
-  const isPending = item.status === 'DELIVERED' && !isExpired;
-  const domainMeta = getDomainMeta(item.legalField);
-  const remaining = isPending ? deliveryTimeRemaining(item.sentAt) : '';
-
-  return (
-    <div className="py-3">
-      {/* Category & status badges */}
-      <div className="flex flex-wrap gap-[7px] items-center">
-        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
-          <domainMeta.Icon size={11} strokeWidth={2} aria-hidden="true" />
-          {domainMeta.label}
-        </span>
-        <span className={cn('text-[11px] font-medium px-[10px] py-[3px] rounded-full', statusStyle.bg, statusStyle.text)}>
-          {DELIVERY_STATUS_LABEL[item.status] ?? item.status}
-        </span>
-        {isExpired && (
-          <span className="bg-[#f1efe8] text-[#5f5e5a] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
-            만료
-          </span>
-        )}
-      </div>
-
-      {/* Description */}
-      <p className="text-[12px] text-[#6b7280] leading-[19.2px] mt-2 line-clamp-2">
-        {item.briefTitle}
-      </p>
-
-      {/* Divider + footer */}
-      <div className="border-t border-[#e9ecef] mt-3 pt-[10px] flex items-center justify-between">
-        <div className="flex flex-col gap-[2px]">
-          <span className="text-[11px] text-[#adb5bd]">
-            전달 {formatShortDate(item.sentAt)}
-          </span>
-          {isPending && remaining && (
-            <div className="flex items-center gap-1">
-              <Clock size={11} className="text-[#a32d2d]" />
-              <span className="text-[11px] font-medium text-[#a32d2d]">{remaining}</span>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-[6px]">
-          <button
-            type="button"
-            onClick={() => navigate(`/lawyer/inbox/${item.deliveryId}`)}
-            className="bg-[#f7f8fa] border border-[#e9ecef] rounded-full px-[10px] py-[6px] text-[11px] font-medium text-[#6b7280]"
-          >
-            상세 보기
-          </button>
-          {isPending && (
-            <>
-              <button
-                type="button"
-                onClick={() => navigate(`/lawyer/inbox/${item.deliveryId}`)}
-                className="bg-[#1a6de0] text-white text-[11px] font-medium px-[11px] py-[5px] rounded-full"
-              >
-                수락
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate(`/lawyer/inbox/${item.deliveryId}`)}
-                className="bg-white border border-[#fcebeb] text-[#a32d2d] text-[11px] font-medium px-[10px] py-[6px] rounded-full"
-              >
-                거절
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── page ────────────────────────────────────────────────────────────────────
 
 function isValidFilterTab(value: string | null): value is FilterTab {
   return value === 'ALL' || value === 'NEW' || value === 'REVIEWING' || value === 'RESPONDED';
+}
+
+function InboxCard({ item }: { item: InboxItemResponse }) {
+  const navigate = useNavigate();
+  const isExpired = item.isExpired === true;
+  const isPending = item.status === 'DELIVERED' && !isExpired;
+  const remaining = isPending ? deliveryTimeRemaining(item.sentAt) : '';
+
+  return (
+    <LawyerCard className="p-3.5">
+      <div className="space-y-2.5">
+        <div className="flex flex-wrap items-center gap-[7px]">
+          <LawyerDomainPill legalField={item.legalField} />
+          <LawyerStatusPill status={item.status} />
+          {isExpired && (
+            <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-[3px] text-[11px] font-medium text-gray-500">
+              만료
+            </span>
+          )}
+        </div>
+
+        <p className="text-[13px] font-semibold leading-[19px] text-[#111827]">
+          {item.briefTitle}
+        </p>
+
+        <div className="flex items-end justify-between gap-3">
+          <div className="space-y-1 text-[11px] text-gray-400">
+            <div className="flex items-center gap-1.5">
+              <Calendar size={12} strokeWidth={1.8} aria-hidden="true" />
+              <span>진단 {formatShortDate(item.sentAt)}</span>
+            </div>
+            {remaining && (
+              <div className="flex items-center gap-1.5 text-red-600">
+                <Clock size={12} strokeWidth={1.8} aria-hidden="true" />
+                <span>{remaining}</span>
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => navigate(`/lawyer/inbox/${item.deliveryId}`)}
+            className="shrink-0 rounded-full border border-brand bg-white px-3 py-1.5 text-[11px] font-medium text-brand transition-colors hover:bg-info-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          >
+            상세 보기
+          </button>
+        </div>
+      </div>
+    </LawyerCard>
+  );
 }
 
 export function InboxPage() {
@@ -134,12 +99,11 @@ export function InboxPage() {
   const items = inboxPage?.content ?? [];
 
   return (
-    <div className="flex flex-col flex-1">
-      <Header title="의뢰함" showBack onBack={() => navigate('/lawyer')} />
+    <LawyerPage>
+      <LawyerHeader title="의뢰함" showBack onBack={() => navigate('/lawyer')} />
 
-      {/* Tabs — figma style */}
-      <div className="bg-white border-b border-[#e9ecef]">
-        <div className="flex">
+      <div className="border-b border-[#e0e2e6] bg-white px-4 py-2">
+        <div className="grid grid-cols-4 gap-1.5">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -148,15 +112,16 @@ export function InboxPage() {
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
                 className={cn(
-                  'flex-1 py-[11px] px-1 text-[12px] text-center relative',
+                  'relative rounded-card px-2 py-2 text-center text-[12px] font-medium transition-colors',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
                   isActive
-                    ? 'font-medium text-[#1a6de0]'
-                    : 'font-normal text-[#adb5bd]',
+                    ? 'bg-white text-brand shadow-[0_8px_20px_rgba(31,140,249,0.10)]'
+                    : 'bg-gray-50 text-gray-500',
                 )}
               >
                 {tab.label}
                 {isActive && (
-                  <div className="absolute bottom-0 left-[15%] right-[15%] h-[2px] bg-[#1a6de0] rounded-[1px]" />
+                  <span className="absolute inset-x-6 -bottom-2 h-0.5 rounded-full bg-brand" />
                 )}
               </button>
             );
@@ -164,23 +129,24 @@ export function InboxPage() {
         </div>
       </div>
 
-      <main className="flex-1 px-[23px] py-4 pb-10">
+      <main className="flex-1 px-4 py-4 pb-24">
         {isLoading ? (
-          <div className="flex items-center justify-center h-48">
+          <div className="flex h-64 items-center justify-center">
             <Spinner size="lg" />
           </div>
         ) : items.length === 0 ? (
-          <div className="flex items-center justify-center h-48">
-            <p className="text-sm text-[#adb5bd]">수신된 의뢰서가 없습니다</p>
-          </div>
+          <LawyerEmptyState
+            title="수신된 의뢰서가 없습니다"
+            description="선택한 필터의 의뢰서가 존재하지 않습니다."
+          />
         ) : (
-          <div className="divide-y divide-[#e9ecef]">
+          <div className="space-y-3">
             {items.map((item) => (
-              <InboxItem key={item.deliveryId} item={item} />
+              <InboxCard key={item.deliveryId} item={item} />
             ))}
           </div>
         )}
       </main>
-    </div>
+    </LawyerPage>
   );
 }

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 interface UsePollingOptions<T> {
   /** 폴링할 함수 */
   fn: () => Promise<T>;

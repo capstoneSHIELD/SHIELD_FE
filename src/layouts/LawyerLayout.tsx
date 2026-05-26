@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { LayoutDashboard, Inbox, Briefcase, User } from 'lucide-react';
-import { BottomNav } from '@/components/layout/BottomNav';
+import { LawyerBottomNav } from '@/components/layout/LawyerBottomNav';
 import { SideNav } from '@/components/layout/SideNav';
 
 const LAWYER_TABS = [
@@ -17,14 +17,14 @@ export function LawyerLayout() {
       <SideNav tabs={[...LAWYER_TABS]} />
 
       {/* Page content */}
-      <main className="flex-1 flex flex-col lg:pl-60 pb-20 lg:pb-0 min-h-0 overflow-y-auto overflow-x-auto">
+      <main className="flex-1 flex flex-col lg:pl-60 pb-20 lg:pb-0 min-h-0 overflow-y-auto overflow-x-hidden">
         <div className="mx-auto w-full max-w-7xl flex-1 flex flex-col min-h-0">
           <Outlet />
         </div>
       </main>
 
       {/* Mobile / tablet bottom nav */}
-      <BottomNav tabs={[...LAWYER_TABS]} />
+      <LawyerBottomNav tabs={[...LAWYER_TABS]} />
     </div>
   );
 }

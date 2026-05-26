@@ -47,6 +47,7 @@ export function ProfileImageUploader({
 
   // 부모가 currentUrl 을 갱신할 때 (예: 다른 폼 reset) 따라가도록
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPreviewUrl(currentUrl);
   }, [currentUrl]);
 
@@ -133,7 +134,7 @@ export function ProfileImageUploader({
   const showDelete = !!previewUrl && !uploading;
 
   return (
-    <div className={cn('flex flex-col items-center gap-2', className)}>
+    <div className={cn('flex w-auto max-w-full flex-col items-center gap-2', className)}>
       <div className="relative" style={{ width: size, height: size }}>
         <Avatar url={previewUrl} name={name} size={size} />
 
@@ -154,13 +155,13 @@ export function ProfileImageUploader({
           disabled={busy}
           aria-label={previewUrl ? '프로필 이미지 변경' : '프로필 이미지 업로드'}
           className={cn(
-            'absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full',
+            'absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full sm:h-8 sm:w-8',
             'bg-brand text-white shadow-md transition-colors',
             'hover:bg-brand/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
             busy && 'cursor-not-allowed opacity-50',
           )}
         >
-          <Camera size={16} strokeWidth={2} aria-hidden="true" />
+          <Camera size={15} strokeWidth={2} aria-hidden="true" />
         </button>
       </div>
 
@@ -193,7 +194,9 @@ export function ProfileImageUploader({
       )}
 
       {/* 안내문 */}
-      <p className="text-[11px] text-gray-400">JPEG / PNG / WEBP · 최대 5MB</p>
+      <p className="max-w-24 text-center text-[11px] leading-snug text-gray-400">
+        JPEG / PNG / WEBP · 최대 5MB
+      </p>
 
       {error && (
         <p className="text-xs text-red-500 leading-snug" role="alert">
