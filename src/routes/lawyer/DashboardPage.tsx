@@ -1,122 +1,103 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock } from 'lucide-react';
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  UserRound,
+} from 'lucide-react';
 import { cn } from '@/lib/cn';
-import { useInboxList, useInboxStats, useUpdateInboxStatus } from '@/hooks/useInbox';
+import { useInboxList, useInboxStats } from '@/hooks/useInbox';
 import { useMyLawyerProfile } from '@/hooks/useLawyer';
-import { Button, Modal, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
-import { DELIVERY_STATUS_LABEL } from '@/lib/constants';
-import { getDomainMeta } from '@/lib/domainIcons';
-import { deliveryTimeRemaining } from '@/lib/dateUtils';
+import { Spinner } from '@/components/ui';
+import {
+  LawyerCard,
+  LawyerDomainPill,
+  LawyerHeader,
+  LawyerPage,
+  LawyerStatusPill,
+} from '@/components/lawyer/LawyerChrome';
 import type { InboxItemResponse } from '@/types';
-
-const rejectTextareaClass = cn(
-  'w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-[#1E293B]',
-  'placeholder:text-[#64748B] resize-none',
-  'outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand',
-  'transition-colors duration-150',
-);
-
-// ─── helpers ────────────────────────────────────────────────────────────────
+import type { LucideIcon } from 'lucide-react';
 
 function formatShortDate(iso: string): string {
-  const d = new Date(iso);
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const h = String(d.getHours()).padStart(2, '0');
-  const min = String(d.getMinutes()).padStart(2, '0');
-  return `${m}.${day} ${h}:${min}`;
+  const date = new Date(iso);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  return `${month}.${day} ${hour}:${minute}`;
 }
-
-function getStatusBadgeStyle(status: string) {
-  if (status === 'DELIVERED') return { bg: 'bg-[#e8f0fc]', text: 'text-[#0c447c]' };
-  if (status === 'CONFIRMED') return { bg: 'bg-[#eaf3de]', text: 'text-[#3b6d11]' };
-  if (status === 'REJECTED') return { bg: 'bg-[#fcebeb]', text: 'text-[#a32d2d]' };
-  return { bg: 'bg-[#f1efe8]', text: 'text-[#5f5e5a]' };
-}
-
-// ─── stat card ───────────────────────────────────────────────────────────────
 
 interface StatCardProps {
   label: string;
-  value: number | undefined;
-  color: 'accent' | 'blue' | 'brown' | 'green';
-  onClick?: () => void;
+  value: number;
+  icon: LucideIcon;
+  tone: 'brand' | 'blue' | 'orange' | 'green';
+  onClick: () => void;
 }
 
-function StatCard({ label, value, color, onClick }: StatCardProps) {
-  const isAccent = color === 'accent';
-  const numColor = {
-    accent: 'text-white',
-    blue: 'text-[#1a6de0]',
-    brown: 'text-[#854f0b]',
-    green: 'text-[#3b6d11]',
-  }[color];
+function StatCard({ label, value, icon: Icon, tone, onClick }: StatCardProps) {
+  const toneClass = {
+    brand: 'text-brand bg-info-bg border-brand/15',
+    blue: 'text-brand bg-info-bg border-gray-100',
+    orange: 'text-orange-500 bg-orange-50 border-gray-100',
+    green: 'text-green-700 bg-green-50 border-gray-100',
+  }[tone];
 
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        'rounded-[14px] p-[15px] flex flex-col gap-[5px] text-left transition-transform',
-        'active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
-        isAccent ? 'bg-[#1a6de0]' : 'bg-white border border-[#e9ecef]',
+        'min-h-[104px] rounded-card border bg-white p-3.5 text-left shadow-sm',
+        'transition-transform active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
+        tone === 'brand' ? 'border-brand/20 bg-info-bg/40' : 'border-gray-100',
       )}
     >
-      <p className={cn('text-[28px] font-bold leading-[28px]', numColor)}>
-        {value ?? 0}
+      <div className={cn('mb-2 flex h-9 w-9 items-center justify-center rounded-full border', toneClass)}>
+        <Icon size={20} strokeWidth={1.9} aria-hidden="true" />
+      </div>
+      <p className={cn('text-[28px] font-bold leading-none', tone === 'orange' ? 'text-orange-500' : tone === 'green' ? 'text-green-700' : 'text-brand')}>
+        {value}
       </p>
-      <p className={cn('text-[11px]', isAccent ? 'text-white/75' : 'text-[#6b7280]')}>
-        {label}
-      </p>
+      <p className="mt-1 text-[11px] font-medium text-[#111827]">{label}</p>
     </button>
   );
 }
 
-// ─── recent item (flat style) ────────────────────────────────────────────────
-
-function RecentItem({ item }: { item: InboxItemResponse }) {
+function RecentRequestCard({ item }: { item: InboxItemResponse }) {
   const navigate = useNavigate();
-  const statusStyle = getStatusBadgeStyle(item.status);
-  const domainMeta = getDomainMeta(item.legalField);
 
   return (
-    <div className="py-2">
-      {/* badges */}
-      <div className="flex flex-wrap gap-[7px] items-center">
-        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
-          <domainMeta.Icon size={11} strokeWidth={2} aria-hidden="true" />
-          {domainMeta.label}
-        </span>
-        <span className={cn('text-[11px] font-medium px-[10px] py-[3px] rounded-full', statusStyle.bg, statusStyle.text)}>
-          {DELIVERY_STATUS_LABEL[item.status] ?? item.status}
-        </span>
+    <LawyerCard className="p-3.5">
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-[7px]">
+          <LawyerDomainPill legalField={item.legalField} />
+          <LawyerStatusPill status={item.status} />
+        </div>
+        <p className="text-[13px] font-semibold leading-[19px] text-[#111827]">
+          {item.briefTitle}
+        </p>
+        <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-2.5">
+          <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+            <Calendar size={12} strokeWidth={1.8} aria-hidden="true" />
+            <span>진단 {formatShortDate(item.sentAt)}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate(`/lawyer/inbox/${item.deliveryId}`)}
+            className="shrink-0 rounded-full border border-gray-200 bg-white px-3 py-1.5 text-[11px] font-medium text-[#111827] transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+          >
+            상세 보기
+          </button>
+        </div>
       </div>
-
-      {/* title / description */}
-      <p className="text-[12px] text-[#6b7280] leading-[19.2px] mt-2 line-clamp-2">
-        {item.briefTitle}
-      </p>
-
-      {/* divider + footer */}
-      <div className="border-t border-[#e9ecef] mt-3 pt-[10px] flex items-center justify-between">
-        <span className="text-[11px] text-[#adb5bd]">
-          전달 {formatShortDate(item.sentAt)}
-        </span>
-        <button
-          type="button"
-          onClick={() => navigate(`/lawyer/inbox/${item.deliveryId}`)}
-          className="bg-[#f7f8fa] border border-[#e9ecef] rounded-full px-[11px] py-[6px] text-[11px] font-medium text-[#6b7280]"
-        >
-          상세 보기
-        </button>
-      </div>
-    </div>
+    </LawyerCard>
   );
 }
-
-// ─── page ────────────────────────────────────────────────────────────────────
 
 export function DashboardPage() {
   const navigate = useNavigate();
@@ -128,248 +109,84 @@ export function DashboardPage() {
   const recentItems = inboxPage?.content ?? [];
   const lawyerName = profile?.name ?? '변호사';
 
-  // Urgent request (첫 번째 DELIVERED 건) — 수락/거절 대상
-  // Issue #106: 24시간 경과한 만료 건은 urgent 에서 제외 (BE 가 isExpired=true 로 표시)
-  const urgentItem = recentItems.find((item) => item.status === 'DELIVERED' && !item.isExpired);
-  const updateStatus = useUpdateInboxStatus(urgentItem?.deliveryId ?? '');
-
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  async function handleAccept() {
-    if (!urgentItem) return;
-    await updateStatus.mutateAsync({ status: 'CONFIRMED' });
-    setConfirmModalOpen(false);
-    setSuccessMessage('의뢰를 수락했습니다.');
-    setTimeout(() => setSuccessMessage(''), 2000);
-  }
-
-  async function handleReject() {
-    if (!urgentItem) return;
-    await updateStatus.mutateAsync({
-      status: 'REJECTED',
-      rejectionReason: rejectReason || undefined,
-    });
-    setRejectModalOpen(false);
-    setRejectReason('');
-    setSuccessMessage('의뢰를 거절했습니다.');
-    setTimeout(() => setSuccessMessage(''), 2000);
-  }
-
   return (
-    <div className="flex flex-col flex-1">
-      <Header title="변호사 대시보드" />
+    <LawyerPage>
+      <LawyerHeader title="변호사 대시보드" />
 
-      <main className="flex-1 px-[22px] py-4 space-y-4 pb-10">
-        {successMessage && (
-          <div className="px-4 py-3 bg-green-50 border border-green-200 rounded-xl">
-            <p className="text-sm text-green-700 font-medium">{successMessage}</p>
-          </div>
-        )}
-
+      <main className="flex-1 px-4 py-4 pb-24">
         {isLoading ? (
-          <div className="flex items-center justify-center h-48">
+          <div className="flex h-64 items-center justify-center">
             <Spinner size="lg" />
           </div>
         ) : (
-          <>
-            {/* ── Greeting banner ────────────────────────────────────── */}
-            <div className="bg-white border border-[#e9ecef] rounded-[12px] px-[13px] py-[11px]">
-              <p className="text-[13px] text-[#6b7280]">
+          <div className="space-y-4">
+            <LawyerCard className="flex items-center gap-3 p-3.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-info-bg text-brand">
+                <Sparkles size={20} strokeWidth={1.9} aria-hidden="true" />
+              </div>
+              <p className="text-[13px] font-medium text-[#111827]">
                 {lawyerName}님, 오늘도 좋은 하루입니다.
               </p>
-            </div>
+            </LawyerCard>
 
-            <div className="grid grid-cols-2 gap-[10px] pt-1">
+            <div className="grid grid-cols-2 gap-3">
               <StatCard
                 label="신규 의뢰"
-                value={stats?.newCount}
-                color="accent"
+                value={stats?.newCount ?? 0}
+                icon={UserRound}
+                tone="brand"
                 onClick={() => navigate('/lawyer/inbox?filter=NEW')}
               />
               <StatCard
                 label="검토 중"
-                value={stats?.reviewing}
-                color="blue"
+                value={stats?.reviewing ?? 0}
+                icon={Clock}
+                tone="blue"
                 onClick={() => navigate('/lawyer/inbox?filter=REVIEWING')}
               />
               <StatCard
                 label="진행 중 사건"
-                value={stats?.confirmed}
-                color="brown"
+                value={stats?.confirmed ?? 0}
+                icon={BriefcaseBusiness}
+                tone="orange"
                 onClick={() => navigate('/lawyer/cases')}
               />
               <StatCard
                 label="이번 주 완료"
-                value={stats?.rejected}
-                color="green"
+                value={stats?.responded ?? stats?.rejected ?? 0}
+                icon={CheckCircle2}
+                tone="green"
                 onClick={() => navigate('/lawyer/inbox?filter=RESPONDED')}
               />
             </div>
 
-            {/* ── Urgent requests (shown when there are pending items) ── */}
-            {/* Issue #106: 만료된 의뢰는 urgent 에서 제외 (BE 의 isExpired 활용) */}
-            {recentItems.some((item) => item.status === 'DELIVERED' && !item.isExpired) && (
-              <section>
-                <div className="flex items-center gap-[7px] mb-2">
-                  <div className="w-2 h-2 rounded-[4px] bg-[#a32d2d]" />
-                  <span className="text-[13px] font-medium text-[#a32d2d]">
-                    빠른 응답이 필요한 의뢰
-                  </span>
-                </div>
-                {recentItems
-                  .filter((item) => item.status === 'DELIVERED' && !item.isExpired)
-                  .slice(0, 1)
-                  .map((item) => (
-                    <div
-                      key={item.deliveryId}
-                      className="bg-white border border-[#f09595] rounded-[14px] p-[14px] space-y-2"
-                    >
-                      <div className="flex flex-wrap gap-[7px]">
-                        {(() => {
-                          const meta = getDomainMeta(item.legalField);
-                          return (
-                            <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full inline-flex items-center gap-1">
-                              <meta.Icon size={11} strokeWidth={2} aria-hidden="true" />
-                              {meta.label}
-                            </span>
-                          );
-                        })()}
-                        <span className="bg-[#e8f0fc] text-[#0c447c] text-[11px] font-medium px-[10px] py-[3px] rounded-full">
-                          신규
-                        </span>
-                      </div>
-                      <p className="text-[12px] text-[#6b7280] leading-[19.2px] line-clamp-3">
-                        {item.briefTitle}
-                      </p>
-                      <div className="border-t border-[#e9ecef] pt-[10px] flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                          <Clock size={12} className="text-[#a32d2d]" />
-                          <span className="text-[11px] font-medium text-[#a32d2d]">
-                            {deliveryTimeRemaining(item.sentAt) || '대기'}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-[6px]">
-                          <button
-                            type="button"
-                            onClick={() => setConfirmModalOpen(true)}
-                            disabled={updateStatus.isPending}
-                            className="relative z-10 bg-[#1a6de0] text-white text-[11px] font-medium px-[12px] py-[5px] rounded-full disabled:opacity-60"
-                          >
-                            수락
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setRejectModalOpen(true)}
-                            disabled={updateStatus.isPending}
-                            className="relative z-10 bg-white border border-[#fcebeb] text-[#a32d2d] text-[11px] font-medium px-[11px] py-[6px] rounded-full disabled:opacity-60"
-                          >
-                            거절
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-              </section>
-            )}
-
-            {/* ── Recent requests ─────────────────────────────────────── */}
-            <section>
-              <div className="flex items-center justify-between pt-1">
-                <h2 className="text-[14px] font-medium text-[#1a1a1a]">최근 의뢰</h2>
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-semibold text-[#111827]">최근 의뢰</h2>
                 <Link
                   to="/lawyer/inbox"
-                  className="text-[12px] text-[#1a6de0]"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-brand transition-colors hover:brightness-90"
                 >
-                  전체 보기 →
+                  전체 보기
+                  <ArrowRight size={14} aria-hidden="true" />
                 </Link>
               </div>
 
               {recentItems.length === 0 ? (
-                <div className="py-8 text-center">
-                  <p className="text-sm text-[#adb5bd]">수신된 의뢰서가 없습니다</p>
-                </div>
+                <LawyerCard className="px-4 py-12 text-center">
+                  <p className="text-base text-gray-400">수신된 의뢰서가 없습니다</p>
+                </LawyerCard>
               ) : (
-                <div className="divide-y divide-[#e9ecef]">
+                <div className="space-y-3">
                   {recentItems.map((item) => (
-                    <RecentItem key={item.deliveryId} item={item} />
+                    <RecentRequestCard key={item.deliveryId} item={item} />
                   ))}
                 </div>
               )}
             </section>
-          </>
+          </div>
         )}
       </main>
-
-      {/* Accept confirm modal */}
-      <Modal
-        isOpen={confirmModalOpen}
-        onClose={() => setConfirmModalOpen(false)}
-        title="의뢰 수락"
-      >
-        <p className="text-sm text-gray-700 mb-5">
-          이 의뢰를 수락하시겠습니까?
-        </p>
-        <div className="flex gap-2">
-          <Button
-            variant="primary"
-            fullWidth
-            isLoading={updateStatus.isPending}
-            onClick={handleAccept}
-          >
-            수락
-          </Button>
-          <Button
-            variant="secondary"
-            fullWidth
-            onClick={() => setConfirmModalOpen(false)}
-          >
-            취소
-          </Button>
-        </div>
-      </Modal>
-
-      {/* Reject confirm modal */}
-      <Modal
-        isOpen={rejectModalOpen}
-        onClose={() => setRejectModalOpen(false)}
-        title="의뢰 거절"
-      >
-        <div className="mb-5 space-y-3">
-          <p className="text-sm text-gray-700">이 의뢰를 거절하시겠습니까?</p>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-[#1E293B]">
-              거절 사유 <span className="text-gray-400 font-normal">(선택)</span>
-            </label>
-            <textarea
-              rows={3}
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="거절 사유를 입력해주세요"
-              className={rejectTextareaClass}
-            />
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="danger"
-            fullWidth
-            isLoading={updateStatus.isPending}
-            onClick={handleReject}
-          >
-            거절
-          </Button>
-          <Button
-            variant="secondary"
-            fullWidth
-            onClick={() => setRejectModalOpen(false)}
-          >
-            취소
-          </Button>
-        </div>
-      </Modal>
-    </div>
+    </LawyerPage>
   );
 }

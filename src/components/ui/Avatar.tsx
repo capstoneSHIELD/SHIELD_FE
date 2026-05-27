@@ -46,6 +46,7 @@ export function Avatar({ url, name, size = 48, alt, className }: AvatarProps) {
   // url 이 바뀌면 imgFailed 초기화 (이전 이미지의 404 가 새 url 에 영향 주지 않게)
   const [imgFailed, setImgFailed] = useState(false);
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImgFailed(false);
   }, [url]);
 

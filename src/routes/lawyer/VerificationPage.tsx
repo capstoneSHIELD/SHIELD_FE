@@ -4,7 +4,7 @@ import { ShieldCheck, Clock, Search, AlertCircle, PlusCircle } from 'lucide-reac
 import { cn } from '@/lib/cn';
 import { useVerificationStatus, useRequestVerification } from '@/hooks/useLawyer';
 import { Button, Card, Spinner } from '@/components/ui';
-import { Header } from '@/components/layout/Header';
+import { LawyerHeader } from '@/components/lawyer/LawyerChrome';
 import type { VerificationStatus } from '@/types';
 
 // ─── status config ────────────────────────────────────────────────────────────
@@ -92,7 +92,7 @@ export function VerificationPage() {
 
   return (
     <div className="flex flex-col flex-1">
-      <Header title="인증 신청" showBack onBack={() => navigate(-1)} />
+      <LawyerHeader title="인증 신청" showBack onBack={() => navigate(-1)} />
 
       <main className="flex-1 px-4 py-4 pb-10 space-y-4">
         {isLoading ? (
