@@ -16,7 +16,7 @@ import type { VerificationStatus } from '@/types/enums';
 
 const schema = z.object({
   specializations: z.array(z.string()).min(1, '전문분야를 1개 이상 선택해주세요'),
-  experienceYears: z.number().min(0, '경력은 0년 이상이어야 합니다'),
+  experienceYears: z.number({ invalid_type_error: '경력을 입력해주세요' }).min(0, '경력은 0년 이상이어야 합니다'),
   bio: z.string(),
 });
 
