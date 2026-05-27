@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { AlertCircle, ArrowLeft, FileText } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { DELIVERY_STATUS_LABEL } from '@/lib/constants';
 import { getDomainMeta } from '@/lib/domainIcons';
@@ -132,6 +132,28 @@ export function LawyerEmptyState({
     <LawyerCard className={cn('flex min-h-48 flex-col items-center justify-center px-4 py-12 text-center', className)}>
       <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-info-bg/70">
         <FileText size={32} strokeWidth={1.6} className="text-brand/30" aria-hidden="true" />
+      </div>
+      <p className="text-sm font-semibold text-[#111827]">{title}</p>
+      {description && (
+        <p className="mt-2 text-xs text-gray-500">{description}</p>
+      )}
+    </LawyerCard>
+  );
+}
+
+export function LawyerErrorState({
+  title = '정보를 불러오지 못했습니다',
+  description = '잠시 후 다시 시도해주세요.',
+  className,
+}: {
+  title?: string;
+  description?: string;
+  className?: string;
+}) {
+  return (
+    <LawyerCard className={cn('flex min-h-48 flex-col items-center justify-center px-4 py-12 text-center', className)}>
+      <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
+        <AlertCircle size={32} strokeWidth={1.6} className="text-red-400" aria-hidden="true" />
       </div>
       <p className="text-sm font-semibold text-[#111827]">{title}</p>
       {description && (

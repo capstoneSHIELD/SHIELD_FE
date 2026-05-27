@@ -98,7 +98,7 @@ export function Modal({
                 'transition-colors duration-150 cursor-pointer',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
               )}
-              aria-label="Close modal"
+              aria-label="모달 닫기"
             >
               <X size={16} aria-hidden="true" />
             </button>
@@ -115,7 +115,7 @@ export function Modal({
               'transition-colors duration-150 cursor-pointer',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
             )}
-            aria-label="Close modal"
+            aria-label="모달 닫기"
           >
             <X size={16} aria-hidden="true" />
           </button>

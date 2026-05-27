@@ -5,8 +5,9 @@ import type {
   LawyerDetailResponse,
   LawyerMeResponse,
   ProfileUpdateRequest,
-  VerificationStatusResponse,
+  RawVerificationStatusResponse,
   VerificationRequestData,
+  VerificationRequestResponse,
   DocumentResponse,
 } from '@/types/lawyer';
 import type { RegisterLawyerRequest, RegisterLawyerResponse } from '@/types/auth';
@@ -34,11 +35,11 @@ export const lawyerApi = {
 
   /** 검증 상태 확인 */
   getVerificationStatus: () =>
-    api.get<ApiResponse<VerificationStatusResponse>>(`${BASE}/me/verification-status`),
+    api.get<ApiResponse<RawVerificationStatusResponse>>(`${BASE}/me/verification-status`),
 
   /** 검증 신청 */
   requestVerification: (data: VerificationRequestData) =>
-    api.post<ApiResponse<void>>(`${BASE}/me/verification-request`, data),
+    api.post<ApiResponse<VerificationRequestResponse>>(`${BASE}/me/verification-request`, data),
 
   /**
    * 변호사 등록

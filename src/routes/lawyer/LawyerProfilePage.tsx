@@ -6,13 +6,15 @@ import { z } from 'zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChevronRight, FileText, LogOut, Shield, Upload } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { getApiErrorMessage } from '@/lib/apiError';
+import { VERIFICATION_STATUS_UI } from '@/lib/constants';
+import { getDomainMeta } from '@/lib/domainIcons';
 import { useAuthStore } from '@/stores/authStore';
 import { useMyLawyerProfile } from '@/hooks/useLawyer';
 import { lawyerApi } from '@/lib/lawyerApi';
 import { Spinner, SpecializationPicker } from '@/components/ui';
 import { ProfileImageUploader } from '@/components/profile/ProfileImageUploader';
-import { LawyerCard, LawyerHeader, LawyerPage } from '@/components/lawyer/LawyerChrome';
-import type { VerificationStatus } from '@/types/enums';
+import { LawyerCard, LawyerErrorState, LawyerHeader, LawyerPage } from '@/components/lawyer/LawyerChrome';
 
 const schema = z.object({
   specializations: z.array(z.string()).min(1, '전문분야를 1개 이상 선택해주세요'),
@@ -21,14 +23,6 @@ const schema = z.object({
 });
 
 type FormValues = z.infer<typeof schema>;
-
-const VERIFICATION_LABEL: Record<VerificationStatus, { text: string; className: string }> = {
-  VERIFIED: { text: '승인 완료', className: 'bg-green-50 text-green-700' },
-  PENDING: { text: '인증 대기', className: 'bg-yellow-50 text-yellow-700' },
-  REVIEWING: { text: '심사 중', className: 'bg-info-bg text-brand' },
-  SUPPLEMENT_REQUESTED: { text: '보완 요청', className: 'bg-red-50 text-red-600' },
-  REJECTED: { text: '인증 거부', className: 'bg-red-50 text-red-600' },
-};
 
 function SectionTitle({ children }: { children: string }) {
   return <h2 className="px-1 text-[12px] font-medium text-[#334e86]">{children}</h2>;
@@ -46,8 +40,9 @@ export function LawyerProfilePage() {
   const navigate = useNavigate();
   const { user, setUser, logout } = useAuthStore();
   const queryClient = useQueryClient();
-  const { data: profile, isLoading } = useMyLawyerProfile();
+  const { data: profile, isLoading, isError, error } = useMyLawyerProfile();
   const [successMessage, setSuccessMessage] = useState('');
+  const [saveError, setSaveError] = useState('');
 
   const {
     register,
@@ -86,18 +81,23 @@ export function LawyerProfilePage() {
 
   async function onSubmit(values: FormValues) {
     if (!profile) return;
-    await lawyerApi.updateMe({
-      domains: values.specializations,
-      subDomains: profile.subDomains ?? [],
-      experienceYears: values.experienceYears,
-      certifications: profile.certifications ?? [],
-      tags: profile.tags ?? [],
-      bio: values.bio,
-      region: profile.region ?? '',
-    });
-    await queryClient.invalidateQueries({ queryKey: ['lawyers', 'me'] });
-    setSuccessMessage('프로필이 저장되었습니다.');
-    setTimeout(() => setSuccessMessage(''), 2000);
+    setSaveError('');
+    try {
+      await lawyerApi.updateMe({
+        domains: values.specializations,
+        subDomains: profile.subDomains ?? [],
+        experienceYears: values.experienceYears,
+        certifications: profile.certifications ?? [],
+        tags: profile.tags ?? [],
+        bio: values.bio,
+        region: profile.region ?? '',
+      });
+      await queryClient.invalidateQueries({ queryKey: ['lawyers', 'me'] });
+      setSuccessMessage('프로필이 저장되었습니다.');
+      setTimeout(() => setSuccessMessage(''), 2000);
+    } catch (err) {
+      setSaveError(getApiErrorMessage(err, '프로필 저장에 실패했습니다.'));
+    }
   }
 
   function handleLogout() {
@@ -110,7 +110,21 @@ export function LawyerProfilePage() {
       <LawyerPage>
         <LawyerHeader title="내 프로필" />
         <div className="flex flex-1 items-center justify-center">
-          <Spinner size="lg" />
+          <Spinner size="lg" text="프로필을 불러오는 중..." />
+        </div>
+      </LawyerPage>
+    );
+  }
+
+  if (isError) {
+    return (
+      <LawyerPage>
+        <LawyerHeader title="내 프로필" />
+        <div className="flex flex-1 items-center justify-center px-4">
+          <LawyerErrorState
+            className="w-full max-w-3xl"
+            description={getApiErrorMessage(error, '프로필을 불러오지 못했습니다.')}
+          />
         </div>
       </LawyerPage>
     );
@@ -118,19 +132,26 @@ export function LawyerProfilePage() {
 
   const displayName = profile?.name ?? user?.name ?? '변호사';
   const verification = profile?.verificationStatus
-    ? VERIFICATION_LABEL[profile.verificationStatus]
+    ? VERIFICATION_STATUS_UI[profile.verificationStatus]
     : null;
-  const primaryDomain = profile?.domains?.[0] ?? '전문분야 미설정';
+  const primaryDomain = profile?.domains?.[0]
+    ? getDomainMeta(profile.domains[0]).label
+    : '전문분야 미설정';
 
   return (
     <LawyerPage>
       <LawyerHeader title="내 프로필" />
 
-      <main className="flex-1 px-4 py-4 pb-28">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-28 lg:py-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           {successMessage && (
             <div className="rounded-card border border-green-200 bg-green-50 px-4 py-3">
               <p className="text-sm font-medium text-green-700">{successMessage}</p>
+            </div>
+          )}
+          {saveError && (
+            <div className="rounded-card border border-red-100 bg-red-50 px-4 py-3" role="alert">
+              <p className="text-sm font-medium text-red-600">{saveError}</p>
             </div>
           )}
 
@@ -151,8 +172,8 @@ export function LawyerProfilePage() {
                 </p>
                 <p className="truncate text-xs text-gray-500">{primaryDomain}</p>
                 {verification && (
-                  <span className={cn('inline-flex rounded-full px-2.5 py-[3px] text-[10px] font-medium', verification.className)}>
-                    {verification.text}
+                  <span className={cn('inline-flex rounded-full px-2.5 py-[3px] text-[10px] font-medium', verification.badgeClassName)}>
+                    {verification.label}
                   </span>
                 )}
               </div>

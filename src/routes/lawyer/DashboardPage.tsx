@@ -3,10 +3,10 @@ import {
   ArrowRight,
   BriefcaseBusiness,
   Calendar,
-  CheckCircle2,
   Clock,
   Sparkles,
   UserRound,
+  XCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { useInboxList, useInboxStats } from '@/hooks/useInbox';
@@ -15,6 +15,8 @@ import { Spinner } from '@/components/ui';
 import {
   LawyerCard,
   LawyerDomainPill,
+  LawyerEmptyState,
+  LawyerErrorState,
   LawyerHeader,
   LawyerPage,
   LawyerStatusPill,
@@ -35,7 +37,7 @@ interface StatCardProps {
   label: string;
   value: number;
   icon: LucideIcon;
-  tone: 'brand' | 'blue' | 'orange' | 'green';
+  tone: 'brand' | 'blue' | 'orange' | 'green' | 'red';
   onClick: () => void;
 }
 
@@ -45,6 +47,7 @@ function StatCard({ label, value, icon: Icon, tone, onClick }: StatCardProps) {
     blue: 'text-brand bg-info-bg border-gray-100',
     orange: 'text-orange-500 bg-orange-50 border-gray-100',
     green: 'text-green-700 bg-green-50 border-gray-100',
+    red: 'text-red-600 bg-red-50 border-gray-100',
   }[tone];
 
   return (
@@ -60,7 +63,16 @@ function StatCard({ label, value, icon: Icon, tone, onClick }: StatCardProps) {
       <div className={cn('mb-2 flex h-9 w-9 items-center justify-center rounded-full border', toneClass)}>
         <Icon size={20} strokeWidth={1.9} aria-hidden="true" />
       </div>
-      <p className={cn('text-[28px] font-bold leading-none', tone === 'orange' ? 'text-orange-500' : tone === 'green' ? 'text-green-700' : 'text-brand')}>
+      <p className={cn(
+        'text-[28px] font-bold leading-none',
+        tone === 'orange'
+          ? 'text-orange-500'
+          : tone === 'green'
+          ? 'text-green-700'
+          : tone === 'red'
+          ? 'text-red-600'
+          : 'text-brand',
+      )}>
         {value}
       </p>
       <p className="mt-1 text-[11px] font-medium text-[#111827]">{label}</p>
@@ -84,7 +96,7 @@ function RecentRequestCard({ item }: { item: InboxItemResponse }) {
         <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-2.5">
           <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
             <Calendar size={12} strokeWidth={1.8} aria-hidden="true" />
-            <span>진단 {formatShortDate(item.sentAt)}</span>
+            <span>수신일 {formatShortDate(item.sentAt)}</span>
           </div>
           <button
             type="button"
@@ -101,11 +113,12 @@ function RecentRequestCard({ item }: { item: InboxItemResponse }) {
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const { data: stats, isLoading: statsLoading } = useInboxStats();
-  const { data: inboxPage, isLoading: inboxLoading } = useInboxList(0, 5);
+  const { data: stats, isLoading: statsLoading, isError: statsError } = useInboxStats();
+  const { data: inboxPage, isLoading: inboxLoading, isError: inboxError } = useInboxList(0, 5);
   const { data: profile } = useMyLawyerProfile();
 
   const isLoading = statsLoading || inboxLoading;
+  const isError = statsError || inboxError;
   const recentItems = inboxPage?.content ?? [];
   const lawyerName = profile?.name ?? '변호사';
 
@@ -113,11 +126,13 @@ export function DashboardPage() {
     <LawyerPage>
       <LawyerHeader title="변호사 대시보드" />
 
-      <main className="flex-1 px-4 py-4 pb-24">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-24 lg:py-6">
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
-            <Spinner size="lg" />
+            <Spinner size="lg" text="대시보드를 불러오는 중..." />
           </div>
+        ) : isError ? (
+          <LawyerErrorState description="수신함 통계와 최근 의뢰를 불러오지 못했습니다." />
         ) : (
           <div className="space-y-4">
             <LawyerCard className="flex items-center gap-3 p-3.5">
@@ -131,18 +146,18 @@ export function DashboardPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <StatCard
-                label="신규 의뢰"
-                value={stats?.newCount ?? 0}
+                label="전체 의뢰"
+                value={stats?.total ?? 0}
                 icon={UserRound}
                 tone="brand"
-                onClick={() => navigate('/lawyer/inbox?filter=NEW')}
+                onClick={() => navigate('/lawyer/inbox')}
               />
               <StatCard
-                label="검토 중"
-                value={stats?.reviewing ?? 0}
+                label="대기 중"
+                value={stats?.pending ?? 0}
                 icon={Clock}
                 tone="blue"
-                onClick={() => navigate('/lawyer/inbox?filter=REVIEWING')}
+                onClick={() => navigate('/lawyer/inbox?status=DELIVERED')}
               />
               <StatCard
                 label="진행 중 사건"
@@ -152,11 +167,11 @@ export function DashboardPage() {
                 onClick={() => navigate('/lawyer/cases')}
               />
               <StatCard
-                label="이번 주 완료"
-                value={stats?.responded ?? stats?.rejected ?? 0}
-                icon={CheckCircle2}
-                tone="green"
-                onClick={() => navigate('/lawyer/inbox?filter=RESPONDED')}
+                label="거절한 의뢰"
+                value={stats?.rejected ?? 0}
+                icon={XCircle}
+                tone="red"
+                onClick={() => navigate('/lawyer/inbox?status=REJECTED')}
               />
             </div>
 
@@ -173,9 +188,10 @@ export function DashboardPage() {
               </div>
 
               {recentItems.length === 0 ? (
-                <LawyerCard className="px-4 py-12 text-center">
-                  <p className="text-base text-gray-400">수신된 의뢰서가 없습니다</p>
-                </LawyerCard>
+                <LawyerEmptyState
+                  title="수신된 의뢰서가 없습니다"
+                  description="새 의뢰가 도착하면 이곳에서 확인할 수 있습니다."
+                />
               ) : (
                 <div className="space-y-3">
                   {recentItems.map((item) => (

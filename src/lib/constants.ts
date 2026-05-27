@@ -1,3 +1,6 @@
+import type { VerificationStatus } from '@/types/enums';
+import type { BadgeVariant } from '@/components/ui/Badge';
+
 export const API_URL = import.meta.env.VITE_API_URL || 'https://api.shieldai.kr';
 export const APP_NAME = import.meta.env.VITE_APP_NAME || 'SHIELD';
 
@@ -43,8 +46,6 @@ export const BRIEF_STATUS_LABELS: Record<string, string> = {
 
 // ── Badge variant mappings (import BadgeVariant from '@/components/ui/Badge') ──
 
-import type { BadgeVariant } from '@/components/ui/Badge';
-
 export const CONSULT_STATUS_BADGE: Record<string, BadgeVariant> = {
   COLLECTING: 'primary',
   ANALYZING: 'warning',
@@ -70,6 +71,53 @@ export const DELIVERY_STATUS_LABEL: Record<string, string> = {
   DELIVERED: '대기 중',
   CONFIRMED: '수락',
   REJECTED: '거절',
+};
+
+export const VERIFICATION_STATUS_UI: Record<
+  VerificationStatus,
+  {
+    label: string;
+    badgeClassName: string;
+    textClassName: string;
+    bgClassName: string;
+    borderClassName: string;
+  }
+> = {
+  PENDING: {
+    label: '심사 대기 중',
+    badgeClassName: 'bg-yellow-50 text-yellow-700',
+    textClassName: 'text-yellow-700',
+    bgClassName: 'bg-yellow-50',
+    borderClassName: 'border-yellow-200',
+  },
+  REVIEWING: {
+    label: '심사 진행 중',
+    badgeClassName: 'bg-info-bg text-brand',
+    textClassName: 'text-brand',
+    bgClassName: 'bg-info-bg',
+    borderClassName: 'border-brand/20',
+  },
+  VERIFIED: {
+    label: '인증 완료',
+    badgeClassName: 'bg-green-50 text-green-700',
+    textClassName: 'text-green-700',
+    bgClassName: 'bg-green-50',
+    borderClassName: 'border-green-200',
+  },
+  REJECTED: {
+    label: '심사 반려',
+    badgeClassName: 'bg-red-50 text-red-600',
+    textClassName: 'text-red-700',
+    bgClassName: 'bg-red-50',
+    borderClassName: 'border-red-200',
+  },
+  SUPPLEMENT_REQUESTED: {
+    label: '보충 자료 요청',
+    badgeClassName: 'bg-orange-50 text-orange-700',
+    textClassName: 'text-orange-700',
+    bgClassName: 'bg-orange-50',
+    borderClassName: 'border-orange-200',
+  },
 };
 
 // ── File upload constants ──

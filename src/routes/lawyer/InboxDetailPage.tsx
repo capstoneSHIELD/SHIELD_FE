@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Scale } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { getApiErrorMessage, isApiErrorStatus } from '@/lib/apiError';
 import { deliveryTimeRemaining, formatDate } from '@/lib/dateUtils';
 import { useInboxDetail, useUpdateInboxStatus } from '@/hooks/useInbox';
 import { Button, Modal, Spinner } from '@/components/ui';
 import {
   LawyerCard,
   LawyerDomainPill,
+  LawyerErrorState,
   LawyerHeader,
   LawyerPage,
   LawyerStatusPill,
 } from '@/components/lawyer/LawyerChrome';
+import type { KeyIssue } from '@/types/brief';
 
 const textareaClass = cn(
   'w-full rounded-xl border border-gray-300 bg-white px-3 py-2.5 text-sm text-[#1E293B]',
@@ -28,36 +31,57 @@ function SectionLabel({ children }: { children: string }) {
   );
 }
 
+function keyIssueTitle(issue: KeyIssue | string): string {
+  return typeof issue === 'string' ? issue : issue.title;
+}
+
 export function InboxDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: brief, isLoading } = useInboxDetail(id);
+  const { data: brief, isLoading, isError, error } = useInboxDetail(id);
   const updateStatus = useUpdateInboxStatus(id);
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [actionError, setActionError] = useState('');
 
   const briefStatus = brief?.status as string | undefined;
   const isPending = briefStatus === 'DELIVERED' && !brief?.isExpired;
 
   async function handleAccept() {
-    await updateStatus.mutateAsync({ status: 'CONFIRMED' });
-    setConfirmModalOpen(false);
-    setSuccessMessage('의뢰를 수락했습니다.');
-    setTimeout(() => navigate('/lawyer/inbox'), 1500);
+    setActionError('');
+    try {
+      await updateStatus.mutateAsync({ status: 'CONFIRMED' });
+      setConfirmModalOpen(false);
+      setSuccessMessage('의뢰를 수락했습니다.');
+      setTimeout(() => navigate('/lawyer/inbox'), 1500);
+    } catch (err) {
+      const fallback = isApiErrorStatus(err, 409)
+        ? '이미 처리된 의뢰서입니다.'
+        : '의뢰 수락에 실패했습니다.';
+      setActionError(getApiErrorMessage(err, fallback));
+    }
   }
 
   async function handleReject() {
-    await updateStatus.mutateAsync({
-      status: 'REJECTED',
-      rejectionReason: rejectReason || undefined,
-    });
-    setRejectModalOpen(false);
-    setSuccessMessage('의뢰를 거절했습니다.');
-    setTimeout(() => navigate('/lawyer/inbox'), 1500);
+    setActionError('');
+    try {
+      await updateStatus.mutateAsync({
+        status: 'REJECTED',
+        rejectionReason: rejectReason || undefined,
+      });
+      setRejectModalOpen(false);
+      setSuccessMessage('의뢰를 거절했습니다.');
+      setTimeout(() => navigate('/lawyer/inbox'), 1500);
+    } catch (err) {
+      const fallback = isApiErrorStatus(err, 409)
+        ? '이미 처리된 의뢰서입니다.'
+        : '의뢰 거절에 실패했습니다.';
+      setActionError(getApiErrorMessage(err, fallback));
+    }
   }
 
   if (isLoading) {
@@ -65,7 +89,21 @@ export function InboxDetailPage() {
       <LawyerPage>
         <LawyerHeader title="의뢰서 상세" showBack onBack={() => navigate('/lawyer/inbox')} />
         <div className="flex flex-1 items-center justify-center">
-          <Spinner size="lg" />
+          <Spinner size="lg" text="의뢰서 상세를 불러오는 중..." />
+        </div>
+      </LawyerPage>
+    );
+  }
+
+  if (isError) {
+    return (
+      <LawyerPage>
+        <LawyerHeader title="의뢰서 상세" showBack onBack={() => navigate('/lawyer/inbox')} />
+        <div className="flex flex-1 items-center justify-center px-4">
+          <LawyerErrorState
+            className="w-full max-w-3xl"
+            description={getApiErrorMessage(error, '의뢰서 상세를 불러오지 못했습니다.')}
+          />
         </div>
       </LawyerPage>
     );
@@ -86,7 +124,7 @@ export function InboxDetailPage() {
     <LawyerPage>
       <LawyerHeader title="의뢰서 상세" showBack onBack={() => navigate('/lawyer/inbox')} />
 
-      <main className="flex-1 px-4 py-4 pb-28">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-28 lg:py-6">
         {successMessage && (
           <div className="mb-4 rounded-card border border-green-200 bg-green-50 px-4 py-3">
             <p className="text-sm font-medium text-green-700">{successMessage}</p>
@@ -138,9 +176,9 @@ export function InboxDetailPage() {
               <SectionLabel>주요 쟁점</SectionLabel>
               <ul className="space-y-1.5">
                 {brief.keyIssues.map((issue, index) => (
-                  <li key={`${issue.title}-${index}`} className="flex items-start gap-2 text-sm text-[#111827]">
+                  <li key={`${keyIssueTitle(issue)}-${index}`} className="flex items-start gap-2 text-sm text-[#111827]">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                    <span>{issue.title}</span>
+                    <span>{keyIssueTitle(issue)}</span>
                   </li>
                 ))}
               </ul>
@@ -173,13 +211,16 @@ export function InboxDetailPage() {
       </main>
 
       {isPending && !successMessage && (
-        <div className="sticky bottom-20 z-30 space-y-2.5 border-t border-gray-100 bg-white px-5 py-4 lg:bottom-0">
+        <div className="sticky bottom-20 z-30 mx-auto w-full max-w-3xl space-y-2.5 border-t border-gray-100 bg-white px-5 py-4 lg:bottom-0">
           <Button
             variant="primary"
             fullWidth
             size="lg"
             className="rounded-card"
-            onClick={() => setConfirmModalOpen(true)}
+            onClick={() => {
+              setActionError('');
+              setConfirmModalOpen(true);
+            }}
           >
             수락하기
           </Button>
@@ -188,7 +229,10 @@ export function InboxDetailPage() {
             fullWidth
             size="lg"
             className="rounded-card border-red-200 text-red-600 hover:bg-red-50"
-            onClick={() => setRejectModalOpen(true)}
+            onClick={() => {
+              setActionError('');
+              setRejectModalOpen(true);
+            }}
           >
             거절하기
           </Button>
@@ -203,6 +247,11 @@ export function InboxDetailPage() {
         <p className="mb-5 text-sm text-gray-700">
           이 의뢰를 수락하시겠습니까?
         </p>
+        {actionError && (
+          <p className="mb-4 rounded-card bg-red-50 px-3 py-2 text-xs font-medium text-red-600" role="alert">
+            {actionError}
+          </p>
+        )}
         <div className="flex gap-2">
           <Button
             variant="primary"
@@ -230,10 +279,11 @@ export function InboxDetailPage() {
         <div className="mb-5 space-y-3">
           <p className="text-sm text-gray-700">이 의뢰를 거절하시겠습니까?</p>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-[#1E293B]">
+            <label htmlFor="reject-reason" className="text-sm font-medium text-[#1E293B]">
               거절 사유 <span className="font-normal text-gray-400">(선택)</span>
             </label>
             <textarea
+              id="reject-reason"
               rows={3}
               value={rejectReason}
               onChange={(event) => setRejectReason(event.target.value)}
@@ -242,6 +292,11 @@ export function InboxDetailPage() {
             />
           </div>
         </div>
+        {actionError && (
+          <p className="mb-4 rounded-card bg-red-50 px-3 py-2 text-xs font-medium text-red-600" role="alert">
+            {actionError}
+          </p>
+        )}
         <div className="flex gap-2">
           <Button
             variant="danger"

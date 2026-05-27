@@ -1,4 +1,4 @@
-import type { VerificationStatus } from './enums';
+import type { DeliveryStatus, VerificationStatus } from './enums';
 import type { KeyIssue } from './brief';
 
 /** 명세: GET /api/lawyers 목록 아이템 + GET /api/lawyers/{lawyerId} 상세
@@ -55,19 +55,17 @@ export interface InboxItemResponse {
   briefId: string;
   briefTitle: string;
   legalField: string;
-  status: string;
+  status: DeliveryStatus;
   sentAt: string;
   /** 24시간 응답 기한 경과 여부 (BE Issue #106). 만료 시 수락 버튼 비활성화. */
   isExpired?: boolean;
 }
 
 export interface InboxStatsResponse {
-  all: number;
-  newCount: number;
-  reviewing: number;
+  total: number;
+  pending: number;
   confirmed: number;
   rejected: number;
-  responded: number;
 }
 
 export interface InboxDetailResponse {
@@ -77,26 +75,51 @@ export interface InboxDetailResponse {
   legalField: string;
   content: string;
   keywords: string[];
-  keyIssues: KeyIssue[];
-  status: string;
+  keyIssues: Array<KeyIssue | string>;
+  status: DeliveryStatus;
   clientName: string;
-  clientEmail: string;
+  clientEmail: string | null;
   sentAt: string;
   /** 24시간 응답 기한 경과 여부 (BE Issue #106). */
   isExpired?: boolean;
 }
 
+export interface UpdateInboxStatusResponse {
+  deliveryId: string;
+  status: 'CONFIRMED' | 'REJECTED';
+  respondedAt: string;
+}
+
 /** GET /api/lawyers/me/verification-status 응답 */
 export interface VerificationStatusResponse {
-  status: VerificationStatus;
-  requestedAt?: string;
-  reviewedAt?: string;
-  rejectionReason?: string;
+  verificationStatus: VerificationStatus;
+  verifiedAt: string | null;
+  requestedAt?: string | null;
+  rejectionReason?: string | null;
+  barAssociationNumber?: string | null;
+}
+
+/** 전환기 BE 호환: 일부 응답은 status 로 검증 상태를 내려줄 수 있다. */
+export interface RawVerificationStatusResponse {
+  verificationStatus?: VerificationStatus;
+  status?: VerificationStatus;
+  verifiedAt?: string | null;
+  requestedAt?: string | null;
+  reviewedAt?: string | null;
+  rejectionReason?: string | null;
+  barAssociationNumber?: string | null;
 }
 
 /** POST /api/lawyers/me/verification-request 요청 */
 export interface VerificationRequestData {
   barAssociationNumber: string;
+}
+
+/** POST /api/lawyers/me/verification-request 응답 */
+export interface VerificationRequestResponse {
+  verificationStatus: VerificationStatus;
+  barAssociationNumber: string;
+  requestedAt: string;
 }
 
 /**

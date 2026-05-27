@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw';
 
-const BASE = 'https://api.shieldai.kr/api';
+const BASE = '*/api';
 
 // ── Mock Data ──
 
@@ -103,13 +103,35 @@ const mockInboxDetail = {
   legalField: 'CIVIL',
   content: '서울시 강남구 소재 아파트 임대차 계약 관련 분쟁입니다.',
   keywords: ['임대차', '보증금'],
-  keyIssues: [
-    { title: '보증금 반환 지연', description: '계약 종료 후 3개월째 보증금을 반환받지 못하고 있습니다.' },
-  ],
+  keyIssues: ['보증금 반환 지연'],
   status: 'DELIVERED',
   clientName: '홍길동',
   clientEmail: 'test@example.com',
   sentAt: '2025-01-16T09:00:00',
+};
+
+const mockLawyerProfile = {
+  lawyerId: '990e8400-e29b-41d4-a716-446655440004',
+  name: '김변호',
+  profileImageUrl: null,
+  domains: ['CIVIL'],
+  subDomains: ['CIVIL_LEASE'],
+  experienceYears: 10,
+  tags: ['임대차', '보증금'],
+  certifications: ['변호사'],
+  caseCount: 24,
+  bio: '민사 사건을 주로 담당합니다.',
+  region: '서울',
+  verificationStatus: 'REVIEWING',
+};
+
+const mockDocument = {
+  documentId: 'dd0e8400-e29b-41d4-a716-446655440007',
+  fileName: 'lawyer-license.pdf',
+  fileSize: 524288,
+  fileType: 'application/pdf',
+  fileUrl: 'https://cdn.shieldai.kr/documents/lawyer-license.pdf',
+  createdAt: '2025-01-16T11:00:00',
 };
 
 // ── Helper: wrap in ApiResponse ──
@@ -237,6 +259,42 @@ export const handlers = [
 
   http.post(`${BASE}/briefs/:id/deliveries`, () => {
     return ok(mockDelivery);
+  }),
+
+  // ── Lawyer Profile / Verification / Documents ──
+  http.get(`${BASE}/lawyers/me`, () => {
+    return ok(mockLawyerProfile);
+  }),
+
+  http.patch(`${BASE}/lawyers/me`, () => {
+    return ok(mockLawyerProfile);
+  }),
+
+  http.get(`${BASE}/lawyers/me/verification-status`, () => {
+    return ok({
+      verificationStatus: 'REVIEWING',
+      verifiedAt: null,
+      requestedAt: '2025-01-16T10:30:00',
+      rejectionReason: null,
+      barAssociationNumber: '12345',
+    });
+  }),
+
+  http.post(`${BASE}/lawyers/me/verification-request`, async ({ request }) => {
+    const body = await request.json() as { barAssociationNumber?: string };
+    return ok({
+      verificationStatus: 'REVIEWING',
+      barAssociationNumber: body.barAssociationNumber ?? '12345',
+      requestedAt: '2025-01-16T10:30:00',
+    });
+  }),
+
+  http.get(`${BASE}/lawyers/me/documents`, () => {
+    return ok([mockDocument]);
+  }),
+
+  http.post(`${BASE}/lawyers/me/documents`, () => {
+    return ok(mockDocument);
   }),
 
   // ── Lawyer Inbox ──

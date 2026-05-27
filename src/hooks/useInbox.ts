@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { inboxApi } from '@/lib/inboxApi';
+import type { DeliveryStatus } from '@/types/enums';
 
 const KEYS = {
   all: ['inbox'] as const,
@@ -8,11 +9,11 @@ const KEYS = {
   detail: (id: string) => [...KEYS.all, 'detail', id] as const,
 };
 
-export function useInboxList(page = 0, size = 20, filter?: string) {
+export function useInboxList(page = 0, size = 20, status?: DeliveryStatus) {
   return useQuery({
-    queryKey: [...KEYS.list(), page, size, filter],
+    queryKey: [...KEYS.list(), page, size, status],
     queryFn: async () => {
-      const { data } = await inboxApi.getList(page, size, filter);
+      const { data } = await inboxApi.getList(page, size, status);
       return data.data;
     },
   });
@@ -44,7 +45,7 @@ export function useUpdateInboxStatus(id: string) {
   return useMutation({
     mutationFn: ({ status, rejectionReason }: { status: 'CONFIRMED' | 'REJECTED'; rejectionReason?: string }) =>
       inboxApi.updateStatus(id, status, rejectionReason),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: KEYS.list() });
       queryClient.invalidateQueries({ queryKey: KEYS.stats() });
       queryClient.invalidateQueries({ queryKey: KEYS.detail(id) });

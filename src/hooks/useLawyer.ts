@@ -1,6 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { lawyerApi } from '@/lib/lawyerApi';
-import type { VerificationRequestData } from '@/types/lawyer';
+import type {
+  RawVerificationStatusResponse,
+  VerificationRequestData,
+  VerificationStatusResponse,
+} from '@/types/lawyer';
 
 const KEYS = {
   all: ['lawyers'] as const,
@@ -10,6 +14,20 @@ const KEYS = {
   verification: () => [...KEYS.all, 'verification'] as const,
   myDocuments: () => [...KEYS.all, 'my-documents'] as const,
 };
+
+export function normalizeVerificationStatus(
+  raw: RawVerificationStatusResponse,
+): VerificationStatusResponse {
+  const verificationStatus = raw.verificationStatus ?? raw.status ?? 'PENDING';
+
+  return {
+    verificationStatus,
+    verifiedAt: raw.verifiedAt ?? raw.reviewedAt ?? null,
+    requestedAt: raw.requestedAt ?? null,
+    rejectionReason: raw.rejectionReason ?? null,
+    barAssociationNumber: raw.barAssociationNumber ?? null,
+  };
+}
 
 /** 변호사 목록 (의뢰인용) */
 export function useLawyerList(
@@ -55,7 +73,7 @@ export function useVerificationStatus() {
     queryKey: KEYS.verification(),
     queryFn: async () => {
       const { data } = await lawyerApi.getVerificationStatus();
-      return data.data;
+      return normalizeVerificationStatus(data.data);
     },
   });
 }

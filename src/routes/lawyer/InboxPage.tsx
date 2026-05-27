@@ -1,6 +1,7 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Clock } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { getApiErrorMessage } from '@/lib/apiError';
 import { useInboxList } from '@/hooks/useInbox';
 import { Spinner } from '@/components/ui';
 import { deliveryTimeRemaining } from '@/lib/dateUtils';
@@ -8,19 +9,21 @@ import {
   LawyerCard,
   LawyerDomainPill,
   LawyerEmptyState,
+  LawyerErrorState,
   LawyerHeader,
   LawyerPage,
   LawyerStatusPill,
 } from '@/components/lawyer/LawyerChrome';
+import type { DeliveryStatus } from '@/types/enums';
 import type { InboxItemResponse } from '@/types';
 
-type FilterTab = 'ALL' | 'NEW' | 'REVIEWING' | 'RESPONDED';
+type StatusTab = 'ALL' | DeliveryStatus;
 
-const TABS: { key: FilterTab; label: string }[] = [
+const TABS: { key: StatusTab; label: string }[] = [
   { key: 'ALL', label: '전체' },
-  { key: 'NEW', label: '신규 의뢰' },
-  { key: 'REVIEWING', label: '검토 중' },
-  { key: 'RESPONDED', label: '응답 완료' },
+  { key: 'DELIVERED', label: '대기 중' },
+  { key: 'CONFIRMED', label: '수락' },
+  { key: 'REJECTED', label: '거절' },
 ];
 
 function formatShortDate(iso: string): string {
@@ -32,8 +35,8 @@ function formatShortDate(iso: string): string {
   return `${month}.${day} ${hour}:${minute}`;
 }
 
-function isValidFilterTab(value: string | null): value is FilterTab {
-  return value === 'ALL' || value === 'NEW' || value === 'REVIEWING' || value === 'RESPONDED';
+function isValidStatusTab(value: string | null): value is StatusTab {
+  return value === 'ALL' || value === 'DELIVERED' || value === 'CONFIRMED' || value === 'REJECTED';
 }
 
 function InboxCard({ item }: { item: InboxItemResponse }) {
@@ -63,7 +66,7 @@ function InboxCard({ item }: { item: InboxItemResponse }) {
           <div className="space-y-1 text-[11px] text-gray-400">
             <div className="flex items-center gap-1.5">
               <Calendar size={12} strokeWidth={1.8} aria-hidden="true" />
-              <span>진단 {formatShortDate(item.sentAt)}</span>
+              <span>수신일 {formatShortDate(item.sentAt)}</span>
             </div>
             {remaining && (
               <div className="flex items-center gap-1.5 text-red-600">
@@ -89,10 +92,11 @@ function InboxCard({ item }: { item: InboxItemResponse }) {
 export function InboxPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const filter = searchParams.get('filter');
-  const activeTab: FilterTab = isValidFilterTab(filter) ? filter : 'ALL';
+  const status = searchParams.get('status');
+  const activeTab: StatusTab = isValidStatusTab(status) ? status : 'ALL';
+  const activeStatus = activeTab === 'ALL' ? undefined : activeTab;
 
-  const { data: inboxPage, isLoading } = useInboxList(0, 50, activeTab);
+  const { data: inboxPage, isLoading, isError, error } = useInboxList(0, 50, activeStatus);
   const items = inboxPage?.content ?? [];
 
   return (
@@ -107,7 +111,10 @@ export function InboxPage() {
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setSearchParams({ filter: tab.key })}
+                onClick={() => {
+                  if (tab.key === 'ALL') setSearchParams({});
+                  else setSearchParams({ status: tab.key });
+                }}
                 className={cn(
                   'relative rounded-card px-2 py-2 text-center text-[12px] font-medium transition-colors',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
@@ -126,11 +133,13 @@ export function InboxPage() {
         </div>
       </div>
 
-      <main className="flex-1 px-4 py-4 pb-24">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-24 lg:py-6">
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
-            <Spinner size="lg" />
+            <Spinner size="lg" text="의뢰함을 불러오는 중..." />
           </div>
+        ) : isError ? (
+          <LawyerErrorState description={getApiErrorMessage(error, '의뢰함을 불러오지 못했습니다.')} />
         ) : items.length === 0 ? (
           <LawyerEmptyState
             title="수신된 의뢰서가 없습니다"
