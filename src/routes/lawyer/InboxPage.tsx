@@ -110,7 +110,7 @@ export function InboxPage() {
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setActiveTab(tab.key)}
+                onClick={() => setSearchParams({ filter: tab.key })}
                 className={cn(
                   'relative rounded-card px-2 py-2 text-center text-[12px] font-medium transition-colors',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
