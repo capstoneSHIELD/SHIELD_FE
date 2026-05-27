@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Calendar, Clock } from 'lucide-react';
 import { cn } from '@/lib/cn';
@@ -89,11 +88,9 @@ function InboxCard({ item }: { item: InboxItemResponse }) {
 
 export function InboxPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const initialFilter = searchParams.get('filter');
-  const [activeTab, setActiveTab] = useState<FilterTab>(
-    isValidFilterTab(initialFilter) ? initialFilter : 'ALL',
-  );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filter = searchParams.get('filter');
+  const activeTab: FilterTab = isValidFilterTab(filter) ? filter : 'ALL';
 
   const { data: inboxPage, isLoading } = useInboxList(0, 50, activeTab);
   const items = inboxPage?.content ?? [];
