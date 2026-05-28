@@ -148,11 +148,9 @@ export function ChatPage() {
                 : '메시지를 입력하세요...'
           }
           subtext={
-            lockInput
+            lockInput || allCompleted
               ? undefined
-              : allCompleted
-                ? undefined
-                : '상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.'
+              : '상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.'
           }
         />
       </div>
