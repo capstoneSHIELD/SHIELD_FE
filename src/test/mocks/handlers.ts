@@ -299,7 +299,7 @@ export const handlers = [
 
   // ── Lawyer Inbox ──
   http.get(`${BASE}/lawyer/inbox/stats`, () => {
-    return ok({ total: 10, pending: 5, confirmed: 3, rejected: 2 });
+    return ok({ all: 10, newCount: 3, reviewing: 2, confirmed: 3, rejected: 2, responded: 5 });
   }),
 
   http.get(`${BASE}/lawyer/inbox/:id`, () => {

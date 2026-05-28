@@ -62,10 +62,12 @@ export interface InboxItemResponse {
 }
 
 export interface InboxStatsResponse {
-  total: number;
-  pending: number;
+  all: number;
+  newCount: number;
+  reviewing: number;
   confirmed: number;
   rejected: number;
+  responded: number;
 }
 
 export interface InboxDetailResponse {

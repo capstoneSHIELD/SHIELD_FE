@@ -254,8 +254,6 @@ export function AnalyzingPage() {
               </div>
               {/* Center shield-check */}
               <img src={shieldCheck} alt="" className="relative z-10 h-4 w-4" />
-              {/* Small bottom-right circle */}
-              <div className="absolute right-[8px] top-[32px] h-8 w-8 rounded-2xl border-2 border-white shadow-[0px_4px_6px_0px_rgba(0,0,0,0.1)]" />
             </div>
 
             {/* Title */}
