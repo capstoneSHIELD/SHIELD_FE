@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { consultationApi } from '@/lib/consultationApi';
 import { useConsultationDetail } from '@/hooks/useConsultation';
 import { useChatStore } from '@/stores/chatStore';
-import type { MessageResponse, ConsultationProgress } from '@/types/consultation';
+import type {
+  MessageResponse,
+  ConsultationProgress,
+  ChecklistItem,
+  ChecklistLabels,
+} from '@/types/consultation';
 import type { MessageRole } from '@/types/enums';
 
 /**
@@ -24,24 +29,60 @@ function deriveProgressFromMessages(messages: MessageResponse[]): ConsultationPr
   };
 }
 
+const CHECKLIST_LEVELS = ['L1', 'L2', 'L3'] as const;
+
+function groupChecklistLabels(items: ChecklistItem[]): ChecklistLabels {
+  const labels: ChecklistLabels = { L1: [], L2: [], L3: [] };
+
+  items.forEach((item) => {
+    const label = item.label.trim();
+    if (label) {
+      labels[item.level].push(label);
+    }
+  });
+
+  return labels;
+}
+
+function formatChecklistMessage(labels: ChecklistLabels): string | null {
+  const flattened = CHECKLIST_LEVELS.flatMap((level) => labels[level]);
+
+  if (flattened.length === 0) return null;
+
+  const lines = flattened.map((label, index) =>
+    index === flattened.length - 1 ? label : `${label},`,
+  );
+
+  return ['필요한 내용은 다음과 같습니다.', ...lines].join('\n');
+}
+
+function normalizeAiRole(role: string | undefined): MessageRole {
+  if (role === 'USER') return 'USER';
+  if (role === 'CHATBOT_TIP') return 'CHATBOT_TIP';
+  if (role === 'ROUTER_REQUEST') return 'ROUTER_REQUEST';
+  if (role === 'SYSTEM') return 'SYSTEM';
+  return 'CHATBOT';
+}
+
 const KEYS = {
   messages: (id: string) => ['messages', id] as const,
 };
 
 export function useChat(consultationId: string) {
-  const queryClient = useQueryClient();
   const {
     messages,
     isSending,
     allCompleted,
     classification,
     progress,
+    checklistLabels,
     setMessages,
     addMessage,
     setIsSending,
     setAllCompleted,
     setClassification,
     setProgress,
+    setChecklistLabels,
     reset,
   } = useChatStore();
 
@@ -115,10 +156,25 @@ export function useChat(consultationId: string) {
         // 3. AI 응답 추가
         addMessage({
           messageId: res.messageId,
-          role: (res.role ?? 'CHATBOT') as MessageRole,
+          role: normalizeAiRole(res.role),
           content: res.content,
           createdAt: res.createdAt,
         });
+
+        const nextChecklistLabels = groupChecklistLabels(
+          res.checklist?.items ?? [],
+        );
+        setChecklistLabels(nextChecklistLabels);
+
+        const checklistContent = formatChecklistMessage(nextChecklistLabels);
+        if (checklistContent) {
+          addMessage({
+            messageId: `${res.messageId}-checklist`,
+            role: 'CHATBOT',
+            content: checklistContent,
+            createdAt: res.createdAt,
+          });
+        }
 
         // 4. 분류 업데이트 — BE `ClassificationResolution.effectiveCandidate` 를
         // chatStore 의 `{ primaryField, tags }` 형태로 어댑팅 (Issue #28)
@@ -140,10 +196,6 @@ export function useChat(consultationId: string) {
           setProgress(res.progress);
         }
 
-        // 캐시 무효화
-        queryClient.invalidateQueries({
-          queryKey: KEYS.messages(consultationId),
-        });
       } catch (error) {
         // PII 에러 등 핸들링 — 에러 메시지를 시스템 메시지로 표시
         const errorMsg =
@@ -167,7 +219,7 @@ export function useChat(consultationId: string) {
       setClassification,
       setAllCompleted,
       setProgress,
-      queryClient,
+      setChecklistLabels,
     ],
   );
 
@@ -183,6 +235,7 @@ export function useChat(consultationId: string) {
     allCompleted,
     classification,
     progress,
+    checklistLabels,
     scrollRef,
     sendMessage,
   };

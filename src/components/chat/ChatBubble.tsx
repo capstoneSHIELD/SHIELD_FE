@@ -136,7 +136,7 @@ export function ChatBubble({ sender, content, timestamp }: ChatBubbleProps) {
             'bg-white text-gray-900 border border-[#dee1e6]',
             'rounded-tr-xl rounded-br-xl rounded-bl-xl',
             'shadow-[0px_2px_4px_0px_rgba(23,25,28,0.08)]',
-            'text-sm leading-relaxed break-words',
+            'whitespace-pre-line text-sm leading-relaxed break-words',
           )}
         >
           {content}

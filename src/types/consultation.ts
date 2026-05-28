@@ -67,6 +67,19 @@ export interface ConsultationProgress {
   progressPercent: number;
 }
 
+export type ChecklistLevel = 'L1' | 'L2' | 'L3';
+
+export interface ChecklistItem {
+  level: ChecklistLevel;
+  label: string;
+}
+
+export interface ChecklistLabels {
+  L1: string[];
+  L2: string[];
+  L3: string[];
+}
+
 /** BE `ClassificationCandidate` 와 1:1 대응 */
 export interface ClassificationCandidate {
   domains: string[];
@@ -93,6 +106,9 @@ export interface SendMessageResponse {
   createdAt: string;
   allCompleted: boolean;
   classification?: ClassificationResolution | null;
+  checklist: {
+    items: ChecklistItem[];
+  };
   /** BE PR #89 추가. 일부 레거시 분기에서 null 일 수 있어 nullable */
   progress?: ConsultationProgress | null;
 }

@@ -52,13 +52,16 @@ describe('ChatPage', () => {
         maxTurns: 10,
         progressPercent: 50,
       },
+      checklistLabels: { L1: [], L2: [], L3: [] },
       scrollRef: createRef<HTMLDivElement>(),
       sendMessage: vi.fn(),
     } as ReturnType<typeof useChat>);
 
     renderChatPage();
 
-    expect(screen.getByRole('button', { name: /의뢰서 생성/ })).toBeInTheDocument();
+    expect(
+      screen.getAllByRole('button', { name: /의뢰서 생성/ }).length,
+    ).toBeGreaterThan(0);
     expect(
       screen.getByText(/의뢰서 생성 준비 완료/),
     ).toBeInTheDocument();
@@ -82,6 +85,7 @@ describe('ChatPage', () => {
         maxTurns: 10,
         progressPercent: 100,
       },
+      checklistLabels: { L1: [], L2: [], L3: [] },
       scrollRef: createRef<HTMLDivElement>(),
       sendMessage: vi.fn(),
     } as ReturnType<typeof useChat>);
