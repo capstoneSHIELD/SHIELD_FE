@@ -216,7 +216,7 @@ export function LawyerProfilePage() {
       {lawyer && briefId && (
         <div
           className={cn(
-            'sticky bottom-0 z-30',
+            'app-sticky-mobile-cta z-30',
             'bg-white border-t border-gray-200 px-4 py-3 safe-area-bottom',
           )}
         >

@@ -160,7 +160,7 @@ export function PrivacySettingsPage() {
       </main>
 
       {/* Fixed bottom CTA */}
-      <div className="sticky bottom-0 bg-linear-to-t from-white via-white/95 to-transparent px-6 pt-10 pb-6 safe-area-bottom">
+      <div className="app-sticky-mobile-cta bg-linear-to-t from-white via-white/95 to-transparent px-6 pt-10 pb-6 safe-area-bottom">
         <Button
           variant="primary"
           fullWidth

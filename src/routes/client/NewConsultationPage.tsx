@@ -214,7 +214,7 @@ export function NewConsultationPage() {
       </main>
 
       {/* 하단 fixed 다음 버튼 */}
-      <div className="sticky bottom-0 left-0 right-0 mx-auto w-full max-w-[390px] bg-white px-5 pb-6 pt-3">
+      <div className="app-sticky-mobile-cta left-0 right-0 mx-auto w-full max-w-[390px] bg-white px-5 pb-6 pt-3">
         <button
           type="button"
           disabled={selected.length === 0 || isPending}

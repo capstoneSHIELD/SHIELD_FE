@@ -30,7 +30,7 @@ export function LawyerHeader({
         className,
       )}
     >
-      <div className="flex h-14 items-center px-4">
+      <div className="flex h-[var(--app-header-height)] items-center px-4">
         <div className="flex w-10 shrink-0 items-center">
           {showBack ? (
             <button

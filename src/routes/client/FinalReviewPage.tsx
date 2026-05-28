@@ -209,7 +209,7 @@ export function FinalReviewPage() {
       </main>
 
       {/* Fixed bottom CTA */}
-      <div className="sticky bottom-0 bg-white shadow-[0px_-10px_20px_0px_rgba(0,0,0,0.02)] px-6 py-6 safe-area-bottom">
+      <div className="app-sticky-mobile-cta bg-white shadow-[0px_-10px_20px_0px_rgba(0,0,0,0.02)] px-6 py-6 safe-area-bottom">
         <Button
           variant="primary"
           fullWidth

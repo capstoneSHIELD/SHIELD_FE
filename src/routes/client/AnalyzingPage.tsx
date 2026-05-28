@@ -173,7 +173,7 @@ export function AnalyzingPage() {
         </main>
 
         {/* Bottom action area (sticky, backdrop blur — figma 06) */}
-        <div className="sticky bottom-0 left-0 right-0 z-10 mx-auto w-full max-w-[390px] bg-white/80 backdrop-blur-[6px] pt-5 pb-6">
+        <div className="app-sticky-mobile-cta left-0 right-0 z-10 mx-auto w-full max-w-[390px] bg-white/80 backdrop-blur-[6px] pt-5 pb-6">
           <div className="px-[25px]">
             <button
               type="button"

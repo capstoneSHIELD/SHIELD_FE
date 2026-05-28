@@ -12,13 +12,13 @@ const CLIENT_TABS = [
 
 export function ClientLayout() {
   return (
-    <div className="h-dvh bg-surface flex flex-col overflow-hidden">
+    <div className="app-shell">
       {/* Desktop sidebar */}
       <SideNav tabs={[...CLIENT_TABS]} />
 
       {/* Page content */}
-      <main className="flex-1 flex flex-col lg:pl-60 pb-20 lg:pb-0 min-h-0 overflow-y-auto overflow-x-auto">
-        <div className="mx-auto w-full max-w-7xl flex-1 flex flex-col min-h-0">
+      <main className="app-scroll-main app-sidebar-offset app-bottom-nav-offset">
+        <div className="app-content-frame">
           <Outlet />
         </div>
       </main>

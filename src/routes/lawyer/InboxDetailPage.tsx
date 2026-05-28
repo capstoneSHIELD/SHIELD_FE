@@ -211,7 +211,7 @@ export function InboxDetailPage() {
       </main>
 
       {isPending && !successMessage && (
-        <div className="sticky bottom-20 z-30 mx-auto w-full max-w-3xl space-y-2.5 border-t border-gray-100 bg-white px-5 py-4 lg:bottom-0">
+        <div className="app-sticky-mobile-cta z-30 mx-auto w-full max-w-3xl space-y-2.5 border-t border-gray-100 bg-white px-5 py-4">
           <Button
             variant="primary"
             fullWidth
