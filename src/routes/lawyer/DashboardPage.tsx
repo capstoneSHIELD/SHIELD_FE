@@ -147,14 +147,14 @@ export function DashboardPage() {
             <div className="grid grid-cols-2 gap-3">
               <StatCard
                 label="전체 의뢰"
-                value={stats?.total ?? 0}
+                value={stats?.all ?? 0}
                 icon={UserRound}
                 tone="brand"
                 onClick={() => navigate('/lawyer/inbox')}
               />
               <StatCard
                 label="대기 중"
-                value={stats?.pending ?? 0}
+                value={(stats?.newCount ?? 0) + (stats?.reviewing ?? 0)}
                 icon={Clock}
                 tone="blue"
                 onClick={() => navigate('/lawyer/inbox?status=DELIVERED')}

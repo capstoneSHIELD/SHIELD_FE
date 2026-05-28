@@ -75,21 +75,20 @@ describe('inboxApi BE contract tests', () => {
   });
 
   describe('getStats', () => {
-    it('uses total, pending, confirmed, rejected', async () => {
+    it('uses all, newCount, reviewing, confirmed, rejected, responded (BE InboxStatsResponse)', async () => {
       const { data } = await inboxApi.getStats();
       const stats = data.data;
 
-      expect(stats).toHaveProperty('total');
-      expect(stats).toHaveProperty('pending');
+      expect(stats).toHaveProperty('all');
+      expect(stats).toHaveProperty('newCount');
+      expect(stats).toHaveProperty('reviewing');
       expect(stats).toHaveProperty('confirmed');
       expect(stats).toHaveProperty('rejected');
-      expect(stats).not.toHaveProperty('all');
-      expect(stats).not.toHaveProperty('newCount');
-      expect(stats).not.toHaveProperty('reviewing');
-      expect(stats).not.toHaveProperty('responded');
-      expect(stats).not.toHaveProperty('accepted');
-      expect(typeof stats.total).toBe('number');
-      expect(typeof stats.pending).toBe('number');
+      expect(stats).toHaveProperty('responded');
+      expect(stats).not.toHaveProperty('total');
+      expect(stats).not.toHaveProperty('pending');
+      expect(typeof stats.all).toBe('number');
+      expect(typeof stats.newCount).toBe('number');
       expect(typeof stats.confirmed).toBe('number');
     });
   });
