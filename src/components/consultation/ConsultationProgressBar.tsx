@@ -32,7 +32,7 @@ export function ConsultationProgressBar({
     };
   }, [progress]);
 
-  const isTurnLimitReached = progress ? progress.currentTurn >= progress.maxTurns : false;
+  const isTurnLimitReached = currentTurn >= maxTurns;
   const isEarlyReady = completed && !isTurnLimitReached;
   const isCompleted = completed || isTurnLimitReached;
 
