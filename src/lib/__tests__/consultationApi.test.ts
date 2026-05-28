@@ -100,6 +100,24 @@ describe('consultationApi – BE contract tests', () => {
       expect(msg.content).toContain('더 알려주실 수 있을까요');
       expect(msg.checklist?.items).toHaveLength(5);
     });
+
+    it('can return early allCompleted with mid-turn progress', async () => {
+      const res = await consultationApi.sendMessage(
+        'early-ready',
+        '조기완료 fixture',
+      );
+
+      expect(res.status).toBe(202);
+
+      const msg = res.data.data;
+      expect(msg.allCompleted).toBe(true);
+      expect(msg.progress).toMatchObject({
+        currentTurn: 5,
+        maxTurns: 10,
+        progressPercent: 50,
+      });
+      expect(msg.content).toContain('더 알려주실 수 있을까요');
+    });
   });
 
   describe('getMessages', () => {
