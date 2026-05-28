@@ -8,6 +8,8 @@ import type {
   ConsultationProgress,
   ChecklistItem,
   ChecklistLabels,
+  ChecklistLevel,
+  SendMessageResponse,
 } from '@/types/consultation';
 import type { MessageRole } from '@/types/enums';
 
@@ -30,6 +32,58 @@ function deriveProgressFromMessages(messages: MessageResponse[]): ConsultationPr
 }
 
 const CHECKLIST_LEVELS = ['L1', 'L2', 'L3'] as const;
+
+type ChecklistLikeResponse = SendMessageResponse & {
+  checkList?: unknown;
+  checklistItems?: unknown;
+};
+
+function readItems(value: unknown): unknown {
+  if (Array.isArray(value)) return value;
+  if (value && typeof value === 'object' && 'items' in value) {
+    return (value as { items?: unknown }).items;
+  }
+  return undefined;
+}
+
+function normalizeChecklistLevel(level: unknown): ChecklistLevel | null {
+  const value = String(level ?? '').trim().toUpperCase();
+
+  if (value === 'L1' || value === 'LEVEL1' || value === '1') return 'L1';
+  if (value === 'L2' || value === 'LEVEL2' || value === '2') return 'L2';
+  if (value === 'L3' || value === 'LEVEL3' || value === '3') return 'L3';
+
+  return null;
+}
+
+function normalizeChecklistItem(item: unknown): ChecklistItem | null {
+  if (!item || typeof item !== 'object') return null;
+
+  const record = item as { level?: unknown; label?: unknown };
+  const level = normalizeChecklistLevel(record.level);
+  const label = typeof record.label === 'string' ? record.label.trim() : '';
+
+  if (!level || !label) return null;
+
+  return { level, label };
+}
+
+function extractChecklistItems(response: SendMessageResponse): ChecklistItem[] {
+  const raw = response as ChecklistLikeResponse;
+  const candidates = [
+    readItems(raw.checklist),
+    readItems(raw.checkList),
+    readItems(raw.checklistItems),
+  ];
+
+  const items = candidates.find(Array.isArray);
+
+  if (!items) return [];
+
+  return items
+    .map(normalizeChecklistItem)
+    .filter((item): item is ChecklistItem => item != null);
+}
 
 function groupChecklistLabels(items: ChecklistItem[]): ChecklistLabels {
   const labels: ChecklistLabels = { L1: [], L2: [], L3: [] };
@@ -162,7 +216,7 @@ export function useChat(consultationId: string) {
         });
 
         const nextChecklistLabels = groupChecklistLabels(
-          res.checklist?.items ?? [],
+          extractChecklistItems(res),
         );
         setChecklistLabels(nextChecklistLabels);
 

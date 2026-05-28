@@ -73,7 +73,7 @@ describe('consultationApi – BE contract tests', () => {
       expect(msg).toHaveProperty('classification');
       expect(msg.classification).toHaveProperty('effectiveCandidate');
       expect(msg).toHaveProperty('checklist');
-      expect(msg.checklist.items).toEqual([
+      expect(msg.checklist?.items).toEqual([
         { level: 'L1', label: '당사자 정보' },
         { level: 'L1', label: '사건 발생 시기' },
         { level: 'L2', label: '임대차 계약 기간' },
@@ -98,7 +98,7 @@ describe('consultationApi – BE contract tests', () => {
         progressPercent: 50,
       });
       expect(msg.content).toContain('더 알려주실 수 있을까요');
-      expect(msg.checklist.items).toHaveLength(5);
+      expect(msg.checklist?.items).toHaveLength(5);
     });
   });
 

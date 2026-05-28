@@ -132,4 +132,62 @@ describe('useChat checklist response handling', () => {
       ),
     ).toBe(false);
   });
+
+  it('accepts checklist aliases and normalized levels from the message response', async () => {
+    server.use(
+      http.post('*/api/consultations/:id/messages', () =>
+        HttpResponse.json(
+          {
+            result: true,
+            message: '전송 완료',
+            data: {
+              messageId: 'alias-checklist-ai',
+              role: 'AI',
+              content: '추가 확인이 필요합니다.',
+              createdAt: '2026-05-29T03:17:00',
+              allCompleted: false,
+              classification: null,
+              checkList: {
+                items: [
+                  { level: 'level1', label: '당사자 정보' },
+                  { level: '2', label: '계약 기간' },
+                  { level: 'L3', label: '보증금 액수' },
+                ],
+              },
+              progress: {
+                currentTurn: 1,
+                maxTurns: 10,
+                progressPercent: 10,
+              },
+            },
+          },
+          { status: 202 },
+        ),
+      ),
+    );
+
+    const { result } = renderHook(() => useChat('alias-checklist'), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await act(async () => {
+      await result.current.sendMessage('체크리스트 별칭 테스트');
+    });
+
+    await waitFor(() =>
+      expect(
+        result.current.messages.some(
+          (message) => message.messageId === 'alias-checklist-ai-checklist',
+        ),
+      ).toBe(true),
+    );
+
+    expect(result.current.checklistLabels).toEqual({
+      L1: ['당사자 정보'],
+      L2: ['계약 기간'],
+      L3: ['보증금 액수'],
+    });
+  });
 });

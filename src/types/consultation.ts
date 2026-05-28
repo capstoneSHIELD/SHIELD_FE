@@ -106,9 +106,9 @@ export interface SendMessageResponse {
   createdAt: string;
   allCompleted: boolean;
   classification?: ClassificationResolution | null;
-  checklist: {
-    items: ChecklistItem[];
-  };
+  checklist?: {
+    items?: ChecklistItem[] | null;
+  } | null;
   /** BE PR #89 추가. 일부 레거시 분기에서 null 일 수 있어 nullable */
   progress?: ConsultationProgress | null;
 }
