@@ -120,24 +120,26 @@ export function InboxDetailPage() {
     );
   }
 
+  const remainingTime = deliveryTimeRemaining(brief.sentAt);
+  const showPendingActions = isPending && !successMessage;
+
   return (
     <LawyerPage>
       <LawyerHeader title="의뢰서 상세" showBack onBack={() => navigate('/lawyer/inbox')} />
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-28 lg:py-6">
+      <main className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 gap-4 px-4 py-4 pb-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:px-6 lg:py-6 lg:pb-8">
+        <div className="min-w-0 space-y-4">
         {successMessage && (
-          <div className="mb-4 rounded-card border border-green-200 bg-green-50 px-4 py-3">
+          <div className="rounded-card border border-green-200 bg-green-50 px-4 py-3">
             <p className="text-sm font-medium text-green-700">{successMessage}</p>
           </div>
         )}
 
         {isPending && (
-          <div className="mb-4 rounded-card border border-red-100 bg-red-50 px-4 py-3">
+          <div className="rounded-card border border-red-100 bg-red-50 px-4 py-3 lg:hidden">
             <p className="text-sm font-medium text-red-700">
               24시간 이내 응답 없으면 자동 거절됩니다.
-              {deliveryTimeRemaining(brief.sentAt) && (
-                <span> {deliveryTimeRemaining(brief.sentAt)}</span>
-              )}
+              {remainingTime && <span> {remainingTime}</span>}
             </p>
           </div>
         )}
@@ -149,7 +151,7 @@ export function InboxDetailPage() {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-start justify-between gap-2">
-                <h2 className="text-base font-semibold leading-snug text-[#111827]">
+                <h2 className="min-w-0 break-words text-base font-semibold leading-snug text-[#111827]">
                   {brief.title}
                 </h2>
                 <LawyerStatusPill status={briefStatus} />
@@ -165,7 +167,7 @@ export function InboxDetailPage() {
           {brief.content && (
             <section className="space-y-2">
               <SectionLabel>내용</SectionLabel>
-              <p className="whitespace-pre-wrap text-sm leading-relaxed text-[#111827]">
+              <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-[#111827]">
                 {brief.content}
               </p>
             </section>
@@ -178,7 +180,7 @@ export function InboxDetailPage() {
                 {brief.keyIssues.map((issue, index) => (
                   <li key={`${keyIssueTitle(issue)}-${index}`} className="flex items-start gap-2 text-sm text-[#111827]">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                    <span>{keyIssueTitle(issue)}</span>
+                    <span className="min-w-0 break-words">{keyIssueTitle(issue)}</span>
                   </li>
                 ))}
               </ul>
@@ -192,7 +194,7 @@ export function InboxDetailPage() {
                 {brief.keywords.map((keyword) => (
                   <span
                     key={keyword}
-                    className="inline-flex rounded-full bg-info-bg px-2.5 py-1 text-xs font-medium text-brand"
+                    className="inline-flex max-w-full break-words rounded-full bg-info-bg px-2.5 py-1 text-xs font-medium text-brand"
                   >
                     {keyword}
                   </span>
@@ -204,14 +206,70 @@ export function InboxDetailPage() {
           {brief.clientName && (
             <section className="space-y-2 border-t border-gray-200 pt-4">
               <SectionLabel>의뢰인</SectionLabel>
-              <p className="text-sm text-[#111827]">{brief.clientName}</p>
+              <p className="break-words text-sm text-[#111827]">{brief.clientName}</p>
             </section>
           )}
         </LawyerCard>
+        </div>
+
+        <aside className="hidden min-w-0 space-y-4 lg:sticky lg:top-6 lg:block lg:self-start">
+          <LawyerCard className="space-y-3 p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <LawyerDomainPill legalField={brief.legalField} />
+              <LawyerStatusPill status={briefStatus} />
+            </div>
+            <div className="space-y-2 border-t border-gray-100 pt-3 text-sm">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-gray-500">수신일</span>
+                <span className="font-medium text-[#111827]">{formatDate(brief.sentAt)}</span>
+              </div>
+              {brief.clientName && (
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-gray-500">의뢰인</span>
+                  <span className="truncate font-medium text-[#111827]">{brief.clientName}</span>
+                </div>
+              )}
+              {remainingTime && (
+                <div className="rounded-card bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
+                  24시간 이내 응답 필요 · {remainingTime}
+                </div>
+              )}
+            </div>
+          </LawyerCard>
+
+          {showPendingActions && (
+            <LawyerCard className="space-y-2.5 p-4">
+              <Button
+                variant="primary"
+                fullWidth
+                size="lg"
+                className="rounded-card"
+                onClick={() => {
+                  setActionError('');
+                  setConfirmModalOpen(true);
+                }}
+              >
+                수락하기
+              </Button>
+              <Button
+                variant="secondary"
+                fullWidth
+                size="lg"
+                className="rounded-card border-red-200 text-red-600 hover:bg-red-50"
+                onClick={() => {
+                  setActionError('');
+                  setRejectModalOpen(true);
+                }}
+              >
+                거절하기
+              </Button>
+            </LawyerCard>
+          )}
+        </aside>
       </main>
 
-      {isPending && !successMessage && (
-        <div className="app-sticky-mobile-cta z-30 mx-auto w-full max-w-3xl space-y-2.5 border-t border-gray-100 bg-white px-5 py-4">
+      {showPendingActions && (
+        <div className="app-sticky-mobile-cta z-30 mx-auto w-full max-w-3xl space-y-2.5 border-t border-gray-100 bg-white px-5 py-4 lg:hidden">
           <Button
             variant="primary"
             fullWidth

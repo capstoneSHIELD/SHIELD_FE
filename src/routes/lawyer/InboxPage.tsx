@@ -46,7 +46,7 @@ function InboxCard({ item }: { item: InboxItemResponse }) {
   const remaining = isPending ? deliveryTimeRemaining(item.sentAt) : '';
 
   return (
-    <LawyerCard className="p-3.5">
+    <LawyerCard className="h-full p-3.5">
       <div className="space-y-2.5">
         <div className="flex flex-wrap items-center gap-[7px]">
           <LawyerDomainPill legalField={item.legalField} />
@@ -58,15 +58,15 @@ function InboxCard({ item }: { item: InboxItemResponse }) {
           )}
         </div>
 
-        <p className="text-[13px] font-semibold leading-[19px] text-[#111827]">
+        <p className="line-clamp-2 break-words text-[13px] font-semibold leading-[19px] text-[#111827]">
           {item.briefTitle}
         </p>
 
-        <div className="flex items-end justify-between gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="space-y-1 text-[11px] text-gray-400">
-            <div className="flex items-center gap-1.5">
+            <div className="min-w-0 flex items-center gap-1.5">
               <Calendar size={12} strokeWidth={1.8} aria-hidden="true" />
-              <span>수신일 {formatShortDate(item.sentAt)}</span>
+              <span className="truncate">수신일 {formatShortDate(item.sentAt)}</span>
             </div>
             {remaining && (
               <div className="flex items-center gap-1.5 text-red-600">
@@ -104,7 +104,7 @@ export function InboxPage() {
       <LawyerHeader title="의뢰함" showBack onBack={() => navigate('/lawyer')} />
 
       <div className="border-b border-[#e0e2e6] bg-white px-4 py-2">
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-4 gap-1.5 lg:px-2">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.key;
             return (
@@ -133,7 +133,7 @@ export function InboxPage() {
         </div>
       </div>
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-24 lg:py-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 pb-6 lg:px-6 lg:py-6 lg:pb-8">
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
             <Spinner size="lg" text="의뢰함을 불러오는 중..." />
@@ -146,7 +146,7 @@ export function InboxPage() {
             description="선택한 필터의 의뢰서가 존재하지 않습니다."
           />
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {items.map((item) => (
               <InboxCard key={item.deliveryId} item={item} />
             ))}

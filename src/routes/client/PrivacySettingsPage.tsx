@@ -76,10 +76,10 @@ export function PrivacySettingsPage() {
   }
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+    <div className="mx-auto flex h-full w-full max-w-5xl flex-col bg-white lg:bg-transparent">
       <PageHeader title="개인정보 공개 설정" />
 
-      <main className="flex-1 space-y-5 overflow-y-auto px-6 pt-4 pb-32">
+      <main className="mx-auto w-full max-w-3xl flex-1 space-y-5 overflow-y-auto px-6 pt-4 pb-32">
         {/* Title */}
         <div>
           <h2 className="text-xl font-bold text-[#161a1d] leading-8">
@@ -160,7 +160,7 @@ export function PrivacySettingsPage() {
       </main>
 
       {/* Fixed bottom CTA */}
-      <div className="app-sticky-mobile-cta bg-linear-to-t from-white via-white/95 to-transparent px-6 pt-10 pb-6 safe-area-bottom">
+      <div className="app-sticky-mobile-cta mx-auto w-full max-w-3xl bg-linear-to-t from-white via-white/95 to-transparent px-6 pt-10 pb-6 safe-area-bottom [--safe-area-bottom-base:1.5rem] lg:static lg:bg-white">
         <Button
           variant="primary"
           fullWidth

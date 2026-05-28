@@ -34,17 +34,21 @@ export function AdminDashboardPage() {
 
   return (
     <div className="space-y-4">
-      {/* 통계 카드 — 2x2 그리드 */}
-      <div className="grid grid-cols-2 gap-2.5">
+      {/* 통계 카드 */}
+      <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
         {statCards.map((s) => {
+          const Icon = s.icon;
           const cardClass = s.accent
-            ? 'bg-[#1a6de0] text-white rounded-[14px] p-3.5 h-[76px]'
-            : 'bg-white border border-[#e9edef] rounded-[14px] p-3.5 h-[76px]';
+            ? 'min-h-24 rounded-[14px] bg-[#1a6de0] p-3.5 text-white'
+            : 'min-h-24 rounded-[14px] border border-[#e9edef] bg-white p-3.5';
           const content = (
             <div key={s.label} className={cardClass}>
-              <p className={`text-[28px] font-medium leading-none ${s.accent ? 'text-white' : (s.color ?? 'text-[#1a1a1a]')}`}>
-                {s.value}
-              </p>
+              <div className="flex items-start justify-between gap-2">
+                <p className={`text-[28px] font-medium leading-none ${s.accent ? 'text-white' : (s.color ?? 'text-[#1a1a1a]')}`}>
+                  {s.value}
+                </p>
+                <Icon className={s.accent ? 'h-4 w-4 text-white/70' : 'h-4 w-4 text-[#adb5b8]'} aria-hidden="true" />
+              </div>
               <p className={`text-[11px] mt-2 ${s.accent ? 'text-white/75' : 'text-[#6b7280]'}`}>
                 {s.label}
               </p>
@@ -65,10 +69,10 @@ export function AdminDashboardPage() {
             <AlertTriangle className="inline h-3 w-3 mr-1" />
             빠른 확인 필요
           </p>
-          <p className="text-[11px] text-[#854f0b]">
-            • 24시간 이상 미처리 {alerts.overdueCount}건
-            &nbsp;&nbsp;• 서류 누락 {alerts.missingDocumentCount}건
-            &nbsp;&nbsp;• 중복 의심 {alerts.duplicateSuspectCount}건
+          <p className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-[#854f0b]">
+            <span>• 24시간 이상 미처리 {alerts.overdueCount}건</span>
+            <span>• 서류 누락 {alerts.missingDocumentCount}건</span>
+            <span>• 중복 의심 {alerts.duplicateSuspectCount}건</span>
           </p>
         </div>
       )}
@@ -80,7 +84,7 @@ export function AdminDashboardPage() {
           <Link to="/admin/lawyers" className="text-[12px] text-[#1a6de0]">전체 보기 →</Link>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="grid grid-cols-1 gap-2.5 md:grid-cols-2 xl:grid-cols-3">
           {recentLawyers.map((lawyer, idx) => {
             const badge = STATUS_BADGE[lawyer.verificationStatus] ?? STATUS_BADGE.PENDING;
             const avatarColor = AVATAR_COLORS[idx % AVATAR_COLORS.length];
@@ -88,7 +92,7 @@ export function AdminDashboardPage() {
             return (
               <div
                 key={lawyer.lawyerId}
-                className="bg-white border-[0.5px] border-[#e9edef] rounded-[14px] p-3 relative"
+                className="relative h-full rounded-[14px] border-[0.5px] border-[#e9edef] bg-white p-3"
               >
                 <div className="flex items-start gap-3">
                   {/* 아바타 */}
@@ -100,27 +104,27 @@ export function AdminDashboardPage() {
                   </div>
                   {/* 정보 */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
-                    <p className="text-[11px] text-[#adb5b8]">{lawyer.email || '-'}</p>
+                    <p className="truncate text-[14px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
+                    <p className="truncate text-[11px] text-[#6b7280]">{lawyer.email || '-'}</p>
                   </div>
                   {/* 상태 배지 */}
-                  <span className={`${badge.bg} ${badge.text} text-[11px] font-medium h-[22px] px-3 rounded-[11px] flex items-center shrink-0`}>
+                  <span className={`${badge.bg} ${badge.text} inline-flex min-h-6 shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-medium`}>
                     {badge.label}
                   </span>
                 </div>
 
                 {/* 전문분야 태그 + 경력 */}
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center gap-1.5">
+                <div className="mt-2 flex items-start justify-between gap-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-1.5">
                     {lawyer.domains?.map((spec: string) => (
-                      <span key={spec} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
+                      <span key={spec} className="inline-flex min-h-6 max-w-full items-center rounded-full bg-[#e8f0fc] px-2 py-1 text-[10px] text-[#0c447c]">
                         {spec}
                       </span>
                     ))}
                   </div>
                   <Link
                     to={`/admin/lawyers/${lawyer.lawyerId}`}
-                    className="bg-[#1a6de0] text-white text-[11px] font-medium h-[22px] px-3 rounded-[11px] flex items-center"
+                    className="inline-flex min-h-6 shrink-0 items-center rounded-full bg-[#1a6de0] px-2.5 py-1 text-[11px] font-medium text-white"
                   >
                     상세 보기
                   </Link>
@@ -132,7 +136,7 @@ export function AdminDashboardPage() {
             );
           })}
           {recentLawyers.length === 0 && (
-            <div className="bg-white border-[0.5px] border-[#e9edef] rounded-[14px] p-6 text-center">
+            <div className="rounded-[14px] border-[0.5px] border-[#e9edef] bg-white p-6 text-center md:col-span-2 xl:col-span-3">
               <p className="text-[12px] text-[#6b7280]">최근 신청이 없습니다</p>
             </div>
           )}

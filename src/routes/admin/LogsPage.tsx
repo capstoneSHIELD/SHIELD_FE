@@ -49,14 +49,14 @@ export function LogsPage() {
   return (
     <div className="space-y-4">
       {/* 필터 탭 */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar">
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap md:overflow-visible">
         {FILTER_TABS.map((tab) => (
           <button
             key={tab.value}
             type="button"
             onClick={() => { setFilter(tab.value); setPage(0); }}
             className={cn(
-              'h-[26px] px-3 rounded-[13px] text-[12px] font-normal whitespace-nowrap shrink-0 transition-colors',
+              'min-h-8 shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-[12px] font-normal transition-colors',
               filter === tab.value
                 ? 'bg-[#1a6de0] text-white'
                 : 'bg-white border-[1.5px] border-[#e9edef] text-[#6b7280]',
@@ -78,7 +78,7 @@ export function LogsPage() {
           <p className="text-[13px] text-[#6b7280]">처리 이력이 없습니다</p>
         </div>
       ) : (
-        <div className="space-y-3.5">
+        <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2 xl:grid-cols-3">
           {data.content.map((log) => {
             const before = normalizeStatus(log.fromStatus);
             const after = normalizeStatus(log.toStatus);
@@ -88,22 +88,22 @@ export function LogsPage() {
             return (
               <div
                 key={log.logId}
-                className="bg-white border-[0.5px] border-[#e9edef] rounded-[14px] overflow-hidden"
+                className="h-full overflow-hidden rounded-[14px] border-[0.5px] border-[#e9edef] bg-white"
               >
                 <div className="p-3">
                   {/* 이름 + 시각 */}
-                  <div className="flex items-center justify-between">
-                    <p className="text-[13px] font-medium text-[#1a1a1a]">{log.lawyerName}</p>
-                    <span className="text-[11px] text-[#adb5b8]">{formatDate(log.createdAt)}</span>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0 truncate text-[13px] font-medium text-[#1a1a1a]">{log.lawyerName}</p>
+                    <span className="shrink-0 text-[11px] text-[#6b7280]">{formatDate(log.createdAt)}</span>
                   </div>
 
                   {/* 상태 전이 */}
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <span className={`${beforeBadge.bg} ${beforeBadge.text} text-[10px] font-medium h-[22px] px-2.5 rounded-[11px] flex items-center`}>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className={`${beforeBadge.bg} ${beforeBadge.text} inline-flex min-h-6 items-center rounded-full px-2.5 py-1 text-[10px] font-medium`}>
                       {beforeBadge.label}
                     </span>
                     <span className="text-[11px] text-[#adb5b8]">→</span>
-                    <span className={`${afterBadge.bg} ${afterBadge.text} text-[10px] font-medium h-[22px] px-2.5 rounded-[11px] flex items-center`}>
+                    <span className={`${afterBadge.bg} ${afterBadge.text} inline-flex min-h-6 items-center rounded-full px-2.5 py-1 text-[10px] font-medium`}>
                       {afterBadge.label}
                     </span>
                   </div>
@@ -114,9 +114,9 @@ export function LogsPage() {
 
                 {/* 하단: 담당자 + 사유 */}
                 <div className="px-3 py-2">
-                  <p className="text-[11px] text-[#adb5b8]">담당: {log.adminName || '-'}</p>
+                  <p className="truncate text-[11px] text-[#6b7280]">담당: {log.adminName || '-'}</p>
                   {log.reason && (
-                    <p className="text-[10px] text-[#6b7280] mt-0.5">{log.reason}</p>
+                    <p className="mt-0.5 break-words text-[10px] leading-relaxed text-[#6b7280]">{log.reason}</p>
                   )}
                 </div>
               </div>

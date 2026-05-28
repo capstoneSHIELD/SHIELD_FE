@@ -56,6 +56,7 @@ function StatCard({ label, value, icon: Icon, tone, onClick }: StatCardProps) {
       onClick={onClick}
       className={cn(
         'min-h-[104px] rounded-card border bg-white p-3.5 text-left shadow-sm',
+        'lg:min-h-[124px]',
         'transition-transform active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
         tone === 'brand' ? 'border-brand/20 bg-info-bg/40' : 'border-gray-100',
       )}
@@ -84,19 +85,19 @@ function RecentRequestCard({ item }: { item: InboxItemResponse }) {
   const navigate = useNavigate();
 
   return (
-    <LawyerCard className="p-3.5">
+    <LawyerCard className="h-full p-3.5">
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-[7px]">
           <LawyerDomainPill legalField={item.legalField} />
           <LawyerStatusPill status={item.status} />
         </div>
-        <p className="text-[13px] font-semibold leading-[19px] text-[#111827]">
+        <p className="line-clamp-2 break-words text-[13px] font-semibold leading-[19px] text-[#111827]">
           {item.briefTitle}
         </p>
         <div className="flex items-center justify-between gap-3 border-t border-gray-100 pt-2.5">
-          <div className="flex items-center gap-1.5 text-[11px] text-gray-400">
+          <div className="min-w-0 flex items-center gap-1.5 text-[11px] text-gray-400">
             <Calendar size={12} strokeWidth={1.8} aria-hidden="true" />
-            <span>수신일 {formatShortDate(item.sentAt)}</span>
+            <span className="truncate">수신일 {formatShortDate(item.sentAt)}</span>
           </div>
           <button
             type="button"
@@ -126,7 +127,7 @@ export function DashboardPage() {
     <LawyerPage>
       <LawyerHeader title="변호사 대시보드" />
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-24 lg:py-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 pb-6 lg:px-6 lg:py-6 lg:pb-8">
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
             <Spinner size="lg" text="대시보드를 불러오는 중..." />
@@ -134,17 +135,18 @@ export function DashboardPage() {
         ) : isError ? (
           <LawyerErrorState description="수신함 통계와 최근 의뢰를 불러오지 못했습니다." />
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 lg:grid lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start lg:gap-5 lg:space-y-0">
+            <div className="min-w-0 space-y-4">
             <LawyerCard className="flex items-center gap-3 p-3.5">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-info-bg text-brand">
                 <Sparkles size={20} strokeWidth={1.9} aria-hidden="true" />
               </div>
-              <p className="text-[13px] font-medium text-[#111827]">
+              <p className="min-w-0 break-words text-[13px] font-medium text-[#111827]">
                 {lawyerName}님, 오늘도 좋은 하루입니다.
               </p>
             </LawyerCard>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <StatCard
                 label="전체 의뢰"
                 value={stats?.all ?? 0}
@@ -175,7 +177,9 @@ export function DashboardPage() {
               />
             </div>
 
-            <section className="space-y-3">
+            </div>
+
+            <section className="min-w-0 space-y-3 lg:sticky lg:top-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-base font-semibold text-[#111827]">최근 의뢰</h2>
                 <Link

@@ -131,8 +131,14 @@ export function NewConsultationPage() {
     );
   }
 
+  const nextButtonLabel = isPending
+    ? '생성 중...'
+    : selected.length > 0
+      ? `다음 (${selected.length}개 선택)`
+      : '다음';
+
   return (
-    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+    <div className="mx-auto flex h-full w-full max-w-6xl flex-col bg-white lg:bg-transparent">
       <PageHeader
         title="분야 선택"
         rightSlot={
@@ -150,15 +156,16 @@ export function NewConsultationPage() {
         }
       />
 
-      <main className="flex-1 overflow-y-auto px-5 pt-4 pb-[112px]">
-        <h1 className="text-[20px] font-bold leading-7 text-[#161a1d]">
-          어떤 <span className="text-brand">법률 분야</span>를
-          <br />
-          선택 하시겠습니까?
-        </h1>
-        <p className="mt-1.5 text-xs text-[#62686f]">
-          여러 항목을 동시에 선택할 수 있습니다.
-        </p>
+      <div className="flex min-h-0 flex-1 flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6 lg:px-6 lg:py-6">
+        <main className="flex-1 overflow-y-auto px-5 pt-4 pb-[112px] lg:rounded-card lg:border lg:border-[#e9ecef] lg:bg-white lg:p-6 lg:shadow-sm">
+          <h1 className="text-[20px] font-bold leading-7 text-[#161a1d]">
+            어떤 <span className="text-brand">법률 분야</span>를
+            <br />
+            선택 하시겠습니까?
+          </h1>
+          <p className="mt-1.5 text-xs text-[#62686f]">
+            여러 항목을 동시에 선택할 수 있습니다.
+          </p>
 
         {/* 검색창 */}
         <div className="relative mt-5">
@@ -213,8 +220,51 @@ export function NewConsultationPage() {
         )}
       </main>
 
+      <aside className="hidden min-w-0 lg:block">
+        <div className="sticky top-6 space-y-4 rounded-card border border-[#e9ecef] bg-white p-5 shadow-sm">
+          <div>
+            <p className="text-sm font-bold text-[#161a1d]">선택한 분야</p>
+            <p className="mt-1 text-xs leading-relaxed text-[#62686f]">
+              상담에 필요한 법률 분야를 여러 개 선택할 수 있습니다.
+            </p>
+          </div>
+
+          {selected.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5">
+              {selected.map((item) => (
+                <SelectedChip
+                  key={itemKey(item)}
+                  item={item}
+                  onRemove={() => removeItem(item)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl bg-[#f9fafb] px-4 py-6 text-center text-sm text-[#9aa0a6]">
+              아직 선택된 분야가 없습니다.
+            </div>
+          )}
+
+          <button
+            type="button"
+            disabled={selected.length === 0 || isPending}
+            onClick={handleNext}
+            className={cn(
+              'flex h-12 w-full items-center justify-center rounded-2xl',
+              'text-sm font-bold text-white transition-colors',
+              'bg-brand hover:bg-brand/90 active:bg-brand/80',
+              'disabled:cursor-not-allowed disabled:bg-[#c5cad0]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2',
+            )}
+          >
+            {nextButtonLabel}
+          </button>
+        </div>
+      </aside>
+      </div>
+
       {/* 하단 fixed 다음 버튼 */}
-      <div className="app-sticky-mobile-cta left-0 right-0 mx-auto w-full max-w-[390px] bg-white px-5 pb-6 pt-3">
+      <div className="app-sticky-mobile-cta left-0 right-0 mx-auto w-full max-w-[390px] bg-white px-5 pb-6 pt-3 lg:hidden">
         <button
           type="button"
           disabled={selected.length === 0 || isPending}
@@ -227,11 +277,7 @@ export function NewConsultationPage() {
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2',
           )}
         >
-          {isPending
-            ? '생성 중…'
-            : selected.length > 0
-              ? `다음 (${selected.length}개 선택)`
-              : '다음'}
+          {nextButtonLabel}
         </button>
       </div>
     </div>
