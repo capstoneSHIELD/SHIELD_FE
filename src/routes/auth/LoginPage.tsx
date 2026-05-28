@@ -30,7 +30,7 @@ function SocialButton({ className, icon, label, labelColor, onClick }: SocialBut
       type="button"
       onClick={onClick}
       className={cn(
-        'relative flex h-14 w-full items-center justify-center rounded-[14px]',
+        'flex h-14 w-full items-center justify-center gap-3 rounded-[14px]',
         'text-base font-semibold leading-6 transition duration-150',
         'shadow-[0px_2px_4px_0px_rgba(35,37,41,0.06)]',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2',
@@ -38,7 +38,7 @@ function SocialButton({ className, icon, label, labelColor, onClick }: SocialBut
         className,
       )}
     >
-      <span className="absolute left-[58px] flex h-6 w-6 items-center justify-center">{icon}</span>
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center">{icon}</span>
       <span style={labelColor ? { color: labelColor } : undefined}>{label}</span>
     </button>
   );
@@ -124,7 +124,7 @@ export function LoginPage() {
               <SocialButton
                 label="Google 계정으로 시작하기"
                 icon={
-                  <img src={googleIcon} alt="" className="block h-[25px] w-[25px] object-cover" />
+                  <img src={googleIcon} alt="" className="block h-6 w-6 object-contain" />
                 }
                 onClick={loginWithGoogle}
                 className="border border-[#e0e2e6] bg-white text-[#16181d] hover:bg-gray-50"
