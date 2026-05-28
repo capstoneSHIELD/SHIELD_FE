@@ -71,8 +71,34 @@ describe('consultationApi – BE contract tests', () => {
       expect(msg).toHaveProperty('allCompleted');
       expect(typeof msg.allCompleted).toBe('boolean');
       expect(msg).toHaveProperty('classification');
-      expect(msg.classification).toHaveProperty('primaryField');
-      expect(msg.classification).toHaveProperty('tags');
+      expect(msg.classification).toHaveProperty('effectiveCandidate');
+      expect(msg).toHaveProperty('checklist');
+      expect(msg.checklist?.items).toEqual([
+        { level: 'L1', label: '당사자 정보' },
+        { level: 'L1', label: '사건 발생 시기' },
+        { level: 'L2', label: '임대차 계약 기간' },
+        { level: 'L3', label: '보증금 액수' },
+        { level: 'L3', label: '반환 요청 여부 및 시점' },
+      ]);
+    });
+
+    it('can return early allCompleted with mid-turn progress', async () => {
+      const res = await consultationApi.sendMessage(
+        'early-ready',
+        '조기완료 fixture',
+      );
+
+      expect(res.status).toBe(202);
+
+      const msg = res.data.data;
+      expect(msg.allCompleted).toBe(true);
+      expect(msg.progress).toMatchObject({
+        currentTurn: 5,
+        maxTurns: 10,
+        progressPercent: 50,
+      });
+      expect(msg.content).toContain('더 알려주실 수 있을까요');
+      expect(msg.checklist?.items).toHaveLength(5);
     });
 
     it('can return early allCompleted with mid-turn progress', async () => {

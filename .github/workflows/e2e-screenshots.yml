@@ -1,0 +1,47 @@
+name: E2E Screenshots (Phase 5)
+
+# 초기에는 수동 실행 + label 트리거만. layout 깨짐이 안정화되면
+# pull_request 트리거 + required check 로 승격한다 (phases.md §Phase 5).
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, labeled]
+
+jobs:
+  visual-regression:
+    name: Playwright visual regression
+    # 'run-e2e' label 이 붙은 PR 에서만 실행 — 초기 비용 절감 + opt-in 운영
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'run-e2e')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run screenshot suite
+        # 운영 정책: 회귀가 안정화될 때까지 실패해도 PR 을 막지 않는다 (warning).
+        continue-on-error: true
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 7

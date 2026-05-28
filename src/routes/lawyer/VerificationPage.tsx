@@ -90,7 +90,7 @@ export function VerificationPage() {
     <LawyerPage>
       <LawyerHeader title="인증 신청" showBack onBack={() => navigate(-1)} />
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-24 lg:py-6">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 pb-6 lg:px-6 lg:py-6 lg:pb-8">
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
             <Spinner size="lg" text="인증 상태를 불러오는 중..." />
@@ -98,7 +98,8 @@ export function VerificationPage() {
         ) : isError ? (
           <LawyerErrorState description={getApiErrorMessage(error, '인증 상태를 불러오지 못했습니다.')} />
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+            <div className="min-w-0 space-y-4">
             {/* Current status card */}
             {config && statusUi && (
               <LawyerCard
@@ -188,13 +189,15 @@ export function VerificationPage() {
                 </p>
               </div>
             )}
+            </div>
 
             {/* Document link */}
+            <aside className="min-w-0 lg:sticky lg:top-6">
             <LawyerCard className="p-5">
-              <div className="flex items-center justify-between">
-                <div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
                   <p className="text-sm font-semibold text-gray-900">서류 제출</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="mt-0.5 break-words text-xs text-gray-500">
                     인증에 필요한 서류를 제출해 주세요
                   </p>
                 </div>
@@ -210,6 +213,7 @@ export function VerificationPage() {
                 </Link>
               </div>
             </LawyerCard>
+            </aside>
           </div>
         )}
       </main>

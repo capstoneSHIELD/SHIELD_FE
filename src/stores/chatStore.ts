@@ -1,5 +1,15 @@
 import { create } from 'zustand';
-import type { MessageResponse, ConsultationProgress } from '@/types';
+import type {
+  MessageResponse,
+  ConsultationProgress,
+  ChecklistLabels,
+} from '@/types';
+
+const createEmptyChecklistLabels = (): ChecklistLabels => ({
+  L1: [],
+  L2: [],
+  L3: [],
+});
 
 interface ChatState {
   messages: MessageResponse[];
@@ -7,6 +17,7 @@ interface ChatState {
   allCompleted: boolean;
   classification: { primaryField: string[]; tags: string[] } | null;
   progress: ConsultationProgress | null;
+  checklistLabels: ChecklistLabels;
 
   setMessages: (messages: MessageResponse[]) => void;
   addMessage: (message: MessageResponse) => void;
@@ -14,6 +25,7 @@ interface ChatState {
   setAllCompleted: (completed: boolean) => void;
   setClassification: (c: { primaryField: string[]; tags: string[] } | null) => void;
   setProgress: (progress: ConsultationProgress | null) => void;
+  setChecklistLabels: (labels: ChecklistLabels) => void;
   reset: () => void;
 }
 
@@ -23,6 +35,7 @@ export const useChatStore = create<ChatState>((set) => ({
   allCompleted: false,
   classification: null,
   progress: null,
+  checklistLabels: createEmptyChecklistLabels(),
 
   setMessages: (messages) => set({ messages }),
   addMessage: (message) =>
@@ -31,6 +44,7 @@ export const useChatStore = create<ChatState>((set) => ({
   setAllCompleted: (allCompleted) => set({ allCompleted }),
   setClassification: (classification) => set({ classification }),
   setProgress: (progress) => set({ progress }),
+  setChecklistLabels: (checklistLabels) => set({ checklistLabels }),
   reset: () =>
     set({
       messages: [],
@@ -38,5 +52,6 @@ export const useChatStore = create<ChatState>((set) => ({
       allCompleted: false,
       classification: null,
       progress: null,
+      checklistLabels: createEmptyChecklistLabels(),
     }),
 }));

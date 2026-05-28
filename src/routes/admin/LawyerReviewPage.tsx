@@ -111,7 +111,7 @@ export function LawyerReviewPage() {
           <ArrowLeft className="h-4 w-4" />
         </button>
         <h1 className="text-[15px] font-medium text-[#1a1a1a] flex-1">가입 신청 상세</h1>
-        <span className={`${badge.bg} ${badge.text} text-[11px] font-medium h-[22px] px-3 rounded-[11px] flex items-center`}>
+        <span className={`${badge.bg} ${badge.text} inline-flex min-h-6 shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-medium`}>
           {badge.label}
         </span>
       </div>
@@ -123,21 +123,24 @@ export function LawyerReviewPage() {
             <span className="text-[18px] font-medium text-white">{initial}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[16px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
-            <p className="text-[11px] text-[#adb5b8]">{lawyer.email || '-'}</p>
-            <p className="text-[11px] text-[#adb5b8]">{lawyer.phone || '-'}</p>
+            <p className="truncate text-[16px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
+            <p className="truncate text-[11px] text-[#6b7280]">{lawyer.email || '-'}</p>
+            <p className="truncate text-[11px] text-[#6b7280]">{lawyer.phone || '-'}</p>
           </div>
         </div>
         {lawyer.domains && lawyer.domains.length > 0 && (
-          <div className="flex items-center gap-1.5 mt-2.5">
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
             {lawyer.domains.map((spec: string) => (
-              <span key={spec} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
+              <span key={spec} className="inline-flex min-h-6 max-w-full items-center rounded-full bg-[#e8f0fc] px-2 py-1 text-[10px] text-[#0c447c]">
                 {spec}
               </span>
             ))}
           </div>
         )}
       </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+        <div className="min-w-0 space-y-4">
 
       {/* 기본 정보 */}
       <div>
@@ -150,9 +153,9 @@ export function LawyerReviewPage() {
             { label: '활동 지역', value: lawyer.region || '-' },
           ].map((row, i, arr) => (
             <div key={row.label}>
-              <div className="flex items-center px-3 h-[22px]">
-                <span className="text-[12px] text-[#6b7280] w-[140px]">{row.label}</span>
-                <span className="text-[12px] text-[#1a1a1a]">{row.value}</span>
+              <div className="flex min-h-[32px] items-center px-3 py-1">
+                <span className="w-[140px] shrink-0 text-[12px] text-[#6b7280]">{row.label}</span>
+                <span className="min-w-0 break-words text-[12px] text-[#1a1a1a]">{row.value}</span>
               </div>
               {i < arr.length - 1 && <div className="h-[0.5px] bg-[#e9edef] mx-3" />}
             </div>
@@ -180,7 +183,7 @@ export function LawyerReviewPage() {
                     <span className="text-[10px] font-medium text-[#0c447c]">PDF</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[12px] font-medium text-[#1a1a1a] truncate">{d.fileName}</p>
+                    <p className="truncate text-[12px] font-medium text-[#1a1a1a]" title={d.fileName}>{d.fileName}</p>
                     <p className="text-[11px] text-[#adb5b8] mt-0.5">
                       {formatFileSize(d.fileSize)} · {new Date(d.createdAt).toLocaleDateString('ko-KR')}
                     </p>
@@ -189,14 +192,14 @@ export function LawyerReviewPage() {
                         href={d.fileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-[#e8f0fc] text-[#1a6de0] text-[10px] h-[18px] px-2 rounded-[9px] flex items-center"
+                        className="inline-flex min-h-6 items-center rounded-full bg-[#e8f0fc] px-2.5 py-1 text-[10px] text-[#1a6de0]"
                       >
                         미리보기
                       </a>
                       <a
                         href={d.fileUrl}
                         download
-                        className="bg-[#e8f0fc] text-[#1a6de0] text-[10px] h-[18px] px-2 rounded-[9px] flex items-center"
+                        className="inline-flex min-h-6 items-center rounded-full bg-[#e8f0fc] px-2.5 py-1 text-[10px] text-[#1a6de0]"
                       >
                         다운로드
                       </a>
@@ -209,6 +212,9 @@ export function LawyerReviewPage() {
         )}
       </div>
 
+        </div>
+
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-6">
       {/* 자동 검증 */}
       <div>
         <p className="text-[12px] font-medium text-[#1a6de0] mb-1.5">자동 검증</p>
@@ -228,12 +234,12 @@ export function LawyerReviewPage() {
               const isPass = item.key === 'requiredFields' ? value : !value;
               return (
                 <div key={item.key}>
-                  <div className="flex items-center justify-between px-3 h-[20px]">
-                    <span className="text-[12px] text-[#6b7280]">{item.label}</span>
+                  <div className="flex min-h-[32px] items-center justify-between gap-3 px-3 py-1">
+                    <span className="min-w-0 text-[12px] text-[#6b7280]">{item.label}</span>
                     {isPass ? (
-                      <span className="text-[11px] text-[#3b6e11]">✓ 이상 없음</span>
+                      <span className="shrink-0 text-[11px] text-[#3b6e11]">✓ 이상 없음</span>
                     ) : (
-                      <span className="text-[11px] text-[#854f0b]">⚠ 주의 필요</span>
+                      <span className="shrink-0 text-[11px] text-[#854f0b]">⚠ 주의 필요</span>
                     )}
                   </div>
                   {i < VERIFY_ITEMS.length - 1 && <div className="h-[0.5px] bg-[#e9edef] mx-3" />}
@@ -257,11 +263,11 @@ export function LawyerReviewPage() {
                 const isChecked = item.key === 'duplicateSignup' ? !checked : checked;
                 return (
                   <div key={item.key}>
-                    <div className="flex items-center gap-2.5 h-[22px]">
+                    <div className="flex min-h-[32px] items-center gap-2.5 py-1">
                       <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isChecked ? 'bg-[#1a6de0]' : 'bg-[#e9edef]'}`}>
                         {isChecked && <span className="text-[12px] font-medium text-white">✓</span>}
                       </div>
-                      <span className="text-[12px] text-[#1a1a1a]">{item.label}</span>
+                      <span className="min-w-0 text-[12px] text-[#1a1a1a]">{item.label}</span>
                     </div>
                     {i < CHECKLIST_ITEMS.length - 1 && <div className="h-[0.5px] bg-[#e9edef] my-0.5" />}
                   </div>
@@ -286,13 +292,13 @@ export function LawyerReviewPage() {
       {/* 액션 버튼 — 검토 진행 중인 상태에서만 노출.
           VERIFIED/REJECTED 같은 종결 상태에서는 안내 메시지로 대체. */}
       {lawyer.verificationStatus === 'VERIFIED' ? (
-        <div className="pt-2 px-4 py-3 bg-[#eaf3de] rounded-[12px] text-center">
+        <div className="rounded-[12px] bg-[#eaf3de] px-4 py-3 text-center">
           <p className="text-[13px] font-medium text-[#3b6e11]">
             이미 승인 완료된 변호사입니다.
           </p>
         </div>
       ) : lawyer.verificationStatus === 'REJECTED' ? (
-        <div className="pt-2 px-4 py-3 bg-[#fcebeb] rounded-[12px] text-center">
+        <div className="rounded-[12px] bg-[#fcebeb] px-4 py-3 text-center">
           <p className="text-[13px] font-medium text-[#a32c2c]">
             거절 처리된 변호사입니다.
           </p>
@@ -303,7 +309,7 @@ export function LawyerReviewPage() {
             type="button"
             onClick={() => setModalAction('VERIFIED')}
             disabled={processing}
-            className="w-full h-12 bg-[#1a6de0] rounded-[24px] text-[15px] font-medium text-white disabled:opacity-50"
+            className="min-h-12 w-full rounded-[24px] bg-[#1a6de0] text-[15px] font-medium text-white disabled:opacity-50"
           >
             승인
           </button>
@@ -311,7 +317,7 @@ export function LawyerReviewPage() {
             type="button"
             onClick={() => setModalAction('SUPPLEMENT_REQUESTED')}
             disabled={processing}
-            className="w-full h-11 bg-white border-[1.5px] border-[#faeeda] rounded-[22px] text-[14px] font-medium text-[#854f0b] disabled:opacity-50"
+            className="min-h-11 w-full rounded-[22px] border-[1.5px] border-[#faeeda] bg-white text-[14px] font-medium text-[#854f0b] disabled:opacity-50"
           >
             보완 요청
           </button>
@@ -319,12 +325,14 @@ export function LawyerReviewPage() {
             type="button"
             onClick={() => setModalAction('REJECTED')}
             disabled={processing}
-            className="w-full h-11 bg-white border-[1.5px] border-[#fcebeb] rounded-[22px] text-[14px] font-medium text-[#a32c2c] disabled:opacity-50"
+            className="min-h-11 w-full rounded-[22px] border-[1.5px] border-[#fcebeb] bg-white text-[14px] font-medium text-[#a32c2c] disabled:opacity-50"
           >
             거절
           </button>
         </div>
       )}
+        </aside>
+      </div>
 
       {/* 확인 모달 */}
       {modalAction && (

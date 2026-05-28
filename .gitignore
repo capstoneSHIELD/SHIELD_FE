@@ -11,3 +11,9 @@ dist
 # Lockfiles from other package managers (this project uses npm)
 pnpm-lock.yaml
 yarn.lock
+
+# Playwright (Phase 5 — adaptive layout regression)
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

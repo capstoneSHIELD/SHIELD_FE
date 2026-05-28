@@ -30,7 +30,7 @@ function SectionTitle({ children }: { children: string }) {
 
 function FieldBox({ children }: { children: string }) {
   return (
-    <div className="rounded-card border border-gray-200 bg-white px-[13px] py-[11px] text-[13px] text-[#111827]">
+    <div className="min-w-0 break-words rounded-card border border-gray-200 bg-white px-[13px] py-[11px] text-[13px] text-[#111827]">
       {children}
     </div>
   );
@@ -142,19 +142,24 @@ export function LawyerProfilePage() {
     <LawyerPage>
       <LawyerHeader title="내 프로필" />
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-28 lg:py-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 pb-6 lg:px-6 lg:py-6 lg:pb-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 gap-5 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start"
+          noValidate
+        >
           {successMessage && (
-            <div className="rounded-card border border-green-200 bg-green-50 px-4 py-3">
+            <div className="rounded-card border border-green-200 bg-green-50 px-4 py-3 lg:col-span-2">
               <p className="text-sm font-medium text-green-700">{successMessage}</p>
             </div>
           )}
           {saveError && (
-            <div className="rounded-card border border-red-100 bg-red-50 px-4 py-3" role="alert">
+            <div className="rounded-card border border-red-100 bg-red-50 px-4 py-3 lg:col-span-2" role="alert">
               <p className="text-sm font-medium text-red-600">{saveError}</p>
             </div>
           )}
 
+          <aside className="min-w-0 space-y-5 lg:sticky lg:top-6">
           <LawyerCard className="px-4 py-5">
             <div className="flex items-center gap-4">
               <div className="shrink-0">
@@ -187,6 +192,10 @@ export function LawyerProfilePage() {
               <FieldBox>{user?.email ?? '-'}</FieldBox>
             </LawyerCard>
           </section>
+
+          </aside>
+
+          <div className="min-w-0 space-y-5">
 
           <section className="space-y-3">
             <SectionTitle>전문 분야</SectionTitle>
@@ -243,7 +252,7 @@ export function LawyerProfilePage() {
                   {profile.certifications.map((certification) => (
                     <div
                       key={certification}
-                      className="rounded-card border border-gray-100 bg-gray-50 px-3 py-2 text-[13px] font-medium text-[#111827]"
+                      className="break-words rounded-card border border-gray-100 bg-gray-50 px-3 py-2 text-[13px] font-medium text-[#111827]"
                     >
                       {certification}
                     </div>
@@ -267,7 +276,7 @@ export function LawyerProfilePage() {
             type="submit"
             disabled={isSubmitting}
             className={cn(
-              'flex h-14 w-full items-center justify-center rounded-card bg-brand text-base font-bold text-white shadow-lg shadow-brand/20',
+              'flex min-h-14 w-full items-center justify-center rounded-card bg-brand px-4 py-3 text-base font-bold text-white shadow-lg shadow-brand/20',
               'transition-colors hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
               isSubmitting && 'cursor-not-allowed opacity-60',
             )}
@@ -303,11 +312,12 @@ export function LawyerProfilePage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-card bg-red-500 text-base font-bold text-white shadow-lg shadow-red-200 transition-colors hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40"
+            className="flex min-h-14 w-full items-center justify-center gap-2 rounded-card bg-red-500 px-4 py-3 text-base font-bold text-white shadow-lg shadow-red-200 transition-colors hover:bg-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/40"
           >
             <LogOut size={18} strokeWidth={2} aria-hidden="true" />
             로그아웃
           </button>
+          </div>
         </form>
       </main>
     </LawyerPage>

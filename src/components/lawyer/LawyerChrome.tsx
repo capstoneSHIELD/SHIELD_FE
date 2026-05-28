@@ -30,7 +30,7 @@ export function LawyerHeader({
         className,
       )}
     >
-      <div className="flex h-14 items-center px-4">
+      <div className="flex h-[var(--app-header-height)] items-center px-4">
         <div className="flex w-10 shrink-0 items-center">
           {showBack ? (
             <button
@@ -94,9 +94,9 @@ export function LawyerDomainPill({ legalField }: { legalField?: string | null })
   const Icon = meta.Icon;
 
   return (
-    <span className="inline-flex max-w-full items-center gap-1 rounded-full bg-info-bg px-2.5 py-[3px] text-[11px] font-medium text-brand">
+    <span className="inline-flex max-w-full min-w-0 items-center gap-1 rounded-full bg-info-bg px-2.5 py-[3px] text-[11px] font-medium text-brand">
       <Icon size={11} strokeWidth={2} aria-hidden="true" className="shrink-0" />
-      <span className="truncate">{meta.label}</span>
+      <span className="min-w-0 truncate">{meta.label}</span>
     </span>
   );
 }
@@ -113,8 +113,8 @@ export function LawyerStatusPill({ status }: { status?: string | null }) {
       : 'bg-gray-100 text-gray-500';
 
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2.5 py-[3px] text-[11px] font-medium', style)}>
-      {DELIVERY_STATUS_LABEL[normalized] ?? normalized}
+    <span className={cn('inline-flex max-w-full min-w-0 items-center rounded-full px-2.5 py-[3px] text-[11px] font-medium', style)}>
+      <span className="min-w-0 truncate">{DELIVERY_STATUS_LABEL[normalized] ?? normalized}</span>
     </span>
   );
 }

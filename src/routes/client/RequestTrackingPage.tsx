@@ -277,82 +277,86 @@ export function RequestTrackingPage() {
   const steps = firstDelivery ? buildSteps(firstDelivery) : [];
 
   return (
-    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
+    <div className="mx-auto flex w-full max-w-5xl flex-col bg-white lg:bg-transparent">
       <PageHeader title="의뢰 현황" onBack={() => navigate(`/briefs/${id}`)} />
 
-      <main className="flex-1 space-y-5 px-4 py-6 pb-10">
+      <main className="grid flex-1 grid-cols-1 gap-5 px-4 py-6 pb-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start lg:px-6">
         {isLoading ? (
-          <div className="flex items-center justify-center h-48">
+          <div className="flex h-48 items-center justify-center lg:col-span-2">
             <Spinner size="lg" />
           </div>
         ) : !deliveries || deliveries.length === 0 ? (
-          <Card padding="md" className="text-center py-8">
+          <Card padding="md" className="text-center py-8 lg:col-span-2">
             <p className="text-sm text-gray-400">전달된 의뢰서가 없습니다.</p>
           </Card>
         ) : (
           <>
-            {/* B-15: 상단 변호사 헤더 카드 */}
-            {firstDelivery && <LawyerHeaderCard delivery={firstDelivery} />}
+            <div className="min-w-0 space-y-5">
+              {/* B-15: 상단 변호사 헤더 카드 */}
+              {firstDelivery && <LawyerHeaderCard delivery={firstDelivery} />}
 
-            {/* Progress stepper section */}
-            <Card padding="md">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
-                진행 단계
-              </p>
-              <VerticalStepper steps={steps} />
-            </Card>
+              {/* Delivery cards */}
+              <section>
+                <h2 className="text-sm font-semibold text-gray-700 mb-3">전달 현황</h2>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-1">
+                  {deliveries.map((d) => (
+                    <DeliveryCard key={d.deliveryId} delivery={d} />
+                  ))}
+                </div>
+              </section>
+            </div>
 
-            {/* Delivery cards */}
-            <section>
-              <h2 className="text-sm font-semibold text-gray-700 mb-3">전달 현황</h2>
-              <div className="space-y-3">
-                {deliveries.map((d) => (
-                  <DeliveryCard key={d.deliveryId} delivery={d} />
-                ))}
+            <aside className="min-w-0 space-y-5 lg:sticky lg:top-6 lg:self-start">
+              {/* Progress stepper section */}
+              <Card padding="md">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-4">
+                  진행 단계
+                </p>
+                <VerticalStepper steps={steps} />
+              </Card>
+
+              {/* Info box */}
+              <div className="rounded-[14px] bg-[#f0f7ff] border border-brand/10 px-4 py-4 flex gap-3">
+                <Clock size={20} className="text-brand shrink-0 mt-0.5" aria-hidden="true" />
+                <div>
+                  <p className="text-sm font-bold text-[#02264b] mb-1">의뢰 응답 안내</p>
+                  <p className="text-xs text-[#02264b]/80 leading-relaxed">
+                    변호사가 의뢰를 수신한 후 <strong className="text-brand">24시간 이내</strong>에 응답하지 않을 경우, 의뢰는 자동으로 거절 처리됩니다.
+                  </p>
+                </div>
               </div>
-            </section>
+
+              {/* B-16: 하단 의뢰 취소 버튼 + 고객센터 링크 */}
+              <div className="space-y-3 pt-2">
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  onClick={() => setCancelOpen(true)}
+                  disabled={!firstDelivery}
+                >
+                  의뢰 취소하기
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/lawyers')}
+                  className="w-full text-xs text-[#62686f] hover:text-brand transition-colors"
+                >
+                  다른 변호사 찾기
+                </button>
+                <div className="text-center text-xs text-[#62686f]">
+                  <span>문제가 발생했나요? </span>
+                  <a
+                    href={SUPPORT_MAILTO}
+                    className="inline-flex items-center gap-0.5 text-brand font-medium hover:brightness-90"
+                  >
+                    <HelpCircle size={12} aria-hidden="true" />
+                    고객센터 문의
+                  </a>
+                </div>
+              </div>
+            </aside>
           </>
         )}
-
-        {/* Info box */}
-        <div className="rounded-[14px] bg-[#f0f7ff] border border-brand/10 px-4 py-4 flex gap-3">
-          <Clock size={20} className="text-brand shrink-0 mt-0.5" aria-hidden="true" />
-          <div>
-            <p className="text-sm font-bold text-[#02264b] mb-1">의뢰 응답 안내</p>
-            <p className="text-xs text-[#02264b]/80 leading-relaxed">
-              변호사가 의뢰를 수신한 후 <strong className="text-brand">24시간 이내</strong>에 응답하지 않을 경우, 의뢰는 자동으로 거절 처리됩니다.
-            </p>
-          </div>
-        </div>
-
-        {/* B-16: 하단 의뢰 취소 버튼 + 고객센터 링크 */}
-        <div className="pt-2 space-y-3">
-          <Button
-            variant="secondary"
-            fullWidth
-            onClick={() => setCancelOpen(true)}
-            disabled={!firstDelivery}
-          >
-            의뢰 취소하기
-          </Button>
-          <button
-            type="button"
-            onClick={() => navigate('/lawyers')}
-            className="w-full text-xs text-[#62686f] hover:text-brand transition-colors"
-          >
-            다른 변호사 찾기
-          </button>
-          <div className="text-center text-xs text-[#62686f]">
-            <span>문제가 발생했나요? </span>
-            <a
-              href={SUPPORT_MAILTO}
-              className="inline-flex items-center gap-0.5 text-brand font-medium hover:brightness-90"
-            >
-              <HelpCircle size={12} aria-hidden="true" />
-              고객센터 문의
-            </a>
-          </div>
-        </div>
       </main>
 
       {/* 의뢰 취소 확인 모달 */}

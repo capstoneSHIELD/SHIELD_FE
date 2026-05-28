@@ -33,7 +33,7 @@ export function PageHeader({
     return (
       <header
         className={cn(
-          'sticky top-0 z-10 flex h-[68px] w-full items-center justify-center border-b border-[#e0e2e6] bg-white px-2',
+          'sticky top-0 z-10 flex h-[var(--app-mobile-header-height)] w-full items-center justify-center border-b border-[#e0e2e6] bg-white px-2',
           className,
         )}
       >
@@ -56,7 +56,7 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        'sticky top-0 z-10 flex h-[68px] w-full items-center justify-center border-b border-[#e0e2e6] bg-white px-2',
+        'sticky top-0 z-10 flex h-[var(--app-mobile-header-height)] w-full items-center justify-center border-b border-[#e0e2e6] bg-white px-2',
         className,
       )}
     >

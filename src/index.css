@@ -26,6 +26,13 @@
   --radius-pill: 9999px;
   --shadow-btn: 0 4px 8px rgba(35, 37, 41, 0.08);
   --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);
+  --app-sidebar-width: 15rem;
+  --app-content-max-width: 80rem;
+  --app-header-height: 3.5rem;
+  --app-mobile-header-height: 68px;
+  --app-bottom-nav-height: 4rem;
+  --app-bottom-nav-safe-padding: max(0.5rem, env(safe-area-inset-bottom));
+  --app-bottom-nav-space: calc(var(--app-bottom-nav-height) + var(--app-bottom-nav-safe-padding) + 0.75rem);
 }
 
 /* ===== Tailwind v4 Theme ===== */
@@ -55,6 +62,71 @@
   --shadow-card: 0 2px 4px rgba(35, 37, 41, 0.06);
 }
 
+/* ===== App Layout Contract ===== */
+.app-shell {
+  display: flex;
+  height: 100dvh;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--color-surface);
+}
+
+.app-scroll-main {
+  display: flex;
+  min-height: 0;
+  flex: 1 1 0%;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-sidebar-offset {
+  padding-left: 0;
+}
+
+.app-bottom-nav-offset {
+  padding-bottom: var(--app-bottom-nav-space);
+}
+
+.app-content-frame {
+  margin-inline: auto;
+  display: flex;
+  min-height: 0;
+  width: 100%;
+  max-width: var(--app-content-max-width);
+  flex: 1 1 0%;
+  flex-direction: column;
+}
+
+.app-bottom-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  padding-bottom: var(--app-bottom-nav-safe-padding);
+}
+
+.app-sticky-mobile-cta {
+  position: sticky;
+  bottom: var(--app-bottom-nav-space);
+}
+
+@media (min-width: 1024px) {
+  .app-sidebar-offset {
+    padding-left: var(--app-sidebar-width);
+  }
+
+  .app-bottom-nav-offset {
+    padding-bottom: 0;
+  }
+
+  .app-sticky-mobile-cta {
+    bottom: 0;
+  }
+}
+
 /* ===== Global Resets ===== */
 *,
 *::before,
@@ -81,12 +153,21 @@ body {
 }
 
 /* ===== iOS Safe Area ===== */
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-bottom-base, 0px);
+}
+
+.safe-area-top {
+  padding-top: var(--safe-area-top-base, 0px);
+}
+
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: calc(var(--safe-area-bottom-base, 0px) + env(safe-area-inset-bottom));
   }
+
   .safe-area-top {
-    padding-top: env(safe-area-inset-top);
+    padding-top: calc(var(--safe-area-top-base, 0px) + env(safe-area-inset-top));
   }
 }
 

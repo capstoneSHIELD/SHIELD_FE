@@ -113,10 +113,10 @@ export function AnalyzingPage() {
     const isUserOverridden = !classificationResult.aiDomains && !!classificationResult.userDomains?.length;
 
     return (
-      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+      <div className="mx-auto flex h-full w-full max-w-5xl flex-col bg-white lg:bg-transparent">
         <PageHeader title="분류 결과" onBack={() => navigate(`/consultations/${id}`)} />
 
-        <main className="flex flex-1 flex-col overflow-y-auto px-[20px] pt-[19px] pb-32">
+        <main className="flex flex-1 flex-col overflow-y-auto px-[20px] pt-[19px] pb-32 lg:px-6 lg:py-8">
           {/* Title — figma 06 */}
           <h2 className="text-[20px] font-bold leading-[30px] text-[#181b20]">
             사건 분류가 <span className="text-brand">완료</span>되었습니다
@@ -126,7 +126,7 @@ export function AnalyzingPage() {
           </p>
 
           {/* Big result card */}
-          <div className="mt-6 flex flex-col items-center rounded-[10px] bg-[#d8ebfd] px-6 pt-8 pb-7 shadow-[0px_8px_16px_0px_rgba(23,25,28,0.1)]">
+          <div className="mt-6 flex flex-col items-center rounded-[10px] bg-[#d8ebfd] px-6 pt-8 pb-7 shadow-[0px_8px_16px_0px_rgba(23,25,28,0.1)] lg:max-w-xl">
             <div className="flex h-[72px] w-[72px] items-center justify-center rounded-[12px] bg-brand/10">
               <meta.Icon
                 size={40}
@@ -173,7 +173,7 @@ export function AnalyzingPage() {
         </main>
 
         {/* Bottom action area (sticky, backdrop blur — figma 06) */}
-        <div className="sticky bottom-0 left-0 right-0 z-10 mx-auto w-full max-w-[390px] bg-white/80 backdrop-blur-[6px] pt-5 pb-6">
+        <div className="app-sticky-mobile-cta left-0 right-0 z-10 mx-auto w-full max-w-[390px] bg-white/80 backdrop-blur-[6px] pt-5 pb-6 lg:static lg:mx-0 lg:max-w-xl lg:bg-transparent lg:backdrop-blur-none">
           <div className="px-[25px]">
             <button
               type="button"
@@ -216,7 +216,7 @@ export function AnalyzingPage() {
 
   // ── loading state (figma 07) ─────────────────────────────────────────────
   return (
-    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
+    <div className="mx-auto flex h-full w-full max-w-5xl flex-col bg-white lg:bg-transparent">
       <main className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         {timedOut ? (
           <>
