@@ -41,6 +41,35 @@ const mockMessage = {
   createdAt: '2025-01-15T10:05:00',
 };
 
+const mockEarlyReadyMessage = {
+  messageId: 'bb0e8400-e29b-41d4-a716-446655440106',
+  role: 'CHATBOT',
+  content: '보증금 반환이 지연된 기간과 집주인에게 보낸 연락 내용을 더 알려주실 수 있을까요?',
+  createdAt: '2025-01-15T10:16:00',
+  allCompleted: true,
+  classification: {
+    primaryField: ['CIVIL'],
+    tags: ['임대차', '보증금'],
+    conflict: false,
+    userCandidate: null,
+    aiCandidate: {
+      domains: ['CIVIL'],
+      subDomains: ['LEASE'],
+      tags: ['임대차', '보증금'],
+    },
+    effectiveCandidate: {
+      domains: ['CIVIL'],
+      subDomains: ['LEASE'],
+      tags: ['임대차', '보증금'],
+    },
+  },
+  progress: {
+    currentTurn: 5,
+    maxTurns: 10,
+    progressPercent: 50,
+  },
+};
+
 const mockBriefSummary = {
   briefId: '770e8400-e29b-41d4-a716-446655440002',
   title: '임대차 분쟁 의뢰서',
@@ -192,7 +221,24 @@ export const handlers = [
     return ok({ ...mockConsultation, consultationId: params.id as string });
   }),
 
-  http.post(`${BASE}/consultations/:id/messages`, () => {
+  http.post(`${BASE}/consultations/:id/messages`, async ({ params, request }) => {
+    const body = (await request.json().catch(() => null)) as {
+      content?: string;
+    } | null;
+    const shouldReturnEarlyReady =
+      params.id === 'early-ready' || body?.content?.includes('조기완료');
+
+    if (shouldReturnEarlyReady) {
+      return HttpResponse.json(
+        {
+          result: true,
+          message: '성공',
+          data: mockEarlyReadyMessage,
+        },
+        { status: 202 },
+      );
+    }
+
     return HttpResponse.json(
       {
         result: true,
@@ -206,6 +252,23 @@ export const handlers = [
           classification: {
             primaryField: ['CIVIL'],
             tags: ['임대차'],
+            conflict: false,
+            userCandidate: null,
+            aiCandidate: {
+              domains: ['CIVIL'],
+              subDomains: ['LEASE'],
+              tags: ['임대차'],
+            },
+            effectiveCandidate: {
+              domains: ['CIVIL'],
+              subDomains: ['LEASE'],
+              tags: ['임대차'],
+            },
+          },
+          progress: {
+            currentTurn: 1,
+            maxTurns: 10,
+            progressPercent: 10,
           },
         },
       },

@@ -5,7 +5,7 @@ import type { ConsultationProgress } from '@/types';
 interface ConsultationProgressBarProps {
   /** BE 응답의 progress 객체. null/undefined 면 0% 빈 상태로 표시 */
   progress?: ConsultationProgress | null;
-  /** allCompleted 신호. true 면 100% 강조 + CTA 안내로 라벨 치환 */
+  /** allCompleted 신호. 조기 완료면 CTA 옵션 안내, 턴 상한이면 완료 안내로 표시 */
   completed?: boolean;
   className?: string;
 }
@@ -16,7 +16,7 @@ interface ConsultationProgressBarProps {
  * - `progressPercent` 는 BE 가 계산한 값을 그대로 사용 (재계산 X)
  * - `width` style 에만 0~100 safe-clamp 적용
  * - `maxTurns` 는 BE 응답값 그대로 사용 — 하드코딩 X (향후 BE 가 12/15 등으로 변경 가능)
- * - 100% 도달 시 색상 강조 + pulse 애니메이션 + CTA 라벨
+ * - allCompleted 조기 신호와 100% 도달 강제 종료를 라벨로 구분
  */
 export function ConsultationProgressBar({
   progress,
@@ -32,7 +32,9 @@ export function ConsultationProgressBar({
     };
   }, [progress]);
 
-  const isCompleted = completed || percent >= 100;
+  const isTurnLimitReached = percent >= 100;
+  const isEarlyReady = completed && !isTurnLimitReached;
+  const isCompleted = completed || isTurnLimitReached;
 
   return (
     <div
@@ -45,9 +47,18 @@ export function ConsultationProgressBar({
       {/* Label row */}
       <div className="flex items-center justify-between text-xs">
         {isCompleted ? (
-          <span className="font-semibold text-emerald-600">
-            정보 수집 완료 — 의뢰서를 생성해주세요
-          </span>
+          isEarlyReady ? (
+            <span className="font-semibold text-emerald-600">
+              의뢰서 생성 준비 완료 — 더 답하거나 바로 생성할 수 있어요
+              <span className="ml-2 font-mono text-gray-400">
+                ({currentTurn} / {maxTurns})
+              </span>
+            </span>
+          ) : (
+            <span className="font-semibold text-emerald-600">
+              정보 수집 완료 — 의뢰서를 생성해주세요
+            </span>
+          )
         ) : (
           <>
             <span className="font-medium text-gray-700">상담 진행률</span>
@@ -66,7 +77,9 @@ export function ConsultationProgressBar({
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={
-          isCompleted
+          isEarlyReady
+            ? `의뢰서 생성 준비 완료: 상담 진행률 ${percent}% (${currentTurn} / ${maxTurns} 단계)`
+            : isCompleted
             ? '상담 진행률 100% 완료'
             : `상담 진행률 ${percent}% (${currentTurn} / ${maxTurns} 단계)`
         }
@@ -74,9 +87,11 @@ export function ConsultationProgressBar({
         <div
           className={cn(
             'h-full rounded-full transition-[width] duration-500 ease-out',
-            isCompleted
-              ? 'bg-emerald-500 animate-pulse'
-              : 'bg-gradient-to-r from-brand to-brand/60',
+            isEarlyReady
+              ? 'bg-emerald-500'
+              : isCompleted
+                ? 'bg-emerald-500 animate-pulse'
+                : 'bg-gradient-to-r from-brand to-brand/60',
           )}
           style={{ width: `${percent}%` }}
         />

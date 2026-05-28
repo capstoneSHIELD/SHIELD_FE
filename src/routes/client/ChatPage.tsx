@@ -34,6 +34,11 @@ export function ChatPage() {
   // Analyze mutation
   const { mutate: requestAnalyze, isPending: isAnalyzing } = useRequestAnalyze(id);
 
+  // 10턴 도달 강제 종료와 LLM 자율 조기 완료를 구분한다.
+  const isTurnLimitReached =
+    progress != null && progress.currentTurn >= progress.maxTurns;
+  const lockInput = isTurnLimitReached;
+
   // ── status-based redirects ──────────────────────────────────────────────
   useEffect(() => {
     if (!consultation) return;
@@ -123,18 +128,31 @@ export function ChatPage() {
             >
               의뢰서 생성
             </Button>
+            {!isTurnLimitReached && (
+              <p className="mt-1 text-center text-[11px] text-text-soft">
+                더 자세히 알려주실 내용이 있다면 계속 답변하셔도 됩니다.
+              </p>
+            )}
           </div>
         )}
 
         {/* Chat input */}
         <ChatInput
           onSend={sendMessage}
-          disabled={isSending || allCompleted}
-          placeholder={allCompleted ? '상담이 완료되었습니다' : '메시지를 입력하세요...'}
+          disabled={isSending || lockInput}
+          placeholder={
+            lockInput
+              ? '상담이 완료되었습니다'
+              : allCompleted
+                ? '추가로 답하거나, 위 버튼을 눌러 의뢰서를 생성하세요'
+                : '메시지를 입력하세요...'
+          }
           subtext={
-            allCompleted
+            lockInput
               ? undefined
-              : '상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.'
+              : allCompleted
+                ? undefined
+                : '상담 내용을 입력하면 AI가 법률 분야를 자동으로 분류합니다.'
           }
         />
       </div>
