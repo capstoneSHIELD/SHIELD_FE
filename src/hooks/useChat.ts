@@ -89,8 +89,9 @@ function groupChecklistLabels(items: ChecklistItem[]): ChecklistLabels {
   const labels: ChecklistLabels = { L1: [], L2: [], L3: [] };
 
   items.forEach((item) => {
-    const label = item.label.trim();
-    if (label) {
+    if (!item) return;
+    const label = typeof item.label === 'string' ? item.label.trim() : '';
+    if (label && labels[item.level]) {
       labels[item.level].push(label);
     }
   });
