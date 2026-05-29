@@ -43,20 +43,20 @@ export function LawyerProfilePage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col bg-white lg:bg-transparent">
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
       <PageHeader title="변호사 프로필" />
 
-      <main className="grid flex-1 grid-cols-1 gap-3 px-4 py-4 pb-28 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:px-6 lg:pb-8">
+      <main className="flex-1 space-y-3 px-4 py-4 pb-28">
         {/* Loading */}
         {isLoading && (
-          <div className="flex h-64 items-center justify-center lg:col-span-2">
+          <div className="flex items-center justify-center h-64">
             <Spinner size="lg" />
           </div>
         )}
 
         {/* Not found */}
         {!isLoading && !lawyer && (
-          <div className="flex flex-col items-center justify-center gap-4 pt-20 text-center lg:col-span-2">
+          <div className="flex flex-col items-center justify-center gap-4 pt-20 text-center">
             <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center">
               <User size={36} className="text-gray-300" aria-hidden="true" />
             </div>
@@ -68,7 +68,6 @@ export function LawyerProfilePage() {
 
         {lawyer && (
           <>
-            <div className="min-w-0 space-y-3">
             {/* ── B-11: 가로형 프로필 헤더 카드 ── */}
             <Card padding="md">
               <div className="flex items-start gap-4">
@@ -135,10 +134,6 @@ export function LawyerProfilePage() {
                 </div>
               </Card>
             )}
-
-            </div>
-
-            <aside className="min-w-0 space-y-3 lg:sticky lg:top-6 lg:self-start">
 
             {/* ── B-13: 주요 수행 사례 (수치 강조 2분할) ── */}
             <Card padding="md">
@@ -213,31 +208,6 @@ export function LawyerProfilePage() {
                 </div>
               </Card>
             )}
-
-            {briefId && (
-              <Card padding="md" className="hidden lg:block">
-                <p className="text-sm font-bold text-[#161a1d]">의뢰서 전달</p>
-                <p className="mt-2 text-xs leading-relaxed text-[#62686f]">
-                  이 변호사에게 현재 의뢰서를 전달하고 응답 현황을 추적합니다.
-                </p>
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  onClick={() => {
-                    if (alreadyDelivered) {
-                      setAlreadyOpen(true);
-                      return;
-                    }
-                    setConfirmOpen(true);
-                  }}
-                  className="mt-4"
-                >
-                  의뢰서 전달하기
-                </Button>
-              </Card>
-            )}
-            </aside>
           </>
         )}
       </main>
@@ -246,8 +216,8 @@ export function LawyerProfilePage() {
       {lawyer && briefId && (
         <div
           className={cn(
-            'app-sticky-mobile-cta z-30 lg:hidden',
-            'bg-white border-t border-gray-200 px-4 py-3 safe-area-bottom [--safe-area-bottom-base:0.75rem]',
+            'sticky bottom-0 z-30',
+            'bg-white border-t border-gray-200 px-4 py-3 safe-area-bottom',
           )}
         >
           <Button

@@ -72,9 +72,9 @@ export function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-dvh overflow-x-hidden bg-surface">
+    <div className="min-h-dvh bg-surface">
       {/* ── Fixed sidebar (md+) ── */}
-      <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-[var(--app-sidebar-width)] flex-col border-r border-gray-200 md:flex">
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 z-40 w-60 border-r border-gray-200">
         <AdminSidebar />
       </aside>
 
@@ -91,7 +91,7 @@ export function AdminLayout() {
       {/* Drawer */}
       <aside
         className={cn(
-          'fixed left-0 top-0 bottom-0 z-50 w-[var(--app-sidebar-width)] border-r border-gray-200',
+          'fixed left-0 top-0 bottom-0 z-50 w-60 border-r border-gray-200',
           'transform transition-transform duration-200 ease-in-out md:hidden',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
         )}
@@ -100,9 +100,9 @@ export function AdminLayout() {
       </aside>
 
       {/* ── Main area ── */}
-      <div className="flex min-h-dvh flex-col md:pl-[var(--app-sidebar-width)]">
+      <div className="md:pl-60 flex flex-col min-h-dvh">
         {/* Mobile header with hamburger */}
-        <header className="sticky top-0 z-30 flex h-[var(--app-header-height)] items-center gap-3 border-b border-gray-200 bg-white px-4 safe-area-top md:hidden">
+        <header className="md:hidden sticky top-0 z-30 h-14 bg-white border-b border-gray-200 flex items-center px-4 gap-3 safe-area-top">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -120,10 +120,8 @@ export function AdminLayout() {
         </header>
 
         {/* Page content */}
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6">
-          <div className="mx-auto w-full max-w-7xl">
-            <Outlet />
-          </div>
+        <main className="flex-1 px-4 py-6 sm:px-6">
+          <Outlet />
         </main>
       </div>
     </div>

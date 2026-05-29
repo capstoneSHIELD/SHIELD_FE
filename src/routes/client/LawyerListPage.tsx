@@ -46,7 +46,7 @@ function LawyerCard({ lawyer, matchedKeywords, onClick }: LawyerCardProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        'relative h-full w-full text-left bg-white rounded-card shadow-sm p-4',
+        'relative w-full text-left bg-white rounded-card shadow-sm p-4',
         'hover:shadow-md active:scale-[0.99] transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40',
       )}
@@ -408,7 +408,7 @@ export function LawyerListPage() {
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col bg-white lg:bg-transparent">
+    <div className="flex flex-col flex-1">
       {/* B-17: 워드마크 헤더 + 우측 아이콘 */}
       <PageHeader logoVariant="wordmark" rightSlot={rightActions} />
 
@@ -428,7 +428,7 @@ export function LawyerListPage() {
         </div>
       </div>
 
-      <main className="flex-1 px-4 py-4 lg:px-6">
+      <main className="flex-1 px-4 py-4">
         {/* B-18: 핵심 키워드 패널 — briefId 진입 시에만 노출 */}
         {briefId && briefKeywords.length > 0 && (
           <section className="mb-4 rounded-card bg-info-bg p-3.5">
@@ -470,7 +470,7 @@ export function LawyerListPage() {
         {/* List */}
         {!isLoading && lawyers.length > 0 && (
           <>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3">
               {lawyers.map((lawyer) => (
                 <LawyerCard
                   key={lawyer.lawyerId}

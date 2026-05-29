@@ -42,42 +42,40 @@ export function LawyerPendingPage() {
   return (
     <div className="space-y-4">
       {/* 검색바 */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)] md:items-center">
-        <div className="relative min-w-0">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#adb5b8]" />
-          <input
-            type="text"
-            placeholder="이름, 이메일, 연락처로 검색"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-            className="h-10 w-full rounded-[20px] border-[1.5px] border-[#e9edef] bg-white pl-10 pr-4 text-[13px] text-[#1a1a1a] outline-none transition-colors placeholder:text-[#adb5b8] focus:border-[#1a6de0]"
-          />
-        </div>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#adb5b8]" />
+        <input
+          type="text"
+          placeholder="🔍  이름, 이메일, 연락처로 검색"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(0); }}
+          className="w-full h-10 pl-10 pr-4 bg-white border-[1.5px] border-[#e9edef] rounded-[20px] text-[13px] text-[#1a1a1a] placeholder:text-[#adb5b8] outline-none focus:border-[#1a6de0] transition-colors"
+        />
+      </div>
 
-        {/* 필터 탭 */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide md:flex-wrap md:justify-end md:overflow-visible">
-          {FILTER_TABS.map((tab) => (
-            <button
-              key={tab.value}
-              type="button"
-              onClick={() => { setStatusFilter(tab.value); setPage(0); }}
-              className={cn(
-                'min-h-7 shrink-0 whitespace-nowrap rounded-[14px] px-3 text-[11px] font-normal transition-colors',
-                statusFilter === tab.value
-                  ? 'bg-[#1a6de0] text-white'
-                  : 'border-[1.5px] border-[#e9edef] bg-white text-[#6b7280]',
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* 필터 탭 */}
+      <div className="flex gap-2 overflow-x-auto no-scrollbar">
+        {FILTER_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            onClick={() => { setStatusFilter(tab.value); setPage(0); }}
+            className={cn(
+              'h-7 px-3 rounded-[14px] text-[11px] font-normal whitespace-nowrap shrink-0 transition-colors',
+              statusFilter === tab.value
+                ? 'bg-[#1a6de0] text-white'
+                : 'bg-white border-[1.5px] border-[#e9edef] text-[#6b7280]',
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* 변호사 카드 목록 */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+      <div className="space-y-3">
         {lawyers.length === 0 ? (
-          <div className="rounded-[14px] border-[0.5px] border-[#e9edef] bg-white py-16 text-center md:col-span-2 xl:col-span-3">
+          <div className="bg-white border-[0.5px] border-[#e9edef] rounded-[14px] py-16 text-center">
             <p className="text-[13px] text-[#6b7280]">심사 대기 중인 변호사가 없습니다</p>
           </div>
         ) : (
@@ -88,7 +86,7 @@ export function LawyerPendingPage() {
             return (
               <div
                 key={lawyer.lawyerId}
-                className="h-full overflow-hidden rounded-[14px] border-[0.5px] border-[#e9edef] bg-white"
+                className="bg-white border-[0.5px] border-[#e9edef] rounded-[14px] overflow-hidden"
               >
                 <div className="p-3">
                   {/* 상단: 아바타 + 이름/이메일/전화 + 상태 배지 */}
@@ -100,20 +98,20 @@ export function LawyerPendingPage() {
                       <span className="text-[15px] font-medium text-white">{initial}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-[14px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
-                      <p className="mt-0.5 truncate text-[11px] text-[#6b7280]">{lawyer.email || '-'}</p>
-                      <p className="truncate text-[11px] text-[#6b7280]">{lawyer.phone || '-'}</p>
+                      <p className="text-[14px] font-medium text-[#1a1a1a]">{lawyer.name}</p>
+                      <p className="text-[11px] text-[#adb5b8] mt-0.5">{lawyer.email || '-'}</p>
+                      <p className="text-[11px] text-[#adb5b8]">{lawyer.phone || '-'}</p>
                     </div>
-                    <span className={`${badge.bg} ${badge.text} inline-flex min-h-6 shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-medium`}>
+                    <span className={`${badge.bg} ${badge.text} text-[11px] font-medium h-[22px] px-3 rounded-[11px] flex items-center shrink-0`}>
                       {badge.label}
                     </span>
                   </div>
 
                   {/* 전문분야 태그 — L1 domains 만 표시 */}
                   {lawyer.domains && lawyer.domains.length > 0 && (
-                    <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 mt-3">
                       {lawyer.domains.map((spec: string) => (
-                        <span key={spec} className="inline-flex min-h-6 max-w-full items-center rounded-full bg-[#e8f0fc] px-2 py-1 text-[10px] text-[#0c447c]">
+                        <span key={spec} className="bg-[#e8f0fc] text-[#0c447c] text-[10px] h-5 px-2 rounded-[10px] flex items-center">
                           {spec}
                         </span>
                       ))}
@@ -132,7 +130,7 @@ export function LawyerPendingPage() {
                   <div className="p-3">
                     <Link
                       to={`/admin/lawyers/${lawyer.lawyerId}`}
-                      className="inline-flex min-h-6 items-center rounded-full bg-[#1a6de0] px-2.5 py-1 text-[11px] font-medium text-white"
+                      className="bg-[#1a6de0] text-white text-[11px] font-medium h-[22px] px-3 rounded-[11px] inline-flex items-center"
                     >
                       상세 보기
                     </Link>

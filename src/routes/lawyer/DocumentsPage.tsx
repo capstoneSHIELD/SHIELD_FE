@@ -224,9 +224,8 @@ export function DocumentsPage() {
     <LawyerPage>
       <LawyerHeader title="서류 관리" showBack onBack={() => navigate(-1)} />
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-4 pb-6 lg:px-6 lg:py-6 lg:pb-8">
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-start">
-          <div className="min-w-0 lg:sticky lg:top-6">
+      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-4 pb-24 lg:py-6">
+        <div className="space-y-4">
           <LawyerCard className="p-5">
             <h2 className="mb-3 text-sm font-semibold text-gray-700">서류 업로드</h2>
 
@@ -279,7 +278,7 @@ export function DocumentsPage() {
             {validationError && (
               <div className="mt-3 flex items-start gap-2 rounded-card bg-red-50 px-3 py-2">
                 <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-red-500" aria-hidden="true" />
-                <p className="whitespace-pre-line break-words text-xs text-red-600" role="alert">
+                <p className="whitespace-pre-line text-xs text-red-600" role="alert">
                   {validationError}
                 </p>
               </div>
@@ -309,7 +308,7 @@ export function DocumentsPage() {
                         >
                           {sf.file.name}
                         </p>
-                        <p className="mt-0.5 truncate text-xs">
+                        <p className="mt-0.5 text-xs">
                           <span className="text-gray-400">
                             {formatFileSize(sf.file.size)}
                           </span>
@@ -366,9 +365,8 @@ export function DocumentsPage() {
               업로드 버튼을 눌러야 선택한 파일이 업로드 됩니다.
             </p>
           </LawyerCard>
-          </div>
 
-          <section className="min-w-0">
+          <section>
             <h2 className="mb-3 text-sm font-semibold text-gray-700">제출된 서류</h2>
 
             {isLoading ? (
@@ -383,7 +381,7 @@ export function DocumentsPage() {
                 description="변호사 인증에 필요한 서류를 업로드해주세요."
               />
             ) : (
-              <div className="grid grid-cols-1 gap-2 xl:grid-cols-2">
+              <div className="flex flex-col gap-2">
                 {documents.map((doc) => (
                   <LawyerCard key={doc.documentId} className="p-3">
                     <div className="flex items-center gap-3">
@@ -391,10 +389,10 @@ export function DocumentsPage() {
                         <FileText size={18} className="text-gray-500" aria-hidden="true" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-gray-900" title={doc.fileName}>
+                        <p className="truncate text-sm font-medium text-gray-900">
                           {doc.fileName}
                         </p>
-                        <p className="mt-0.5 truncate text-xs text-gray-400">
+                        <p className="mt-0.5 text-xs text-gray-400">
                           {fileTypeLabel(doc.fileName, doc.fileType)} · {formatFileSize(doc.fileSize)} · {formatDate(doc.createdAt)}
                         </p>
                       </div>

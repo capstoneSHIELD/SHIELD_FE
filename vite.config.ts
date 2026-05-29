@@ -32,8 +32,5 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
-    // tests/e2e/ 는 Playwright 전용 — vitest 가 스캔하면 @playwright/test
-    // import 가 깨지므로 명시적으로 제외한다.
-    exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });

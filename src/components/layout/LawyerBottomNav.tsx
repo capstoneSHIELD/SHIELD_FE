@@ -17,9 +17,10 @@ export function LawyerBottomNav({ tabs, className }: LawyerBottomNavProps) {
   return (
     <nav
       className={cn(
-        'app-bottom-nav px-3 pt-2 sm:px-4 lg:hidden',
+        'fixed bottom-0 left-0 right-0 z-40 px-3 pt-2 sm:px-4 lg:hidden',
         className,
       )}
+      style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
       aria-label="변호사 하단 내비게이션"
     >
       <div className="mx-auto flex h-16 max-w-md items-center justify-around rounded-[22px] border border-gray-100 bg-white shadow-[0_-6px_18px_rgba(31,140,249,0.08)]">

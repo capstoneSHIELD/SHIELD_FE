@@ -39,7 +39,7 @@ export function FinalReviewPage() {
   // ── loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="mx-auto flex h-full w-full max-w-5xl flex-col bg-white lg:bg-transparent">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
         <PageHeader title="의뢰서 최종 확인" />
         <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
@@ -50,7 +50,7 @@ export function FinalReviewPage() {
 
   if (!brief) {
     return (
-      <div className="mx-auto flex h-full w-full max-w-5xl flex-col bg-white lg:bg-transparent">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
         <PageHeader title="의뢰서 최종 확인" />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-sm text-gray-500">의뢰서를 찾을 수 없습니다.</p>
@@ -74,22 +74,21 @@ export function FinalReviewPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col bg-white lg:bg-transparent">
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
       <PageHeader title="의뢰서 최종 확인" />
 
-      <main className="flex-1 px-6 py-6 pb-36 lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-6 lg:pb-8">
-        <div className="min-w-0 space-y-5">
-          {/* Intro */}
-          <div>
-            <h2 className="text-xl font-bold text-[#161a1d] tracking-tight leading-8">
-              마지막으로
-              <br />
-              내용을 확인해주세요.
-            </h2>
-            <p className="text-sm text-[#31383f] mt-2">
-              작성하신 의뢰서가 변호사님께 전달됩니다.
-            </p>
-          </div>
+      <main className="flex-1 space-y-5 px-6 py-6 pb-36">
+        {/* Intro */}
+        <div>
+          <h2 className="text-xl font-bold text-[#161a1d] tracking-tight leading-8">
+            마지막으로
+            <br />
+            내용을 확인해주세요.
+          </h2>
+          <p className="text-sm text-[#31383f] mt-2">
+            작성하신 의뢰서가 변호사님께 전달됩니다.
+          </p>
+        </div>
 
         {/* Case Summary Card — B-9: 파란 strip 상단 + 분야 칩 + 제목 */}
         <Card padding="none" className="overflow-hidden">
@@ -192,44 +191,25 @@ export function FinalReviewPage() {
           </div>
         </Card>
 
-        </div>
-
-        <aside className="mt-5 min-w-0 space-y-4 lg:sticky lg:top-6 lg:mt-0 lg:self-start">
-          {/* Warning box — figma 10 (warning-red 토큰 정합) */}
-          <div className="bg-warning-red/5 border border-warning-red/20 rounded-card p-4 flex gap-3">
-            <div className="shrink-0 w-9 h-9 rounded-[18px] bg-warning-red/10 flex items-center justify-center mt-1">
-              <TriangleAlert size={20} className="text-warning-red" />
-            </div>
-            <div>
-              <p className="text-sm font-bold text-warning-red mb-1">제출 전 확인 필수</p>
-              <p className="text-[10px] text-warning-red/80 leading-[18px]">
-                의뢰서 제출 버튼을 누른 후에는{' '}
-                <span className="underline">내용을 수정할 수 없습니다.</span>
-                <br />
-                모든 항목이 정확한지 다시 한번 확인해 주세요.
-              </p>
-            </div>
+        {/* Warning box — figma 10 (warning-red 토큰 정합) */}
+        <div className="bg-warning-red/5 border border-warning-red/20 rounded-card p-4 flex gap-3">
+          <div className="shrink-0 w-9 h-9 rounded-[18px] bg-warning-red/10 flex items-center justify-center mt-1">
+            <TriangleAlert size={20} className="text-warning-red" />
           </div>
-
-          <div className="hidden rounded-card border border-[#e9ecef] bg-white p-5 shadow-sm lg:block">
-            <Button
-              variant="primary"
-              fullWidth
-              size="lg"
-              onClick={handleSendRequest}
-              className="rounded-card h-14 shadow-lg shadow-brand/20"
-            >
-              변호사 선택
-            </Button>
-            <p className="text-[10px] text-[#31383f] text-center mt-3">
-              제출 시 SHIELD 서비스 이용 약관 및 개인정보 처리방침에 동의하게 됩니다.
+          <div>
+            <p className="text-sm font-bold text-warning-red mb-1">제출 전 확인 필수</p>
+            <p className="text-[10px] text-warning-red/80 leading-[18px]">
+              의뢰서 제출 버튼을 누른 후에는{' '}
+              <span className="underline">내용을 수정할 수 없습니다.</span>
+              <br />
+              모든 항목이 정확한지 다시 한번 확인해 주세요.
             </p>
           </div>
-        </aside>
+        </div>
       </main>
 
       {/* Fixed bottom CTA */}
-      <div className="app-sticky-mobile-cta bg-white shadow-[0px_-10px_20px_0px_rgba(0,0,0,0.02)] px-6 py-6 safe-area-bottom [--safe-area-bottom-base:1.5rem] lg:hidden">
+      <div className="sticky bottom-0 bg-white shadow-[0px_-10px_20px_0px_rgba(0,0,0,0.02)] px-6 py-6 safe-area-bottom">
         <Button
           variant="primary"
           fullWidth

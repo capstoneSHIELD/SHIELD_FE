@@ -139,7 +139,7 @@ export function BriefDetailPage() {
   // ── loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="mx-auto flex h-full w-full max-w-6xl flex-col bg-white lg:bg-transparent">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
         <PageHeader title="의뢰서" onBack={() => navigate('/briefs')} />
         <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
@@ -150,7 +150,7 @@ export function BriefDetailPage() {
 
   if (!brief) {
     return (
-      <div className="mx-auto flex h-full w-full max-w-6xl flex-col bg-white lg:bg-transparent">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
         <PageHeader title="의뢰서" onBack={() => navigate('/briefs')} />
         <div className="flex flex-1 items-center justify-center">
           <p className="text-sm text-gray-500">의뢰서를 찾을 수 없습니다.</p>
@@ -162,31 +162,22 @@ export function BriefDetailPage() {
   // ── render ───────────────────────────────────────────────────────────────
   // 핵심 키워드 컬러 분류 (P-2): 상위 3개는 파란 강조 칩, 나머지는 회색 보조 칩
   const primaryKeywordCount = 3;
-  const hasBriefSidePanel = hasAcceptedLawyer || isConfirmed;
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col bg-white lg:bg-transparent">
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
       <PageHeader
         logoVariant="wordmark"
         rightSlot={editButton}
       />
 
       {/* Page title — figma 08 */}
-      <div className="px-5 pt-4 lg:px-6">
+      <div className="px-5 pt-4">
         <h1 className="text-[20px] font-bold leading-7 text-[#161a1d]">
           <span className="text-brand">분석리포트</span>를 확인하세요
         </h1>
       </div>
 
-      <main
-        className={cn(
-          'grid flex-1 grid-cols-1 gap-4 px-4 py-4 pb-20 lg:items-start lg:px-6',
-          hasBriefSidePanel
-            ? 'lg:grid-cols-[minmax(0,1fr)_360px]'
-            : 'lg:grid-cols-1',
-        )}
-      >
-        <div className="min-w-0 space-y-4">
+      <main className="flex-1 space-y-4 px-4 py-4 pb-20">
         {/* ── Brief content card ──────────────────────────────────────── */}
         <Card padding="md">
           {editMode ? (
@@ -400,11 +391,6 @@ export function BriefDetailPage() {
           </section>
         )}
 
-        </div>
-
-        {hasBriefSidePanel && (
-        <aside className="min-w-0 space-y-4 lg:sticky lg:top-6 lg:self-start">
-
         {/* ── 담당 변호사 확정 — 추천 리스트 대신 노출 ─────────────────── */}
         {hasAcceptedLawyer && brief && (
           <section>
@@ -569,8 +555,6 @@ export function BriefDetailPage() {
             )}
 
           </section>
-        )}
-        </aside>
         )}
       </main>
 

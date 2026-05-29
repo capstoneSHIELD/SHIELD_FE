@@ -22,7 +22,7 @@ export function Header({
     <header
       className={cn(
         'sticky top-0 z-30',
-        'h-[var(--app-header-height)] bg-white border-b border-gray-200',
+        'h-14 bg-white border-b border-gray-200',
         'flex items-center px-4',
         'safe-area-top',
         className,

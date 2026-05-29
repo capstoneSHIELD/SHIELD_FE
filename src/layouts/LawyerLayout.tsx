@@ -12,13 +12,13 @@ const LAWYER_TABS = [
 
 export function LawyerLayout() {
   return (
-    <div className="app-shell">
+    <div className="h-dvh bg-surface flex flex-col overflow-hidden">
       {/* Desktop sidebar */}
       <SideNav tabs={[...LAWYER_TABS]} />
 
       {/* Page content */}
-      <main className="app-scroll-main app-sidebar-offset app-bottom-nav-offset">
-        <div className="app-content-frame">
+      <main className="flex-1 flex flex-col lg:pl-60 pb-20 lg:pb-0 min-h-0 overflow-y-auto overflow-x-hidden">
+        <div className="mx-auto w-full max-w-7xl flex-1 flex flex-col min-h-0">
           <Outlet />
         </div>
       </main>

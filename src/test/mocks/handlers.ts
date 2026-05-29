@@ -43,7 +43,7 @@ const mockMessage = {
 
 const mockEarlyReadyMessage = {
   messageId: 'bb0e8400-e29b-41d4-a716-446655440106',
-  role: 'AI',
+  role: 'CHATBOT',
   content: '보증금 반환이 지연된 기간과 집주인에게 보낸 연락 내용을 더 알려주실 수 있을까요?',
   createdAt: '2025-01-15T10:16:00',
   allCompleted: true,
@@ -62,15 +62,6 @@ const mockEarlyReadyMessage = {
       subDomains: ['LEASE'],
       tags: ['임대차', '보증금'],
     },
-  },
-  checklist: {
-    items: [
-      { level: 'L1', label: '당사자 정보' },
-      { level: 'L1', label: '사건 발생 시기' },
-      { level: 'L2', label: '임대차 계약 기간' },
-      { level: 'L3', label: '보증금 액수' },
-      { level: 'L3', label: '반환 요청 여부 및 시점' },
-    ],
   },
   progress: {
     currentTurn: 5,
@@ -254,7 +245,7 @@ export const handlers = [
         message: '성공',
         data: {
           messageId: 'bb0e8400-e29b-41d4-a716-446655440006',
-          role: 'AI',
+          role: 'CHATBOT',
           content: '네, 임대차 관련 문의시군요. 좀 더 자세히 말씀해주세요.',
           createdAt: '2025-01-15T10:06:00',
           allCompleted: false,
@@ -273,15 +264,6 @@ export const handlers = [
               subDomains: ['LEASE'],
               tags: ['임대차'],
             },
-          },
-          checklist: {
-            items: [
-              { level: 'L1', label: '당사자 정보' },
-              { level: 'L1', label: '사건 발생 시기' },
-              { level: 'L2', label: '임대차 계약 기간' },
-              { level: 'L3', label: '보증금 액수' },
-              { level: 'L3', label: '반환 요청 여부 및 시점' },
-            ],
           },
           progress: {
             currentTurn: 1,

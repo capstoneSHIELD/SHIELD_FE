@@ -18,10 +18,10 @@ export function BriefDeliveryPage() {
   const list = deliveries ?? [];
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col bg-white lg:bg-transparent">
+    <div className="mx-auto flex w-full max-w-[390px] flex-col bg-white">
       <PageHeader title="변호사 찾기" onBack={() => navigate(`/briefs/${id}`)} />
 
-      <main className="flex flex-1 flex-col gap-4 px-4 py-4 lg:px-6">
+      <main className="flex flex-1 flex-col gap-4 px-4 py-4">
         {/* Loading */}
         {isLoading && (
           <div className="flex items-center justify-center h-48">
@@ -41,7 +41,7 @@ export function BriefDeliveryPage() {
 
         {/* Delivery list */}
         {!isLoading && list.length > 0 && (
-          <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <ul className="flex flex-col gap-3">
             {list.map((d) => {
               const status = d.status as DeliveryStatus;
               const goToProfile = () => navigate(`/lawyers/${d.lawyerId}`);

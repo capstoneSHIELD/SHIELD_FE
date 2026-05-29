@@ -67,7 +67,7 @@ export function ChatPage() {
   // ── loading ─────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="mx-auto flex h-full w-full max-w-6xl flex-col bg-white lg:bg-transparent">
+      <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
         <PageHeader logoVariant="wordmark" />
         <div className="flex flex-1 items-center justify-center">
           <Spinner size="lg" />
@@ -77,8 +77,7 @@ export function ChatPage() {
   }
 
   return (
-    <div className="mx-auto grid h-full w-full max-w-6xl grid-cols-1 bg-white lg:grid-cols-[minmax(0,440px)_minmax(0,1fr)] lg:gap-6 lg:bg-transparent lg:p-6">
-      <section className="flex min-h-0 flex-col bg-white lg:overflow-hidden lg:rounded-card lg:border lg:border-border lg:shadow-sm">
+    <div className="mx-auto flex h-full w-full max-w-[390px] flex-col bg-white">
       {/* ── header ─────────────────────────────────────────────────────── */}
       <PageHeader logoVariant="wordmark" />
 
@@ -117,7 +116,7 @@ export function ChatPage() {
       <div className="safe-area-bottom bg-white">
         {/* "의뢰서 생성" CTA — shown when allCompleted */}
         {allCompleted && (
-          <div className="px-4 pt-3 pb-1 lg:hidden">
+          <div className="px-4 pt-3 pb-1">
             <Button
               variant="primary"
               size="lg"
@@ -155,50 +154,6 @@ export function ChatPage() {
           }
         />
       </div>
-      </section>
-
-      <aside className="hidden min-h-0 flex-col gap-4 lg:flex">
-        <div className="rounded-card border border-border bg-white p-5 shadow-sm">
-          <p className="text-sm font-bold text-[#161a1d]">상담 진행</p>
-          <div className="mt-4 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl bg-info-bg px-3 py-4 text-center">
-              <p className="text-2xl font-bold text-brand">
-                {progress?.currentTurn ?? messages.length}
-              </p>
-              <p className="mt-1 text-xs text-[#62686f]">현재 답변</p>
-            </div>
-            <div className="rounded-2xl bg-[#f9fafb] px-3 py-4 text-center">
-              <p className="text-2xl font-bold text-[#161a1d]">
-                {progress?.maxTurns ?? '-'}
-              </p>
-              <p className="mt-1 text-xs text-[#62686f]">최대 단계</p>
-            </div>
-          </div>
-          <p className="mt-4 text-xs leading-relaxed text-[#62686f]">
-            답변이 충분히 모이면 의뢰서 초안 생성 단계로 넘어갈 수 있습니다.
-          </p>
-        </div>
-
-        {allCompleted && (
-          <div className="rounded-card border border-brand/20 bg-white p-5 shadow-sm">
-            <p className="text-sm font-bold text-[#161a1d]">의뢰서 생성 가능</p>
-            <p className="mt-2 text-xs leading-relaxed text-[#62686f]">
-              필요한 답변이 모이면 의뢰서를 생성해 다음 단계로 이동합니다.
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              fullWidth
-              isLoading={isAnalyzing}
-              leftIcon={<FileText size={18} />}
-              onClick={handleRequestAnalyze}
-              className="mt-4 bg-brand shadow-md"
-            >
-              의뢰서 생성
-            </Button>
-          </div>
-        )}
-      </aside>
     </div>
   );
 }
